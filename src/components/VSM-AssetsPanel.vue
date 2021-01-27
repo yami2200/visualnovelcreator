@@ -1,5 +1,6 @@
 <template>
   <v-card :height="sizeTabsPannel">
+    <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
     <v-tabs
         v-model="tab"
         icon
@@ -112,11 +113,11 @@
     >
       <v-spacer></v-spacer>
 
-      <v-btn icon>
+      <v-btn icon @click="deleteAssetsRequest">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
 
-      <v-btn icon>
+      <v-btn icon @click="bus.$emit('testParent'); console.log('Lets go !')">
         <v-icon>mdi-pencil-outline</v-icon>
       </v-btn>
 
@@ -131,12 +132,19 @@
 </template>
 
 <script>
+import ConfirmationRequest from './VSM-ConfirmationRequestModal.vue';
+
 export default {
   name: "VSM-AssetsPanel",
 
   props: {
     sizeHeight : {required: true},
-    assets : {required: true}
+    assets : {required: true},
+    bus : {required: true},
+  },
+
+  components: {
+    'vsm-confirmation-request-modal' : ConfirmationRequest,
   },
 
   computed: {
@@ -153,11 +161,29 @@ export default {
 
   data: () => ({
     tab: null,
-    selectedItem: [1,1,1,1,1],
+    selectedItem: [null,null,null,null,null],
+    headlineCRM: "",
+    textCRM: "",
   }),
 
   methods: {
-
+    deleteAssetsRequest(){
+      //console.log(this.tab.substring(4,5));
+      //console.log(this.selectedItem[this.tab.substring(4,5)-1]);
+      this.headlineCRM = "Do you really want to delete this asset ?";
+      this.textCRM = "You are trying to delete the asset : "+", are you sure you want to continue ? ";
+      this.bus.$emit('showConfirmationRequestModal');
+    },
+    deleteAsset(){
+      if(this.tab!=null){
+        var indextab = this.tab.substring(4,5)-1;
+        var index = this.selectedItem[indextab];
+        if(this.assets[indextab].content.length>0 && index!=null){
+          this.assets[indextab].content.splice(index,1);
+          this.selectedItem[indextab] = null;
+        }
+      }
+    }
   },
 
 }

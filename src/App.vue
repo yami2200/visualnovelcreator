@@ -2,13 +2,14 @@
   <v-app>
     <v-main>
       <vsm-menu-bar></vsm-menu-bar>
+
         <v-row no-gutters>
           <v-col cols="8">
           </v-col>
           <v-col cols="4">
             <v-card :height="sizePreviewPannel">
             </v-card>
-            <vsm-assets-panel :size-height="height" :assets="assets"></vsm-assets-panel>
+            <vsm-assets-panel :size-height="height" :assets="assets" :bus="bus"></vsm-assets-panel>
           </v-col>
         </v-row>
     </v-main>
@@ -16,9 +17,12 @@
 </template>
 
 <script>
+import Vue from "vue";
+
 const remote = require('electron').remote;
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/VSM-AssetsPanel.vue';
+//import ConfirmationRequest from './components/VSM-ConfirmationRequestModal.vue';
 import json from './test/assets.json';
 
 export default {
@@ -27,6 +31,11 @@ export default {
   components: {
     'vsm-menu-bar' : MenuBar,
     'vsm-assets-panel' : AssetsPanel,
+    //'vsm-confirmation-request-modal' : ConfirmationRequest,
+  },
+
+  mounted() {
+    this.bus.$on('testParent', this.print);
   },
 
   created() {
@@ -41,6 +50,9 @@ export default {
   methods: {
     resizeWindow() {
       this.height = window.innerHeight;
+    },
+    print() {
+      console.log("text parent");
     }
   },
 
@@ -56,6 +68,7 @@ export default {
   data: () => ({
     height: window.innerHeight,
     assets : json,
+    bus: new Vue(),
   }),
 
 
