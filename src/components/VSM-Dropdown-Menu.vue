@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ on }">
-      <v-btn :max-height="sizeButton"
+      <v-btn :max-height="sizeButton" min-height="20px"
              v-on="on"
       >
         {{ name }}
@@ -43,16 +43,13 @@ export default {
 
   methods: {
     myEventHandler() {
-      console.log("change size" + window.innerHeight);
       this.height = window.innerHeight;
     }
   },
 
   computed: {
-    // a computed getter
     sizeButton: function () {
-      // `this` points to the vm instance
-      return (this.height * this.sizeHeight / 100)+"px" ;
+      return (this.height * this.sizeHeight / 100)+"px";
     }
   },
 

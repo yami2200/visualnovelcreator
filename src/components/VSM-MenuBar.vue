@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar max-height="3%">
+  <v-app-bar max-height="3%" min-height="20px">
     <v-toolbar-items>
       <vsm-dropdown-menu
           :items="FileItems"
@@ -18,12 +18,20 @@
           @projectproperties="properties"
           @apppreferences="preferences">
       </vsm-dropdown-menu>
+      <vsm-dropdown-menu
+          :items="HelpItems"
+          name="Help"
+          sizeHeight=3
+          @github="githublink"
+          @websiteauthor="authorwebsiteLink">
+      </vsm-dropdown-menu>
     </v-toolbar-items>
   </v-app-bar>
 </template>
 
 <script>
 const remote = require('electron').remote;
+const { shell } = require('electron');
 import Dropdown from "./VSM-Dropdown-Menu";
 
 export default {
@@ -53,6 +61,12 @@ export default {
       {title: "App Preferences",
         action: "apppreferences"},
     ],
+    HelpItems: [
+      {title: "Github",
+        action: "github"},
+      {title: "Author WebSite",
+        action: "websiteauthor"},
+    ],
   }),
 
   methods: {
@@ -79,6 +93,14 @@ export default {
     },
     properties(){
       console.log("Project Properties");
+    },
+
+    // ########################## HELP MENU #####################################
+    githublink(){
+      shell.openExternal('https://github.com/yami2200/visualnovelmaker');
+    },
+    authorwebsiteLink(){
+      shell.openExternal('https://romainbriend.com/');
     }
 
   }
