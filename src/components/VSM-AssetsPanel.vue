@@ -113,11 +113,11 @@
     >
       <v-spacer></v-spacer>
 
-      <v-btn icon @click="deleteAssetsRequest">
+      <v-btn icon @click="deleteAssetsRequest" :disabled=disableEditionButtons>
         <v-icon>mdi-delete</v-icon>
       </v-btn>
 
-      <v-btn icon @click="bus.$emit('testParent'); console.log('Lets go !')">
+      <v-btn icon :disabled=disableEditionButtons>
         <v-icon>mdi-pencil-outline</v-icon>
       </v-btn>
 
@@ -156,6 +156,9 @@ export default {
     },
     sizeTabs: function () {
       return (this.sizeHeight * 0.05)+"px";
+    },
+    disableEditionButtons : function () {
+      return (this.tab==null || !(this.assets[this.tab.substring(4,5)-1].content.length>0 && this.selectedItem[this.tab.substring(4,5)-1]!=null));
     }
   },
 
@@ -168,11 +171,15 @@ export default {
 
   methods: {
     deleteAssetsRequest(){
-      //console.log(this.tab.substring(4,5));
-      //console.log(this.selectedItem[this.tab.substring(4,5)-1]);
-      this.headlineCRM = "Do you really want to delete this asset ?";
-      this.textCRM = "You are trying to delete the asset : "+", are you sure you want to continue ? ";
-      this.bus.$emit('showConfirmationRequestModal');
+      if(this.tab!=null){
+        var indextab = this.tab.substring(4,5)-1;
+        var index = this.selectedItem[indextab];
+        if(this.assets[indextab].content.length>0 && index!=null){
+          this.headlineCRM = "Do you really want to delete this asset ?";
+          this.textCRM = "You are trying to delete the asset : "+", are you sure you want to continue ? ";
+          this.bus.$emit('showConfirmationRequestModal');
+        }
+      }
     },
     deleteAsset(){
       if(this.tab!=null){

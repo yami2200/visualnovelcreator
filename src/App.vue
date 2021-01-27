@@ -5,6 +5,7 @@
 
         <v-row no-gutters>
           <v-col cols="8">
+            <!-- https://github.com/thecodealer/vue-panzoom -->
           </v-col>
           <v-col cols="4">
             <v-card :height="sizePreviewPannel">
