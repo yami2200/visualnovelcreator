@@ -92,9 +92,12 @@
 
                     <v-list-item-action>
                       <v-row>
-                        <v-btn icon>
-                          <v-icon color="grey darken-5">mdi-folder-image</v-icon>
-                        </v-btn>
+                        <v-file-input
+                            hide-input
+                            prepend-icon="mdi-folder-image"
+                            color="grey darken-5"
+                            v-model="imageImportList[index]"
+                        ></v-file-input>
                         <v-btn icon>
                           <v-icon color="red lighten-1">mdi-delete</v-icon>
                         </v-btn>
@@ -236,8 +239,8 @@ export default {
       console.log(this.baseImage);
     },
     addNewImageState(){
+      this.imageImportList.push({ name: "", path: "" });
       this.currentCharacter.imgOthers.push({name : "", img : ""});
-
     }
   },
 
