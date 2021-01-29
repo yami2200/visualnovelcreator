@@ -1,6 +1,7 @@
 <template>
   <v-card :height="sizeTabsPannel">
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
+    <vsm-character-edition-modal :project-prop="project_prop" :assets="assets" :index-edition="EditionIndex" :bus="bus" ></vsm-character-edition-modal>
     <v-tabs
         v-model="tab"
         icon
@@ -34,12 +35,11 @@
     <v-tabs-items v-model="tab">
       <v-tab-item
           v-for="item in assets"
-          :key="item"
+          :key="item.type"
           :value="'tab-' + (assets.indexOf(item)+1)"
       >
 
-        <v-list shaped :height="sizeList"
-                class="overflow-y-auto">
+        <v-list shaped :height="sizeList" class="overflow-y-auto">
           <v-subheader> {{ item.type }} : </v-subheader>
           <v-list-item-group
               v-model="selectedItem[assets.indexOf(item)]"
@@ -50,7 +50,7 @@
                 :key="i"
             >
               <v-list-item-avatar v-if="item.type == 'Characters' || item.type == 'Scenes' || item.type == 'Objects'">
-                <v-img :src="iteml.img"></v-img>
+                <v-img :src="project_prop.directory + 'Assets\\Characters\\' +iteml.img"></v-img>
               </v-list-item-avatar>
 
               <v-list-item-icon v-else>
@@ -60,52 +60,13 @@
               <v-list-item-content>
                 <v-list-item-title v-text="iteml.name"></v-list-item-title>
               </v-list-item-content>
+
             </v-list-item>
           </v-list-item-group>
         </v-list>
 
       </v-tab-item>
     </v-tabs-items>
-    <!-- <v-bottom-navigation :height="sizeTabs">
-
-      <v-btn>
-        <span>Delete</span>
-
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-
-      <v-btn>
-        <span>Edit</span>
-
-        <v-icon>mdi-pencil-outline</v-icon>
-      </v-btn>
-
-      <v-btn>
-        <span>New</span>
-
-        <v-icon>mdi-plus-circle</v-icon>
-      </v-btn>
-
-    </v-bottom-navigation>-->
-    <!--<v-toolbar
-        :height="sizeTabs"
-        center
-    >
-      <v-btn icon>
-        <span>Delete</span>
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <span>Edit</span>
-        <v-icon>mdi-pencil-outline</v-icon>
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <span>New</span>
-        <v-icon>mdi-plus-circle</v-icon>
-      </v-btn>
-    </v-toolbar>-->
 
     <v-app-bar
         dense
@@ -117,11 +78,11 @@
         <v-icon>mdi-delete</v-icon>
       </v-btn>
 
-      <v-btn icon :disabled=disableEditionButtons>
+      <v-btn icon @click="editAssetRequest" :disabled=disableEditionButtons>
         <v-icon>mdi-pencil-outline</v-icon>
       </v-btn>
 
-      <v-btn icon>
+      <v-btn icon @click="newAssetRequest">
         <v-icon>mdi-plus-circle</v-icon>
       </v-btn>
 
@@ -133,6 +94,7 @@
 
 <script>
 import ConfirmationRequest from './VSM-ConfirmationRequestModal.vue';
+import CharacterEdition from './VSM-CharacterEditionPanel.vue';
 
 export default {
   name: "VSM-AssetsPanel",
@@ -140,11 +102,13 @@ export default {
   props: {
     sizeHeight : {required: true},
     assets : {required: true},
+    project_prop: {required: true},
     bus : {required: true},
   },
 
   components: {
     'vsm-confirmation-request-modal' : ConfirmationRequest,
+    'vsm-character-edition-modal' : CharacterEdition,
   },
 
   computed: {
@@ -167,6 +131,8 @@ export default {
     selectedItem: [null,null,null,null,null],
     headlineCRM: "",
     textCRM: "",
+    EditionMode: true,
+    EditionIndex: 0,
   }),
 
   methods: {
@@ -189,6 +155,28 @@ export default {
           this.assets[indextab].content.splice(index,1);
           this.selectedItem[indextab] = null;
         }
+      }
+    },
+    editAssetRequest(){
+      if(!this.disableEditionButtons){
+        this.EditionMode = true;
+        var indextab = this.tab.substring(4,5)-1;
+        var index = this.selectedItem[indextab];
+        this.EditionIndex = index;
+        this.showEditionPanel(true);
+      }
+    },
+    newAssetRequest(){
+      if(this.tab!=null) {
+        this.EditionMode = false;
+        this.showEditionPanel(false);
+      }
+    },
+    showEditionPanel(editMode){
+      var indexTab = this.tab.substring(4,5)-1;
+      var index = this.selectedItem[indexTab];
+      if(this.assets[indexTab].type == "Characters"){
+        this.bus.$emit('showCharacterEditionPanel', {type: editMode, index: index});
       }
     }
   },

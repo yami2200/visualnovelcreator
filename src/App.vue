@@ -10,7 +10,7 @@
           <v-col cols="4">
             <v-card :height="sizePreviewPannel">
             </v-card>
-            <vsm-assets-panel :size-height="height" :assets="assets" :bus="bus"></vsm-assets-panel>
+            <vsm-assets-panel :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus"></vsm-assets-panel>
           </v-col>
         </v-row>
     </v-main>
@@ -24,7 +24,8 @@ const remote = require('electron').remote;
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/VSM-AssetsPanel.vue';
 //import ConfirmationRequest from './components/VSM-ConfirmationRequestModal.vue';
-import json from './test/assets.json';
+import jsonAssets from './test/assets.json';
+import jsonProjectProperties from './test/project_properties.json';
 
 export default {
   name: 'App',
@@ -68,8 +69,9 @@ export default {
 
   data: () => ({
     height: window.innerHeight,
-    assets : json,
+    assets : jsonAssets,
     bus: new Vue(),
+    project_properties: jsonProjectProperties,
   }),
 
 

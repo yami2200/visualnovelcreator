@@ -1,7 +1,7 @@
 [
   {
     "type" : "Characters",
-    "content" : [ { "name" : "Yami", "img" : "https://t1.ea.ltmcdn.com/fr/images/5/2/5/img_comment_prendre_soin_d_un_capybara_525_orig.jpg" },{"name" : "Pixselve", "img" : "https://cdn.futura-sciences.com/buildsv6/images/wide1920/a/0/f/a0fc73919d_50166390_chaton.jpg" },{"name" : "Wild2Me", "img" : "https://cdn2.unrealengine.com/egs-rocketleague-psyonixllc-s2-1200x1600-b1aecb2c82d9.jpg" },{"name" : "Cody", "img" : "https://cdn.akamai.steamstatic.com/steam/apps/238960/capsule_616x353.jpg?t=1610659970" }, {"name" : "SireSombre", "img" : "https://www.nautiljon.com/images/anime/00/43/sword_art_online_2234.jpg" } ]},
+    "content" : [ { "name" : "Yami", "img" : "Yami_Normal.jpg", "sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}]},{"name" : "Pixselve", "img" : "Pixselve_Normal.png" },{"name" : "Wild2Me", "img" : "Wild2Me_Normal.jpg" },{"name" : "Cody", "img" : "Cody_Normal.jpg" } ]},
   {
     "type" : "Scenes",
     "content" : [ {"name" : "Forest", "img" : "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Foret.JPG/1200px-Foret.JPG" },{"name" : "Mountain", "img" : "https://i0.wp.com/www.altitude.news/wp-content/uploads/2017/11/montblancrange.jpg?resize=1400%2C800&ssl=1" },{"name" : "School", "img" : "https://france3-regions.francetvinfo.fr/image/TdHcZjksiQ4QG_JVOCPZ4El3_H8/600x400/regions/2020/06/09/5edf8f2f52376_titre_pid_mie_d_mangeaison_dans_cole-00_00_09_23-4313940.jpg" },{"name" : "Paris", "img" : "https://www.sortiraparis.com/images/58/83517/577986-visuel-paris-velo-quai-2.jpg" }, {"name" : "Library", "img" : "https://www.maisonapart.com/images/auto/640-480-c/20080207_183222_Biblio_passage_lundia.JPG" } ]},
