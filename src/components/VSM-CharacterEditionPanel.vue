@@ -183,17 +183,19 @@ export default {
     show() {
       if(this.editionMode){
         this.previousName = this.assets[0].content[this.indexEdition].name;
-        this.currentCharacter = Object.assign({}, this.assets[0].content[this.indexEdition]);
+        //this.currentCharacter = Object.assign({}, this.assets[0].content[this.indexEdition]);
+        this.currentCharacter = JSON.parse(JSON.stringify(this.assets[0].content[this.indexEdition]));
         this.baseImage = { name: this.currentCharacter.img, path: this.projectProp.directory + "Assets\\Characters\\"+this.currentCharacter.img};
-        this.imageImportList = null;
+        this.imageImportList =  [];
         this.currentCharacter.imgOthers.forEach(element => {
           this.imageImportList.push({name: element.img, path: this.projectProp.directory + "Assets\\Characters\\"+element.img });
         });
         console.log("edit asset");
       } else {
         this.currentCharacter = null;
-        this.imageImportList = null;
+        this.imageImportList = [];
         this.currentCharacter = Object.assign({}, baseCharacter);
+        this.currentCharacter.imgOthers = [];
         this.baseImage = null;
         console.log("new asset");
       }
@@ -217,12 +219,12 @@ export default {
           var filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
           fs.readFile(this.baseImage.path, (err, data) => {
             if(err){
-              alert("An error ocurred reading the image :" + err.message);
+              alert("An error ocurred reading the image : " + err.message);
               return;
             }
             fs.writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, data, (err) => {
               if(err){
-                alert("An error ocurred while saving images !" + " #" +err.code)
+                alert("An error ocurred while saving images ! : " + err.message)
               }
             });
           });
