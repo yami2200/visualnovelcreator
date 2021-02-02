@@ -14,7 +14,7 @@
             <v-col cols="6">
               <v-text-field
                   label="Name"
-                  required
+                  :rules="[rules.required, rules.counter]"
                   v-model="currentCharacter.name"
                   :value="(currentCharacter!=null ? currentCharacter.name : '')"
               ></v-text-field>
@@ -70,23 +70,21 @@
             </v-col>
             <v-col cols="6">
               <v-card>
-              <v-list dense height="200px" class="mt-2 overflow-y-auto" >
-                <v-list-item-group
-                    color="primary"
-                    v-model="selectedItemStateImage"
-                >
+              <v-list dense height="200px" class="mt-2 overflow-y-auto" readonly>
                   <v-list-item
                       v-for="(imgo, index) in currentCharacter.imgOthers"
                       :key="index"
                   >
-                    <v-list-item-avatar v-if="imgo.img != ''">
-                      <v-img :src="projectProp.directory + 'Assets\\Characters\\' +imgo.img"></v-img>
+                    <v-list-item-avatar v-if="imgo.img != '' || imageImportList[index]!=null">
+                      <v-img v-if="imgo.img != ''" :src="projectProp.directory + 'Assets\\Characters\\' +imgo.img"></v-img>
+                      <v-img v-else :src="imageImportList[index].path"></v-img>
                     </v-list-item-avatar>
 
                     <v-list-item-content>
                       <v-text-field
                           label="Name"
                           v-model="imgo.name"
+                          :rules="[rules.required, rules.counter]"
                       ></v-text-field>
                     </v-list-item-content>
 
@@ -107,7 +105,6 @@
                     </v-list-item-action>
 
                   </v-list-item>
-                </v-list-item-group>
               </v-list>
               </v-card>
               <v-row class="mt-3">
@@ -161,9 +158,12 @@ export default {
       editionMode : false,
       indexEdition: 0,
       previousName: "",
-      selectedItemStateImage: 1,
-      imageImportList: []
-    }
+      imageImportList: [],
+      rules: {
+        required: value => !!value || 'Required.',
+        counter: value => value.length <= 20 || 'Max 20 characters',
+      },
+    };
   },
 
   computed: {
@@ -183,7 +183,6 @@ export default {
     show() {
       if(this.editionMode){
         this.previousName = this.assets[0].content[this.indexEdition].name;
-        //this.currentCharacter = Object.assign({}, this.assets[0].content[this.indexEdition]);
         this.currentCharacter = JSON.parse(JSON.stringify(this.assets[0].content[this.indexEdition]));
         this.baseImage = { name: this.currentCharacter.img, path: this.projectProp.directory + "Assets\\Characters\\"+this.currentCharacter.img};
         this.imageImportList =  [];
