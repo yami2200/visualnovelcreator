@@ -13,10 +13,11 @@
           <v-row>
             <v-col cols="6">
               <v-text-field
+                  v-if="currentCharacter!=null"
                   label="Name"
                   :rules="[rules.required, rules.counter]"
                   v-model="currentCharacter.name"
-                  :value="(currentCharacter!=null ? currentCharacter.name : '')"
+                  :value="currentCharacter.name"
               ></v-text-field>
               <v-slider
                   class="mt-5"
@@ -70,7 +71,7 @@
             </v-col>
             <v-col cols="6">
               <v-card>
-              <v-list dense height="200px" class="mt-2 overflow-y-auto" readonly>
+              <v-list dense height="200px" class="mt-2 overflow-y-auto" v-if="currentCharacter!=null">
                   <v-list-item
                       v-for="(imgo, index) in currentCharacter.imgOthers"
                       :key="index"
@@ -141,9 +142,9 @@
 
 <script>
 import jsonBaseCharacter from './../assets/base_characters.json';
+import {readFileSync, writeFile} from './../lib.js';
 
 const baseCharacter = jsonBaseCharacter;
-var fs = require('fs');
 
 export default {
   name: "VSM-CharacterEditionPanel",
@@ -189,14 +190,12 @@ export default {
         this.currentCharacter.imgOthers.forEach(element => {
           this.imageImportList.push({name: element.img, path: this.projectProp.directory + "Assets\\Characters\\"+element.img });
         });
-        console.log("edit asset");
       } else {
         this.currentCharacter = null;
         this.imageImportList = [];
         this.currentCharacter = Object.assign({}, baseCharacter);
         this.currentCharacter.imgOthers = [];
         this.baseImage = null;
-        console.log("new asset");
       }
       this.dialog = true;
     },
@@ -216,21 +215,13 @@ export default {
           }
         } else {
           var filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
-          fs.readFile(this.baseImage.path, (err, data) => {
-            if(err){
-              alert("An error ocurred reading the image : " + err.message);
-              return;
-            }
-            fs.writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, data, (err) => {
-              if(err){
-                alert("An error ocurred while saving images ! : " + err.message)
-              }
-            });
-          });
+          var filedata = readFileSync(this.baseImage.path);
+          writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
 
           this.currentCharacter.img = filename;
 
           this.assets[0].content.push(this.currentCharacter);
+          console.log(this.assets[0].content[this.assets[0].content.length-1].img + " " + this.assets[0].content[this.assets[0].content.length-1].name);
         }
         this.hide();
         this.$emit("accept");
