@@ -15,13 +15,14 @@
               <v-text-field
                   v-if="currentCharacter!=null"
                   label="Name"
-                  :rules="[rules.required, rules.counter]"
+                  :rules="[rules.required, rules.counter, rules.existCharName]"
                   v-model="currentCharacter.name"
                   :value="currentCharacter.name"
               ></v-text-field>
               <v-slider
+                  v-if="currentCharacter!=null"
                   class="mt-5"
-                  v-model="sliderSizeX"
+                  v-model="currentCharacter.sizex"
                   :max="100"
                   :min="1"
                   :thumb-size="20"
@@ -29,11 +30,12 @@
                   label="Horizontal size"
               ></v-slider>
               <v-slider
+                  v-if="currentCharacter!=null"
                   class="mt-5"
                   :max="100"
                   :min="1"
                   :thumb-size="20"
-                  v-model="sliderSizeY"
+                  v-model="currentCharacter.sizey"
                   thumb-label="always"
                   label="Vertical size"
               ></v-slider>
@@ -76,9 +78,9 @@
                       v-for="(imgo, index) in currentCharacter.imgOthers"
                       :key="index"
                   >
-                    <v-list-item-avatar v-if="imgo.img != '' || imageImportList[index]!=null">
-                      <v-img v-if="imgo.img != ''" :src="projectProp.directory + 'Assets\\Characters\\' +imgo.img"></v-img>
-                      <v-img v-else :src="imageImportList[index].path"></v-img>
+                    <v-list-item-avatar v-if="imgo.img != '' || imageImportList[index].path != ''">
+                      <v-img v-if="imageImportList[index].path != ''" :src="imageImportList[index].path"></v-img>
+                      <v-img v-else :src="projectProp.directory + 'Assets\\Characters\\' +imgo.img" @click="print(projectProp.directory + 'Assets\\Characters\\' +imgo.img)"></v-img>
                     </v-list-item-avatar>
 
                     <v-list-item-content>
@@ -97,7 +99,7 @@
                             color="grey darken-5"
                             v-model="imageImportList[index]"
                         ></v-file-input>
-                        <v-btn icon>
+                        <v-btn icon @click="deleteNewImageState(index)">
                           <v-icon color="red lighten-1">mdi-delete</v-icon>
                         </v-btn>
 
@@ -152,8 +154,6 @@ export default {
   data () {
     return {
       dialog: false,
-      sliderSizeX : 10,
-      sliderSizeY : 10,
       baseImage: null,
       currentCharacter: null,
       editionMode : false,
@@ -163,14 +163,25 @@ export default {
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
+        existCharName: value => (this.assets[0].content.filter(e => e.name === value).length < 1 || this.previousName == value) || 'Already Exist',
       },
     };
   },
 
   computed: {
     canSave: function () {
-      if(this.editionMode) return (this.currentCharacter!=null && this.currentCharacter.name != "" && this.baseImage!=null && (!this.assets[0].content.some(a => a.name == this.currentCharacter.name)) || this.currentCharacter.name == this.previousName)
-      return (this.currentCharacter!=null && this.currentCharacter.name != "" && this.baseImage!=null && !this.assets[0].content.some(a => a.name == this.currentCharacter.name));
+      if(this.editionMode) return (this.currentCharacter!=null && this.currentCharacter.name != "" && (this.baseImage!=null || this.currentCharacter.img!="") && ((!this.assets[0].content.some(a => a.name == this.currentCharacter.name)) || this.currentCharacter.name == this.previousName) && this.listOthersImagesValid)
+      return (this.currentCharacter!=null && this.currentCharacter.name != "" && this.baseImage!=null && !this.assets[0].content.some(a => a.name == this.currentCharacter.name) && this.listOthersImagesValid);
+    },
+    listOthersImagesValid: function () {
+      if(this.currentCharacter==null) return false;
+      var names = [];
+      for(var i = 0; i<this.currentCharacter.imgOthers.length; i++){
+        if(this.currentCharacter.imgOthers[i].name == "" || (this.currentCharacter.imgOthers[i].img == "" && this.imageImportList[i].path=="")) return false;
+        if(names.includes(this.currentCharacter.imgOthers[i].name)) return false;
+        names.push(this.currentCharacter.imgOthers[i].name);
+      }
+      return true;
     },
   },
 
@@ -184,16 +195,19 @@ export default {
     show() {
       if(this.editionMode){
         this.previousName = this.assets[0].content[this.indexEdition].name;
+        this.currentCharacter = null;
         this.currentCharacter = JSON.parse(JSON.stringify(this.assets[0].content[this.indexEdition]));
         this.baseImage = { name: this.currentCharacter.img, path: this.projectProp.directory + "Assets\\Characters\\"+this.currentCharacter.img};
-        this.imageImportList =  [];
+        this.imageImportList = null;
+        this.imageImportList = [];
         this.currentCharacter.imgOthers.forEach(element => {
           this.imageImportList.push({name: element.img, path: this.projectProp.directory + "Assets\\Characters\\"+element.img });
         });
       } else {
         this.currentCharacter = null;
+        this.previousName = "";
         this.imageImportList = [];
-        this.currentCharacter = Object.assign({}, baseCharacter);
+        this.currentCharacter = JSON.parse(JSON.stringify(baseCharacter));
         this.currentCharacter.imgOthers = [];
         this.baseImage = null;
       }
@@ -214,9 +228,17 @@ export default {
             console.log("");
           }
         } else {
+          // Copy Image Character in directory
           var filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
           var filedata = readFileSync(this.baseImage.path);
           writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
+
+          for(var i = 0; i < this.currentCharacter.imgOthers.length; i++){
+            var imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name +  "." + this.imageImportList[i].name.split('.').pop();
+            var imgdata = readFileSync(this.imageImportList[i].path);
+            writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
+            this.currentCharacter.imgOthers[i].img = imgName;
+          }
 
           this.currentCharacter.img = filename;
 
@@ -227,12 +249,16 @@ export default {
         this.$emit("accept");
       }
     },
-    print(){
-      console.log(this.baseImage);
+    print(text){
+      console.log(text);
     },
     addNewImageState(){
       this.imageImportList.push({ name: "", path: "" });
       this.currentCharacter.imgOthers.push({name : "", img : ""});
+    },
+    deleteNewImageState(index){
+      this.imageImportList.splice(index, 1);
+      this.currentCharacter.imgOthers.splice(index, 1);
     }
   },
 

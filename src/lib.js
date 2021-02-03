@@ -5,11 +5,12 @@ function readFileSync(path) {
 }
 
 function writeFile(path, data){
-    fs.writeFile(path, data, (err) => {
+    fs.writeFileSync(path, data);
+    /*fs.writeFile(path, data, (err) => {
         if(err){
             alert("An error ocurred while saving images ! : " + err.message)
         }
-    });
+    });*/
 }
 
 export {readFileSync, writeFile};
