@@ -144,7 +144,7 @@
 
 <script>
 import jsonBaseCharacter from './../assets/base_characters.json';
-import {readFileSync, writeFile} from './../lib.js';
+import {readFileSync, writeFile, renameFile, deleteFile} from './../lib.js';
 
 const baseCharacter = jsonBaseCharacter;
 
@@ -223,17 +223,59 @@ export default {
     save() {
       if(this.canSave){
         var char = this.assets[0].content[this.indexEdition];
+        var filename = "";
+        var filedata = "";
+        var i = 0;
         if(this.editionMode){
+
+          // Case change the name
           if(this.currentCharacter.name != char.name){
-            console.log("");
+
+            // change image name or delete the old one
+            if(this.baseImage.name == this.currentCharacter.img){
+              renameFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img, this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.img.replace(this.previousName, this.currentCharacter.name));
+            }
+            else {
+              deleteFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img);
+            }
+
+            // change others image
+            for(i = 0; i < this.currentCharacter.imgOthers.length; i++){
+              if(this.imageImportList[i].path!=""){
+                deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
+              } else {
+                renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img, this.projectProp.directory + "Assets\\Characters\\" +  this.currentCharacter.imgOthers[i].img.replace(this.previousName, this.currentCharacter.name));
+              }
+            }
           }
+
+          // Case change the image
+          if(this.baseImage.name != this.currentCharacter.img){
+            filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
+            filedata = readFileSync(this.baseImage.path);
+            writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
+          }
+
+          // Delete old images files
+          /*for(var i = 0; i < this.assets[0].content[this.indexEdition].imgOthers.length; i++){
+            if(!(this.currentCharacter.imgOthers.filter(e => e.img === this.assets[0].content[this.indexEdition].imgOthers[i].img).length > 0)){
+
+            }
+          }*/
+          if(this.baseImage.name == this.currentCharacter.img){
+            this.currentCharacter.img = this.currentCharacter.img.replace(this.previousName, this.currentCharacter.name);
+          } else {
+            this.currentCharacter.img = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
+          }
+
+          this.assets[0].content[this.indexEdition] = this.currentCharacter;
         } else {
           // Copy Image Character in directory
-          var filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
-          var filedata = readFileSync(this.baseImage.path);
+          filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
+          filedata = readFileSync(this.baseImage.path);
           writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
 
-          for(var i = 0; i < this.currentCharacter.imgOthers.length; i++){
+          for(i = 0; i < this.currentCharacter.imgOthers.length; i++){
             var imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name +  "." + this.imageImportList[i].name.split('.').pop();
             var imgdata = readFileSync(this.imageImportList[i].path);
             writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
@@ -243,7 +285,6 @@ export default {
           this.currentCharacter.img = filename;
 
           this.assets[0].content.push(this.currentCharacter);
-          console.log(this.assets[0].content[this.assets[0].content.length-1].img + " " + this.assets[0].content[this.assets[0].content.length-1].name);
         }
         this.hide();
         this.$emit("accept");

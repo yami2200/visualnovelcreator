@@ -6,11 +6,18 @@ function readFileSync(path) {
 
 function writeFile(path, data){
     fs.writeFileSync(path, data);
-    /*fs.writeFile(path, data, (err) => {
-        if(err){
-            alert("An error ocurred while saving images ! : " + err.message)
-        }
-    });*/
 }
 
-export {readFileSync, writeFile};
+function renameFile(oldPath, newPath){
+    fs.renameSync(oldPath, newPath);
+}
+
+function deleteFile(path){
+    fs.unlinkSync(path);
+}
+
+function existFile(path){
+    return fs.existsSync(path);
+}
+
+export {readFileSync, writeFile, renameFile, deleteFile, existFile};
