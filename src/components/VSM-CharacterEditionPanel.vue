@@ -144,7 +144,7 @@
 
 <script>
 import jsonBaseCharacter from './../assets/base_characters.json';
-import {readFileSync, writeFile, renameFile, deleteFile} from './../lib.js';
+import {readFileSync, writeFile, renameFile, deleteFile, getDate} from './../lib.js';
 
 const baseCharacter = jsonBaseCharacter;
 
@@ -233,10 +233,8 @@ export default {
 
             // change image name or delete the old one
             if(this.baseImage.name == this.currentCharacter.img){
-              renameFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img, this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.img.replace(this.previousName, this.currentCharacter.name));
-            }
-            else {
-              deleteFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img);
+              filename = this.currentCharacter.name + "_Normal_" + getDate()+ "." + this.currentCharacter.img.split('.').pop();
+              renameFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img, this.projectProp.directory + "Assets\\Characters\\" + filename);
             }
 
             // change others image
@@ -244,16 +242,20 @@ export default {
               if(this.imageImportList[i].path!=""){
                 deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
               } else {
-                renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img, this.projectProp.directory + "Assets\\Characters\\" +  this.currentCharacter.imgOthers[i].img.replace(this.previousName, this.currentCharacter.name));
+                renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img, this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + new Date() + "." + this. this.currentCharacter.imgOthers[i].img.split('.').pop());
               }
             }
           }
 
           // Case change the image
           if(this.baseImage.name != this.currentCharacter.img){
-            filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
+            deleteFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img);
+            filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.baseImage.name.split('.').pop();
             filedata = readFileSync(this.baseImage.path);
             writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
+            this.currentCharacter.img = filename;
+          } else if (filename!=""){
+            this.currentCharacter.img = filename;
           }
 
           // Delete old images files
@@ -262,21 +264,17 @@ export default {
 
             }
           }*/
-          if(this.baseImage.name == this.currentCharacter.img){
-            this.currentCharacter.img = this.currentCharacter.img.replace(this.previousName, this.currentCharacter.name);
-          } else {
-            this.currentCharacter.img = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
-          }
 
           this.assets[0].content[this.indexEdition] = this.currentCharacter;
+
         } else {
           // Copy Image Character in directory
-          filename = this.currentCharacter.name + "_Normal." + this.baseImage.name.split('.').pop();
+          filename = this.currentCharacter.name + "_Normal_"+ getDate() +"." + this.baseImage.name.split('.').pop();
           filedata = readFileSync(this.baseImage.path);
           writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
 
           for(i = 0; i < this.currentCharacter.imgOthers.length; i++){
-            var imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name +  "." + this.imageImportList[i].name.split('.').pop();
+            var imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_"+ getDate() +  "." + this.imageImportList[i].name.split('.').pop();
             var imgdata = readFileSync(this.imageImportList[i].path);
             writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
             this.currentCharacter.imgOthers[i].img = imgName;

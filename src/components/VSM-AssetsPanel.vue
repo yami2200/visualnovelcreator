@@ -1,7 +1,7 @@
 <template>
   <v-card :height="sizeTabsPannel">
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
-    <vsm-character-edition-modal :project-prop="project_prop" :assets="assets" :index-edition="EditionIndex" :bus="bus" ></vsm-character-edition-modal>
+    <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :index-edition="EditionIndex" :bus="bus" ></vsm-character-edition-modal>
     <v-tabs
         v-model="tab"
         icon
@@ -178,6 +178,9 @@ export default {
       if(this.assets[indexTab].type == "Characters"){
         this.bus.$emit('showCharacterEditionPanel', {type: editMode, index: index});
       }
+    },
+    saveEditCharacter(){
+      this.$forceUpdate();
     }
   },
 
