@@ -95,6 +95,7 @@
                       <v-row>
                         <v-file-input
                             hide-input
+                            accept="image/*"
                             prepend-icon="mdi-folder-image"
                             color="grey darken-5"
                             v-model="imageImportList[index]"
@@ -221,72 +222,82 @@ export default {
       this.$emit("cancel");
     },
     save() {
-      if(this.canSave){
+      if(this.canSave) {
         var char = this.assets[0].content[this.indexEdition];
         var filename = "";
         var filedata = "";
+        var imgName = "";
+        var imgdata = "";
         var i = 0;
-        if(this.editionMode){
+        if (this.editionMode) {
 
           // Case change the name
-          if(this.currentCharacter.name != char.name){
+          if (this.currentCharacter.name != char.name) {
 
             // change image name or delete the old one
-            if(this.baseImage.name == this.currentCharacter.img){
-              filename = this.currentCharacter.name + "_Normal_" + getDate()+ "." + this.currentCharacter.img.split('.').pop();
-              renameFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img, this.projectProp.directory + "Assets\\Characters\\" + filename);
+            if (this.baseImage.name == this.currentCharacter.img) {
+              filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.currentCharacter.img.split('.').pop();
+              renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.img, this.projectProp.directory + "Assets\\Characters\\" + filename);
             }
 
             // change others image
-            for(i = 0; i < this.currentCharacter.imgOthers.length; i++){
-              if(this.imageImportList[i].path!=""){
-                deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
-              } else {
-                renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img, this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + new Date() + "." + this. this.currentCharacter.imgOthers[i].img.split('.').pop());
+            for (i = 0; i < this.currentCharacter.imgOthers.length; i++) {
+              if (this.currentCharacter.imgOthers[i].img != "") {
+                if (this.imageImportList[i].name != this.currentCharacter.imgOthers[i].img) {
+                  deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
+                } else {
+                  renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img, this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + new Date() + "." + this.this.currentCharacter.imgOthers[i].img.split('.').pop());
+                }
               }
             }
           }
 
-          // Case change the image
-          if(this.baseImage.name != this.currentCharacter.img){
-            deleteFile(this.projectProp.directory + "Assets\\Characters\\" +this.currentCharacter.img);
+            // Case change the image
+            if (this.baseImage.name != this.currentCharacter.img) {
+              deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.img);
+              filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.baseImage.name.split('.').pop();
+              filedata = readFileSync(this.baseImage.path);
+              writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
+              this.currentCharacter.img = filename;
+            } else if (filename != "") {
+              this.currentCharacter.img = filename;
+            }
+
+            // Delete old images files
+            for (i = 0; i < this.assets[0].content[this.indexEdition].imgOthers.length; i++) {
+              if (this.imageImportList[i].name != this.currentCharacter.imgOthers[i].img) {
+                if (this.previousName == this.currentCharacter.name) {
+                  deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
+                }
+                imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.imageImportList[i].name.split('.').pop();
+                imgdata = readFileSync(this.imageImportList[i].path);
+                writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
+                this.currentCharacter.imgOthers[i].img = imgName;
+              }
+            }
+
+            this.assets[0].content[this.indexEdition] = this.currentCharacter;
+
+          } else {
+            // Copy Image Character in directory
             filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.baseImage.name.split('.').pop();
             filedata = readFileSync(this.baseImage.path);
             writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
-            this.currentCharacter.img = filename;
-          } else if (filename!=""){
-            this.currentCharacter.img = filename;
-          }
 
-          // Delete old images files
-          /*for(var i = 0; i < this.assets[0].content[this.indexEdition].imgOthers.length; i++){
-            if(!(this.currentCharacter.imgOthers.filter(e => e.img === this.assets[0].content[this.indexEdition].imgOthers[i].img).length > 0)){
-
+            for (i = 0; i < this.currentCharacter.imgOthers.length; i++) {
+              imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.imageImportList[i].name.split('.').pop();
+              imgdata = readFileSync(this.imageImportList[i].path);
+              writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
+              this.currentCharacter.imgOthers[i].img = imgName;
             }
-          }*/
 
-          this.assets[0].content[this.indexEdition] = this.currentCharacter;
+            this.currentCharacter.img = filename;
 
-        } else {
-          // Copy Image Character in directory
-          filename = this.currentCharacter.name + "_Normal_"+ getDate() +"." + this.baseImage.name.split('.').pop();
-          filedata = readFileSync(this.baseImage.path);
-          writeFile(this.projectProp.directory + "Assets\\Characters\\" + filename, filedata);
-
-          for(i = 0; i < this.currentCharacter.imgOthers.length; i++){
-            var imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_"+ getDate() +  "." + this.imageImportList[i].name.split('.').pop();
-            var imgdata = readFileSync(this.imageImportList[i].path);
-            writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
-            this.currentCharacter.imgOthers[i].img = imgName;
+            this.assets[0].content.push(this.currentCharacter);
           }
-
-          this.currentCharacter.img = filename;
-
-          this.assets[0].content.push(this.currentCharacter);
+          this.hide();
+          this.$emit("accept");
         }
-        this.hide();
-        this.$emit("accept");
-      }
     },
     print(text){
       console.log(text);
