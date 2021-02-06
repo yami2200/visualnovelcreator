@@ -1,7 +1,10 @@
 <template>
   <v-card :height="sizeTabsPannel">
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
-    <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :index-edition="EditionIndex" :bus="bus" ></vsm-character-edition-modal>
+
+    <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" ></vsm-character-edition-modal>
+    <vsm-scene-edit-modal @accept="saveEditScene" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
+
     <v-tabs
         v-model="tab"
         icon
@@ -95,6 +98,7 @@
 <script>
 import ConfirmationRequest from './VSM-ConfirmationRequestModal.vue';
 import CharacterEdition from './VSM-CharacterEditionPanel.vue';
+import SceneEditPanel from './VSM-SceneEditPanel';
 import {deleteFile} from './../lib.js';
 
 export default {
@@ -110,6 +114,7 @@ export default {
   components: {
     'vsm-confirmation-request-modal' : ConfirmationRequest,
     'vsm-character-edition-modal' : CharacterEdition,
+    'vsm-scene-edit-modal' : SceneEditPanel,
   },
 
   computed: {
@@ -153,8 +158,8 @@ export default {
         var indextab = this.tab.substring(4,5)-1;
         var index = this.selectedItem[indextab];
         if(this.assets[indextab].content.length>0 && index!=null){
-          switch (indextab) {
-            case 0 :
+          switch (this.assets[indextab].type) {
+            case "Characters" :
               this.deleteCharacterDependency(this.assets[indextab].content[index]);
               break;
           }
@@ -188,11 +193,19 @@ export default {
     showEditionPanel(editMode){
       var indexTab = this.tab.substring(4,5)-1;
       var index = this.selectedItem[indexTab];
-      if(this.assets[indexTab].type == "Characters"){
-        this.bus.$emit('showCharacterEditionPanel', {type: editMode, index: index});
+      switch(this.assets[indexTab].type) {
+        case "Characters" :
+          this.bus.$emit('showCharacterEditionPanel', {type: editMode, index: index});
+          break;
+        case "Scenes" :
+          this.bus.$emit('showSceneEditPanel', {type: editMode, index: index});
+          break;
       }
     },
     saveEditCharacter(){
+      this.$forceUpdate();
+    },
+    saveEditScene(){
       this.$forceUpdate();
     }
   },
