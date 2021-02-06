@@ -162,6 +162,9 @@ export default {
             case "Characters" :
               this.deleteCharacterDependency(this.assets[indextab].content[index]);
               break;
+            case "Scenes" :
+              this.deleteSceneDependency(this.assets[indextab].content[index]);
+              break;
           }
           this.assets[indextab].content.splice(index,1);
           this.selectedItem[indextab] = undefined;
@@ -174,6 +177,9 @@ export default {
       for(var i = 0; i<character.imgOthers.length; i++){
         deleteFile(dir + character.imgOthers[i].img);
       }
+    },
+    deleteSceneDependency(scene){
+      deleteFile(this.project_prop.directory + "Assets\\Scenes\\" + scene.img);
     },
     editAssetRequest(){
       if(!this.disableEditionButtons){
