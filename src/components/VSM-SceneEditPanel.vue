@@ -26,19 +26,29 @@
                     v-model="baseImage"
                     :clearable="false"
                 ></v-file-input>
+          <v-row>
+
+            <v-spacer></v-spacer>
 
             <img
                 v-if="baseImage!=null && baseImage.path!=''"
-                width="100%"
+                contain
+                :height="maxHeightImage"
                 :src="baseImage.path"
                 alt="Default Image"
             >
 
             <img
                 v-else
-                width="100%"
+                contain
+                :height="maxHeightImage"
                 :src="require('../assets/logo.png')"
             >
+
+            <v-spacer></v-spacer>
+
+          </v-row>
+
 
         </v-container>
       </v-card-text>
@@ -77,6 +87,7 @@ export default {
     bus: {required: true},
     assets: {required: true},
     projectProp : {required: true},
+    height: {required: true},
   },
 
   data () {
@@ -102,6 +113,9 @@ export default {
       if(this.editionMode) return (this.currentScene!=null && this.currentScene.name != "" && (this.baseImage!=null) && ((!this.assets[1].content.some(a => a.name == this.currentScene.name)) || this.currentScene.name == this.previousName))
       return (this.currentScene!=null && this.currentScene.name != "" && this.baseImage!=null && !this.assets[1].content.some(a => a.name == this.currentScene.name));
     },
+    maxHeightImage: function () {
+      return this.height * 0.4;
+    }
   },
 
   methods : {

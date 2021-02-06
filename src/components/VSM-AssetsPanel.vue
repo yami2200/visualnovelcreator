@@ -3,7 +3,7 @@
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
     <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" ></vsm-character-edition-modal>
-    <vsm-scene-edit-modal @accept="saveEditScene" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
+    <vsm-scene-edit-modal @accept="saveEditScene" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
     <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-object-edit-modal>
 
     <v-tabs
