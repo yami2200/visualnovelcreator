@@ -45,9 +45,19 @@
             </v-col>
 
             <v-col cols="6">
-              <v-row justify="space-around" class="mb-7 mt-3">
+              <v-row justify="space-around" class="mb-7 mt-9">
 
                 <v-spacer></v-spacer>
+
+                <v-file-input
+                    class="mt-6"
+                    @change="onChangeImage(-1)"
+                    @click="onClickFileInput(baseImage)"
+                    accept="image/*"
+                    label="Default Image"
+                    hide-input
+                    v-model="baseImage"
+                ></v-file-input>
 
                 <v-avatar v-if="baseImage!=null" size="100">
                   <img
@@ -65,11 +75,7 @@
                 <v-spacer></v-spacer>
 
               </v-row>
-              <v-file-input
-                  accept="image/*"
-                  label="Default Image"
-                  v-model="baseImage"
-              ></v-file-input>
+
             </v-col>
             <v-col cols="6">
               <v-card>
@@ -94,6 +100,8 @@
                     <v-list-item-action>
                       <v-row>
                         <v-file-input
+                            @change="onChangeImage(index)"
+                            @click="onClickFileInput(imageImportList[index])"
                             hide-input
                             accept="image/*"
                             prepend-icon="mdi-folder-image"
@@ -166,6 +174,7 @@ export default {
         counter: value => value.length <= 20 || 'Max 20 characters',
         existCharName: value => (this.assets[0].content.filter(e => e.name === value).length < 1 || this.previousName == value) || 'Already Exist',
       },
+      oldimageinput: {name: "", path: ""},
     };
   },
 
@@ -263,7 +272,7 @@ export default {
               this.currentCharacter.img = filename;
             }
 
-            // Delete old images files
+            // add new others images files
             for (i = 0; i < this.assets[0].content[this.indexEdition].imgOthers.length; i++) {
               if (this.imageImportList[i].name != this.currentCharacter.imgOthers[i].img) {
                 if (this.previousName == this.currentCharacter.name) {
@@ -309,6 +318,20 @@ export default {
     deleteNewImageState(index){
       this.imageImportList.splice(index, 1);
       this.currentCharacter.imgOthers.splice(index, 1);
+    },
+    onChangeImage(index){
+      if(index==-1){
+        if(this.baseImage==undefined || this.baseImage.path==""){
+          this.baseImage = this.oldimageinput;
+        }
+      } else {
+        if(this.imageImportList[index]==undefined || this.imageImportList[index].path=="") {
+          this.imageImportList[index] = this.oldimageinput;
+        }
+      }
+    },
+    onClickFileInput(image){
+      this.oldimageinput = image;
     }
   },
 
