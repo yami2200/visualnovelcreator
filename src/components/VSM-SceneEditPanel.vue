@@ -36,7 +36,8 @@
 
             <img
                 v-else
-                :src="require('../assets/logo.svg')"
+                width="100%"
+                :src="require('../assets/logo.png')"
             >
 
         </v-container>

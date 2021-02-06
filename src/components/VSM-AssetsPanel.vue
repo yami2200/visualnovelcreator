@@ -4,6 +4,7 @@
 
     <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" ></vsm-character-edition-modal>
     <vsm-scene-edit-modal @accept="saveEditScene" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
+    <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-object-edit-modal>
 
     <v-tabs
         v-model="tab"
@@ -99,6 +100,7 @@
 import ConfirmationRequest from './VSM-ConfirmationRequestModal.vue';
 import CharacterEdition from './VSM-CharacterEditionPanel.vue';
 import SceneEditPanel from './VSM-SceneEditPanel';
+import ObjectEditPanel from './VSM-ObjetEditPanel';
 import {deleteFile} from './../lib.js';
 
 export default {
@@ -115,6 +117,7 @@ export default {
     'vsm-confirmation-request-modal' : ConfirmationRequest,
     'vsm-character-edition-modal' : CharacterEdition,
     'vsm-scene-edit-modal' : SceneEditPanel,
+    'vsm-object-edit-modal' :ObjectEditPanel,
   },
 
   computed: {
@@ -165,6 +168,9 @@ export default {
             case "Scenes" :
               this.deleteSceneDependency(this.assets[indextab].content[index]);
               break;
+            case "Objects" :
+              this.deleteObjectDependency(this.assets[indextab].content[index]);
+              break;
           }
           this.assets[indextab].content.splice(index,1);
           this.selectedItem[indextab] = undefined;
@@ -180,6 +186,9 @@ export default {
     },
     deleteSceneDependency(scene){
       deleteFile(this.project_prop.directory + "Assets\\Scenes\\" + scene.img);
+    },
+    deleteObjectDependency(object){
+      deleteFile(this.project_prop.directory + "Assets\\Objects\\" + object.img);
     },
     editAssetRequest(){
       if(!this.disableEditionButtons){
@@ -206,12 +215,18 @@ export default {
         case "Scenes" :
           this.bus.$emit('showSceneEditPanel', {type: editMode, index: index});
           break;
+        case "Objects" :
+          this.bus.$emit('showObjectEditPanel', {type: editMode, index: index});
+          break;
       }
     },
     saveEditCharacter(){
       this.$forceUpdate();
     },
     saveEditScene(){
+      this.$forceUpdate();
+    },
+    saveEditObject(){
       this.$forceUpdate();
     }
   },
