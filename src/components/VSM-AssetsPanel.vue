@@ -50,7 +50,7 @@
                 :key="i"
             >
               <v-list-item-avatar v-if="item.type == 'Characters' || item.type == 'Scenes' || item.type == 'Objects'">
-                <v-img :src="project_prop.directory + 'Assets\\Characters\\' + iteml.img"></v-img>
+                <v-img :src="project_prop.directory + 'Assets\\' + item.type + '\\' + iteml.img"></v-img>
               </v-list-item-avatar>
 
               <v-list-item-icon v-else>
