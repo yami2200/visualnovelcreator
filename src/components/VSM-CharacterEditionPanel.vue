@@ -175,6 +175,7 @@ export default {
         existCharName: value => (this.assets[0].content.filter(e => e.name === value).length < 1 || this.previousName == value) || 'Already Exist',
       },
       oldimageinput: {name: "", path: ""},
+      filesToDelete : [],
     };
   },
 
@@ -203,20 +204,20 @@ export default {
 
   methods: {
     show() {
+
+      this.filesToDelete = [];
+      this.currentCharacter = null;
+      this.imageImportList = [];
+
       if(this.editionMode){
         this.previousName = this.assets[0].content[this.indexEdition].name;
-        this.currentCharacter = null;
         this.currentCharacter = JSON.parse(JSON.stringify(this.assets[0].content[this.indexEdition]));
         this.baseImage = { name: this.currentCharacter.img, path: this.projectProp.directory + "Assets\\Characters\\"+this.currentCharacter.img};
-        this.imageImportList = null;
-        this.imageImportList = [];
         this.currentCharacter.imgOthers.forEach(element => {
           this.imageImportList.push({name: element.img, path: this.projectProp.directory + "Assets\\Characters\\"+element.img });
         });
       } else {
-        this.currentCharacter = null;
         this.previousName = "";
-        this.imageImportList = [];
         this.currentCharacter = JSON.parse(JSON.stringify(baseCharacter));
         this.currentCharacter.imgOthers = [];
         this.baseImage = null;
@@ -272,17 +273,29 @@ export default {
               this.currentCharacter.img = filename;
             }
 
-            // add new others images files
-            for (i = 0; i < this.assets[0].content[this.indexEdition].imgOthers.length; i++) {
+            // add new others images files and replace old images
+            for (i = 0; i < this.currentCharacter.imgOthers.length; i++) {
               if (this.imageImportList[i].name != this.currentCharacter.imgOthers[i].img) {
-                if (this.previousName == this.currentCharacter.name) {
+                if (this.currentCharacter.imgOthers[i].img != "") {
                   deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
                 }
                 imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.imageImportList[i].name.split('.').pop();
                 imgdata = readFileSync(this.imageImportList[i].path);
                 writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
                 this.currentCharacter.imgOthers[i].img = imgName;
+              } else if(!this.currentCharacter.imgOthers[i].img.includes(this.currentCharacter.name+"_"+this.currentCharacter.imgOthers[i].name+"_")){
+                imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.currentCharacter.imgOthers[i].img.split('.').pop();
+                var oldDir = this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img;
+                imgdata = readFileSync(oldDir);
+                writeFile(this.projectProp.directory + "Assets\\Characters\\" + imgName, imgdata);
+                deleteFile(oldDir);
+                this.currentCharacter.imgOthers[i].img = imgName;
               }
+            }
+
+            // deletes local files from deleted assets
+            for(i = 0; i < this.filesToDelete.length ; i++){
+              deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.filesToDelete[i]);
             }
 
             this.assets[0].content[this.indexEdition] = this.currentCharacter;
@@ -316,6 +329,7 @@ export default {
       this.currentCharacter.imgOthers.push({name : "", img : ""});
     },
     deleteNewImageState(index){
+      if(this.currentCharacter.imgOthers[index].img != "") this.filesToDelete.push(this.currentCharacter.imgOthers[index].img);
       this.imageImportList.splice(index, 1);
       this.currentCharacter.imgOthers.splice(index, 1);
     },
