@@ -95,6 +95,7 @@
 <script>
 import ConfirmationRequest from './VSM-ConfirmationRequestModal.vue';
 import CharacterEdition from './VSM-CharacterEditionPanel.vue';
+import {deleteFile} from './../lib.js';
 
 export default {
   name: "VSM-AssetsPanel",
@@ -152,9 +153,21 @@ export default {
         var indextab = this.tab.substring(4,5)-1;
         var index = this.selectedItem[indextab];
         if(this.assets[indextab].content.length>0 && index!=null){
+          switch (indextab) {
+            case 0 :
+              this.deleteCharacterDependency(this.assets[indextab].content[index]);
+              break;
+          }
           this.assets[indextab].content.splice(index,1);
-          this.selectedItem[indextab] = null;
+          this.selectedItem[indextab] = undefined;
         }
+      }
+    },
+    deleteCharacterDependency(character) {
+      var dir = this.project_prop.directory + "Assets\\Characters\\";
+      deleteFile(dir + character.img);
+      for(var i = 0; i<character.imgOthers.length; i++){
+        deleteFile(dir + character.imgOthers[i].img);
       }
     },
     editAssetRequest(){
