@@ -5,6 +5,7 @@
     <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" ></vsm-character-edition-modal>
     <vsm-scene-edit-modal @accept="saveEditScene" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
     <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-object-edit-modal>
+    <vsm-sound-edit-modal :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-sound-edit-modal>
 
     <v-tabs
         v-model="tab"
@@ -101,6 +102,7 @@ import ConfirmationRequest from './VSM-ConfirmationRequestModal.vue';
 import CharacterEdition from './VSM-CharacterEditionPanel.vue';
 import SceneEditPanel from './VSM-SceneEditPanel';
 import ObjectEditPanel from './VSM-ObjetEditPanel';
+import SoundEditPanel from './VSM-Sound-Edit-Panel';
 import {deleteFile} from './../lib.js';
 
 export default {
@@ -118,6 +120,7 @@ export default {
     'vsm-character-edition-modal' : CharacterEdition,
     'vsm-scene-edit-modal' : SceneEditPanel,
     'vsm-object-edit-modal' :ObjectEditPanel,
+    'vsm-sound-edit-modal' : SoundEditPanel,
   },
 
   computed: {
@@ -217,6 +220,9 @@ export default {
           break;
         case "Objects" :
           this.bus.$emit('showObjectEditPanel', {type: editMode, index: index});
+          break;
+        case "Sounds" :
+          this.bus.$emit('showSoundEditPanel', {type: editMode, index: index});
           break;
       }
     },

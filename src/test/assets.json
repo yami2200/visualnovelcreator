@@ -15,6 +15,6 @@
   },
   {
     "type" : "Sounds",
-    "content" : [ {"name" : "Shoot Pistol" }, {"name" : "Car" }, {"name" : "Bird" }]
+    "content" : [ {"name" : "Shoot Pistol" , "path":  "", "volume" : 50}, {"name" : "Car", "path":  "", "volume" : 50 }, {"name" : "Bird", "path":  "", "volume" : 50 }]
   }
 ]
