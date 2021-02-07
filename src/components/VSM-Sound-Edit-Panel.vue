@@ -29,6 +29,15 @@
               :clearable="false"
           ></v-file-input>
 
+          <v-slider
+          min="0"
+          step="0.01"
+          max="1"
+          @change="onChangeVolume"
+          >
+
+          </v-slider>
+
           <vsm-audioplayer v-if="currentSound != null" :url="getUrl" :volume="currentSound.volume" :bus="audiobus"></vsm-audioplayer>
 
         </v-container>
@@ -174,7 +183,10 @@ export default {
     },
     onClickFileInput() {
       this.oldSoundInput = this.soundInputFile;
-    }
+    },
+    onChangeVolume(){
+
+    },
   },
 
   mounted() {
