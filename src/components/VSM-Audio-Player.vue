@@ -78,6 +78,7 @@ export default {
 
   watch: {
     pause(pause) {
+      if(this.howlPlayer==null) return;
       this.timePlayed = this.howlPlayer.seek()
       let updateSeek
       if (!pause) {
@@ -179,7 +180,7 @@ export default {
     });
     this.bus.$on('changeVolume', (data) => {
       if(this.howlPlayer != null){
-        this.howlPlayer.volume = data;
+        this.howlPlayer.volume(data);
       }
     });
   },

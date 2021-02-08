@@ -15,6 +15,6 @@
   },
   {
     "type" : "Sounds",
-    "content" : [ {"name" : "Shoot Pistol" , "path":  "", "volume" : 50}, {"name" : "Car", "path":  "", "volume" : 50 }, {"name" : "Bird", "path":  "", "volume" : 50 }]
+    "content" : [ {"name" : "OpenDoor" , "path":  "OpenDoor.wav", "volume" : 40}, {"name" : "OpenChest", "path":  "OpenChest.wav", "volume" : 50 }, {"name" : "Punch", "path":  "Punch.wav", "volume" : 100 }]
   }
 ]

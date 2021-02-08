@@ -5,7 +5,7 @@
     <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" ></vsm-character-edition-modal>
     <vsm-scene-edit-modal @accept="saveEditScene" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
     <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-object-edit-modal>
-    <vsm-sound-edit-modal :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-sound-edit-modal>
+    <vsm-sound-edit-modal @accept="saveEditSound" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-sound-edit-modal>
 
     <v-tabs
         v-model="tab"
@@ -174,6 +174,9 @@ export default {
             case "Objects" :
               this.deleteObjectDependency(this.assets[indextab].content[index]);
               break;
+            case "Sounds" :
+              this.deleteSoundDependency(this.assets[indextab].content[index]);
+              break;
           }
           this.assets[indextab].content.splice(index,1);
           this.selectedItem[indextab] = undefined;
@@ -189,6 +192,9 @@ export default {
     },
     deleteSceneDependency(scene){
       deleteFile(this.project_prop.directory + "Assets\\Scenes\\" + scene.img);
+    },
+    deleteSoundDependency(sound){
+      deleteFile(this.project_prop.directory + "Assets\\Sounds\\" + sound.path);
     },
     deleteObjectDependency(object){
       deleteFile(this.project_prop.directory + "Assets\\Objects\\" + object.img);
@@ -233,6 +239,9 @@ export default {
       this.$forceUpdate();
     },
     saveEditObject(){
+      this.$forceUpdate();
+    },
+    saveEditSound(){
       this.$forceUpdate();
     }
   },

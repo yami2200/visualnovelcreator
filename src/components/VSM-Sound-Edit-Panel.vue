@@ -19,26 +19,30 @@
               :value="currentSound.name"
           ></v-text-field>
 
+          <v-slider
+              v-model="volume"
+              v-if="currentSound!=null"
+              thumb-label
+              class="mt-8"
+              label="Volume : "
+              min="0"
+              step="0.01"
+              max="1"
+              @change="onChangeVolume"
+          >
+          </v-slider>
+
           <v-file-input
-              class="mt-6"
+              class="mt-4"
               @change="onChangeSound()"
               @click="onClickFileInput()"
               accept="audio/wav, audio/mp3"
-              label="Default Image"
+              label="Audio path"
               v-model="soundInputFile"
               :clearable="false"
           ></v-file-input>
 
-          <v-slider
-          min="0"
-          step="0.01"
-          max="1"
-          @change="onChangeVolume"
-          >
-
-          </v-slider>
-
-          <vsm-audioplayer v-if="currentSound != null" :url="getUrl" :volume="currentSound.volume" :bus="audiobus"></vsm-audioplayer>
+          <vsm-audioplayer class="mt-4" v-if="currentSound != null" :url="getUrl" :volume="currentSound.volume" :bus="audiobus"></vsm-audioplayer>
 
         </v-container>
       </v-card-text>
@@ -67,7 +71,7 @@
 <script>
 import {deleteFile, getDate, readFileSync, renameFile, writeFile} from "@/lib";
 import AudioPlayer from './VSM-Audio-Player';
-import jsonBaseSound from "@/assets/base_characters.json";
+import jsonBaseSound from "@/assets/base_sound.json";
 import Vue from "vue";
 
 const baseSound = jsonBaseSound;
@@ -100,6 +104,7 @@ export default {
       },
       oldSoundInput: {name: "", path: ""},
       audiobus: new Vue(),
+      volume: 0.1,
     };
   },
 
@@ -118,20 +123,23 @@ export default {
   methods : {
     show(){
       this.currentSound = null;
-      this.filesToDelete = [];
       if(this.editionMode){
         this.previousName = this.assets[4].content[this.indexEdition].name;
         this.currentSound = JSON.parse(JSON.stringify(this.assets[4].content[this.indexEdition]));
-        this.soundInputFile = { name: this.currentSound.path, path: this.projectProp.directory + "Assets\\Scenes\\"+this.currentSound.path};
+        this.soundInputFile = { name: this.currentSound.path, path: this.projectProp.directory + "Assets\\Sounds\\"+this.currentSound.path};
+        this.volume = this.currentSound.volume / 100;
+        process.nextTick(this.onChangeSound);
       } else {
         this.previousName = "";
         this.currentSound = JSON.parse(JSON.stringify(baseSound));
+        this.volume = this.currentSound.volume / 100;
         this.soundInputFile = null;
         this.audiobus.$emit('newAudio', null);
       }
       this.dialog = true;
     },
     hide() {
+      this.audiobus.$emit('newAudio', null);
       this.dialog = false;
     },
     cancel(){
@@ -160,6 +168,8 @@ export default {
             this.currentSound.path = filename;
           }
 
+          this.currentSound.volume = this.volume*100;
+
           this.assets[4].content[this.indexEdition] = this.currentSound;
 
         } else {
@@ -168,6 +178,7 @@ export default {
           writeFile(this.projectProp.directory + "Assets\\Sounds\\" + filename, filedata);
 
           this.currentSound.path = filename;
+          this.currentSound.volume = this.volume*100;
 
           this.assets[4].content.push(this.currentSound);
         }
@@ -178,14 +189,14 @@ export default {
     onChangeSound() {
       if(this.soundInputFile==null) this.soundInputFile = this.oldSoundInput;
       else {
-        this.audiobus.$emit('newAudio', {path: this.soundInputFile.path, volume: 0.5});
+        this.audiobus.$emit('newAudio', {path: this.soundInputFile.path, volume: this.volume});
       }
     },
     onClickFileInput() {
       this.oldSoundInput = this.soundInputFile;
     },
     onChangeVolume(){
-
+      this.audiobus.$emit('changeVolume', this.volume);
     },
   },
 
