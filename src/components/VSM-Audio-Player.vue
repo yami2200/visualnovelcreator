@@ -83,7 +83,7 @@ export default {
       if (!pause) {
         updateSeek = setInterval(() => {
           if(!this.pause) this.timePlayed = this.howlPlayer.seek()
-        }, 20)
+        }, 100)
       } else {
         clearInterval(updateSeek)
       }
@@ -132,8 +132,9 @@ export default {
       }
     },
     stop(){
+      if(!this.pause) this.togglePlay();
       this.howlPlayer.stop();
-      this.pause = true;
+      this.timePlayed = this.howlPlayer.seek();
     },
     load(data){
       if(this.howlPlayer!=null){
