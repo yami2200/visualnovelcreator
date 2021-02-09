@@ -11,7 +11,7 @@
   },
   {
     "type" : "Musics",
-    "content" : [ {"name" : "NyanCat" }, {"name" : "You know my Name" }, {"name" : "Warriors" }]
+    "content" : [ {"name" : "NyanCat" , "path":  "NyanCat.mp3", "volume" : 40}, {"name" : "You know my Name", "path":  "You know my Name.mp3", "volume" : 40}, {"name" : "Warriors" , "path":  "Warriors.mp3", "volume" : 40}]
   },
   {
     "type" : "Sounds",

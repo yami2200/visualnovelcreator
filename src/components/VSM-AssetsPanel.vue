@@ -6,6 +6,7 @@
     <vsm-scene-edit-modal @accept="saveEditScene" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
     <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-object-edit-modal>
     <vsm-sound-edit-modal @accept="saveEditSound" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-sound-edit-modal>
+    <vsm-music-edit-modal @accept="saveEditMusic" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-music-edit-modal>
 
     <v-tabs
         v-model="tab"
@@ -103,6 +104,7 @@ import CharacterEdition from './VSM-CharacterEditionPanel.vue';
 import SceneEditPanel from './VSM-SceneEditPanel';
 import ObjectEditPanel from './VSM-ObjetEditPanel';
 import SoundEditPanel from './VSM-Sound-Edit-Panel';
+import MusicEditPanel from './VSM-Music-Edit-Panel';
 import {deleteFile} from './../lib.js';
 
 export default {
@@ -121,6 +123,7 @@ export default {
     'vsm-scene-edit-modal' : SceneEditPanel,
     'vsm-object-edit-modal' :ObjectEditPanel,
     'vsm-sound-edit-modal' : SoundEditPanel,
+    'vsm-music-edit-modal' : MusicEditPanel,
   },
 
   computed: {
@@ -154,7 +157,7 @@ export default {
         var index = this.selectedItem[indextab];
         if(this.assets[indextab].content.length>0 && index!=null){
           this.headlineCRM = "Do you really want to delete this asset ?";
-          this.textCRM = "You are trying to delete the asset : "+", are you sure you want to continue ? ";
+          this.textCRM = "You are trying to delete the "+this.assets[indextab].type.slice(0, -1)+" : "+this.assets[indextab].content[index].name +", are you sure you want to continue ? ";
           this.bus.$emit('showConfirmationRequestModal');
         }
       }
@@ -177,6 +180,9 @@ export default {
             case "Sounds" :
               this.deleteSoundDependency(this.assets[indextab].content[index]);
               break;
+            case "Musics" :
+              this.deleteMusicDependency(this.assets[indextab].content[index]);
+              break;
           }
           this.assets[indextab].content.splice(index,1);
           this.selectedItem[indextab] = undefined;
@@ -195,6 +201,9 @@ export default {
     },
     deleteSoundDependency(sound){
       deleteFile(this.project_prop.directory + "Assets\\Sounds\\" + sound.path);
+    },
+    deleteMusicDependency(music){
+      deleteFile(this.project_prop.directory + "Assets\\Musics\\" + music.path);
     },
     deleteObjectDependency(object){
       deleteFile(this.project_prop.directory + "Assets\\Objects\\" + object.img);
@@ -217,20 +226,7 @@ export default {
     showEditionPanel(editMode){
       var indexTab = this.tab.substring(4,5)-1;
       var index = this.selectedItem[indexTab];
-      switch(this.assets[indexTab].type) {
-        case "Characters" :
-          this.bus.$emit('showCharacterEditionPanel', {type: editMode, index: index});
-          break;
-        case "Scenes" :
-          this.bus.$emit('showSceneEditPanel', {type: editMode, index: index});
-          break;
-        case "Objects" :
-          this.bus.$emit('showObjectEditPanel', {type: editMode, index: index});
-          break;
-        case "Sounds" :
-          this.bus.$emit('showSoundEditPanel', {type: editMode, index: index});
-          break;
-      }
+      this.bus.$emit('show'+this.assets[indexTab].type.slice(0, -1)+'EditPanel', {type: editMode, index: index});
     },
     saveEditCharacter(){
       this.$forceUpdate();
@@ -242,6 +238,9 @@ export default {
       this.$forceUpdate();
     },
     saveEditSound(){
+      this.$forceUpdate();
+    },
+    saveEditMusic(){
       this.$forceUpdate();
     }
   },

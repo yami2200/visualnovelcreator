@@ -350,12 +350,12 @@ export default {
   },
 
   mounted() {
-    this.bus.$on('showCharacterEditionPanel', (data) => {
+    this.bus.$on('showCharacterEditPanel', (data) => {
       this.editionMode = data.type;
       this.indexEdition = data.index;
       this.show();
     });
-    this.bus.$on('hideCharacterEditionPanel', this.hide)
+    this.bus.$on('hideCharacterEditPanel', this.hide)
   },
 }
 </script>

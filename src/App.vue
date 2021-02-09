@@ -62,6 +62,9 @@ export default {
     },
     sizeTabsPannel: function () {
       return (this.height * 0.67)+"px";
+    },
+    sizeDialogPanel: function(){
+      return (this.height * 0.97) + "px";
     }
   },
 
