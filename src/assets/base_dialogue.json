@@ -1,0 +1,10 @@
+{
+  "title" : "Untitled Dialogue",
+  "x" : 0,
+  "y" : 0,
+  "text" : "",
+  "type" : "dialogue",
+  "choices" : [],
+  "action" : [],
+  "nextDialogue" : -1
+}
