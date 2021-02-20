@@ -16,10 +16,12 @@
                     @mousedown="mouseDown"
                 >
                 </rect>-->
+              <line v-if="linkingBlock != -1" :x1="linkingOutput==-1 ? getInputLocX(linkingBlock) : getOutputLocX(linkingBlock, linkingOutput, listDialogues[linkingBlock].nextDialogue.length)" :y1="linkingOutput==-1 ? getInputLocY(linkingBlock) : getOutputLocY(linkingBlock)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
+
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-test :bus="bus" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-test>
+                <vsm-test :bus="bus" @linkEndInput="linkEndInput" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-test>
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
-                  <line v-if="valueL != -1" :x1="getOutputLocX(index, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
+                  <line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
                 </g>
               </g>
 
@@ -48,6 +50,10 @@ export default {
     yTest: 500,
     color: "red",
 
+    linkingBlock: -1,
+    linkingOutput: -1,
+    xMouse: 0,
+    yMouse: 0,
     bus: new Vue(),
     dragOffsetX: 0,
     dragOffsetY: 0,
@@ -86,16 +92,6 @@ export default {
     ]
   }),
 
-  computed: {
-    /*getInputLocX: function (index) {
-      //console.log(index);
-      return this.listDialogues[index].x + 7.5;
-    },
-    getInputLocY: function (index){
-      return this.listDialogues[index].y + 0.5;
-    }*/
-  },
-
   methods:{
     getInputLocX(index){
       return this.listDialogues[index].x + 10.5;
@@ -106,36 +102,57 @@ export default {
     getOutputLocY(index){
       return this.listDialogues[index].y + 9;
     },
-    getOutputLocX(index, length){
+    getOutputLocX(indexD, indexO, length){
       if(length==1){
-        return this.listDialogues[index].x + 10.5;
+        return this.listDialogues[indexD].x + 10.5;
       }
-      return 0;
+      return indexO; // TO DO FOR CHOICES
     },
     printtest(text){
       console.log(text);
     },
     selectDialogue(data){
-      console.log(data);
       this.selectedDialogue = data.index;
       this.dragOffsetX = data.e.offsetX - this.listDialogues[this.selectedDialogue].x;
       this.dragOffsetY = data.e.offsetY - this.listDialogues[this.selectedDialogue].y;
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMove)
     },
     testIgnore(){
-      return this.selectedDialogue != -1;
+      return this.selectedDialogue != -1 || this.linkingBlock != -1;
     },
     pan(){
       console.log("pan");
     },
     mouseUp(){
-      this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove)
-      this.bus.$emit('unselect'+this.selectedDialogue);
-      this.selectedDialogue = -1;
+      if(this.selectedDialogue != -1){
+        this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove)
+        this.bus.$emit('unselect'+this.selectedDialogue);
+        this.selectedDialogue = -1;
+      } else {
+        this.$refs.svgBox.removeEventListener('mousemove', this.mouseMoveLink)
+        this.linkingBlock = -1;
+      }
     },
     mouseMove(e){
         this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
         this.listDialogues[this.selectedDialogue].y = e.offsetY - this.dragOffsetY;
+    },
+    startingLinkFromOutput(data){
+      this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
+      this.linkingOutput = data.indexO;
+      this.linkingBlock = data.indexD;
+      this.xMouse = data.e.offsetX;
+      this.yMouse = data.e.offsetY;
+    },
+    linkEndInput(data){
+      if(this.linkingBlock == -1) return;
+      if(this.linkingOutput!=-1){
+        this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = data.indexD;
+      }
+    },
+    mouseMoveLink(e){
+      this.xMouse = e.offsetX;
+      this.yMouse = e.offsetY;
     },
   },
 
