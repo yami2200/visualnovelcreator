@@ -18,6 +18,9 @@
                 </rect>-->
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
                 <vsm-test :bus="bus" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-test>
+                <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
+                  <line v-if="valueL != -1" :x1="getOutputLocX(index, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
+                </g>
               </g>
 
 
@@ -58,7 +61,7 @@ export default {
         type : "dialogue",
         choices : [],
         action : [],
-        nextDialogue : -1
+        nextDialogue : [1]
       },
       {
         title : "Untitled Dialogue",
@@ -68,7 +71,7 @@ export default {
         type : "dialogue",
         choices : [],
         action : [],
-        nextDialogue : -1
+        nextDialogue : [2]
       },
       {
         title : "Untitled Dialogue",
@@ -78,12 +81,37 @@ export default {
         type : "dialogue",
         choices : [],
         action : [],
-        nextDialogue : -1
+        nextDialogue : [-1]
       },
     ]
   }),
 
+  computed: {
+    /*getInputLocX: function (index) {
+      //console.log(index);
+      return this.listDialogues[index].x + 7.5;
+    },
+    getInputLocY: function (index){
+      return this.listDialogues[index].y + 0.5;
+    }*/
+  },
+
   methods:{
+    getInputLocX(index){
+      return this.listDialogues[index].x + 10.5;
+    },
+    getInputLocY(index){
+      return this.listDialogues[index].y;
+    },
+    getOutputLocY(index){
+      return this.listDialogues[index].y + 9;
+    },
+    getOutputLocX(index, length){
+      if(length==1){
+        return this.listDialogues[index].x + 10.5;
+      }
+      return 0;
+    },
     printtest(text){
       console.log(text);
     },
