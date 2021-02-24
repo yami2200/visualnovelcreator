@@ -10,7 +10,7 @@
 export default {
   name: "test",
 
-  props: ['dialogue', 'index', 'bus'],
+  props: ['dialogue', 'index', 'bus', 'linkingblock'],
 
   data: () => ({
     selected: false,
@@ -38,16 +38,17 @@ export default {
     },
     linkEnd(e){
       this.$emit("linkEnd", {indexD: this.index, e:e});
+      if(this.selected) this.unselect();
     },
     startLinkingFromOutput(e, indexO){
       this.dialogue.nextDialogue[indexO] = -1;
       this.$emit("linkingOutput", {indexD: this.index, indexO: indexO, e:e});
     },
-    mouseEnter(e){
-      this.$emit("mouseIn", {indexD: this.index, e:e});
+    mouseEnter(){
+      if(this.linkingblock != -1 && this.linkingblock != this.index) this.selected = true;
     },
-    mouseLeave(e){
-      this.$emit("mouseOut", {indexD: this.index, e:e});
+    mouseLeave(){
+      if(this.selected) this.unselect();
     }
   },
 

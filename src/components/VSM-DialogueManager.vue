@@ -14,12 +14,12 @@
                     :x="xTest"
                     :y="yTest"
                     @mousedown="mouseDown"
-                >
+                > @mouseIn="mouseEnterDialogue" @mouseOut="mouseLeaveDialogue"
                 </rect>-->
               <line v-if="linkingBlock != -1" :x1="linkingOutput==-1 ? getInputLocX(linkingBlock) : getOutputLocX(linkingBlock, linkingOutput, listDialogues[linkingBlock].nextDialogue.length)" :y1="linkingOutput==-1 ? getInputLocY(linkingBlock) : getOutputLocY(linkingBlock)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-test :bus="bus" @mouseIn="mouseEnterDialogue" @mouseOut="mouseLeaveDialogue" @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-test>
+                <vsm-test :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-test>
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
                 </g>
@@ -130,6 +130,7 @@ export default {
         this.selectedDialogue = -1;
       }
       if(this.linkingBlock != -1) {
+        console.log(this.linkingBlock);
         this.$refs.svgBox.removeEventListener('mousemove', this.mouseMoveLink)
         this.linkingBlock = -1;
       }
@@ -150,18 +151,12 @@ export default {
       if(this.linkingOutput!=-1){
         this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = data.indexD;
         this.linkingBlock = -1;
-        //this.bus.$emit('unselect'+data.indexD);
       }
     },
+
     mouseMoveLink(e){
       this.xMouse = e.offsetX;
       this.yMouse = e.offsetY;
-    },
-    mouseEnterDialogue(data){
-      if(this.linkingBlock != -1 && data.indexD != this.linkingBlock) this.bus.$emit('select'+data.indexD);
-    },
-    mouseLeaveDialogue(data){
-      if(this.linkingBlock != -1 && data.indexD != this.linkingBlock) this.bus.$emit('unselect'+data.indexD);
     },
   },
 
