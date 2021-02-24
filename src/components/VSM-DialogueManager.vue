@@ -3,7 +3,7 @@
 
           <panZoom @panstart="pan" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
-            <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: green;" @mouseup="mouseUp">
+            <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp">
                 <!--<path :x="xTest" :y="yTest" @mousemove="mouseMove" @mousedown="mouseDown" @mouseup="mouseUp" @mouseenter="printtest('Enter')" d="M150 0 L75 200 L225 200 Z" />
                 -->
                <!-- <rect
@@ -16,12 +16,12 @@
                     @mousedown="mouseDown"
                 > @mouseIn="mouseEnterDialogue" @mouseOut="mouseLeaveDialogue"
                 </rect>-->
-              <line v-if="linkingBlock != -1" :x1="linkingOutput==-1 ? getInputLocX(linkingBlock) : getOutputLocX(linkingBlock, linkingOutput, listDialogues[linkingBlock].nextDialogue.length)" :y1="linkingOutput==-1 ? getInputLocY(linkingBlock) : getOutputLocY(linkingBlock)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
+              <line v-if="linkingBlock != -1" :x1="linkingOutput==-1 ? getInputLocX(linkingBlock) : getOutputLocX(linkingBlock, linkingOutput, listDialogues[linkingBlock].nextDialogue.length)" :y1="linkingOutput==-1 ? getInputLocY(linkingBlock) : getOutputLocY(linkingBlock)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
                 <vsm-test :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-test>
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
-                  <line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:1" ></line>
+                  <line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
                 </g>
               </g>
 
@@ -60,7 +60,7 @@ export default {
     selectedDialogue: -1,
     listDialogues: [
       {
-        title : "Untitled Dialogue",
+        title : "Dialogue 1",
         x : 500,
         y : 300,
         text : "",
@@ -70,7 +70,7 @@ export default {
         nextDialogue : [1]
       },
       {
-        title : "Untitled Dialogue",
+        title : "A",
         x : 500,
         y : 320,
         text : "",
@@ -80,9 +80,19 @@ export default {
         nextDialogue : [2]
       },
       {
-        title : "Untitled Dialogue",
+        title : "Supra dialogue long azeoids",
         x : 500,
         y : 340,
+        text : "",
+        type : "dialogue",
+        choices : [],
+        action : [],
+        nextDialogue : [3]
+      },
+      {
+        title : "Dialogue Middle",
+        x : 500,
+        y : 360,
         text : "",
         type : "dialogue",
         choices : [],
@@ -153,7 +163,6 @@ export default {
         this.linkingBlock = -1;
       }
     },
-
     mouseMoveLink(e){
       this.xMouse = e.offsetX;
       this.yMouse = e.offsetY;

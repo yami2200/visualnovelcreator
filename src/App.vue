@@ -29,7 +29,7 @@ import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/VSM-AssetsPanel.vue';
 import DialogueManager from './components/VSM-DialogueManager.vue';
 import jsonAssets from './test/assets.json';
-import jsonProjectProperties from './test/project_properties2.json';
+import jsonProjectProperties from './test/project_properties.json';
 
 export default {
   name: 'App',
