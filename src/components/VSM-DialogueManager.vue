@@ -19,7 +19,7 @@
               <line v-if="linkingBlock != -1" :x1="linkingOutput==-1 ? getInputLocX(linkingBlock) : getOutputLocX(linkingBlock, linkingOutput, listDialogues[linkingBlock].nextDialogue.length)" :y1="linkingOutput==-1 ? getInputLocY(linkingBlock) : getOutputLocY(linkingBlock)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-test :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-test>
+                <vsm-dialogueblock :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
                 </g>
@@ -34,13 +34,13 @@
 
 <script>
 import Vue from "vue";
-import testComp from './test';
+import testComp from './VSM-DialogueBlock';
 
 export default {
   name: "VSM-DialogueManager",
 
   components: {
-    'vsm-test' : testComp,
+    'vsm-dialogueblock' : testComp,
   },
 
   props: ['height'],

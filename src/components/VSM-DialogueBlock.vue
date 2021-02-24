@@ -62,7 +62,7 @@
 
 <script>
 export default {
-  name: "test",
+  name: "vsm-dialogueblock",
 
   props: ['dialogue', 'index', 'bus', 'linkingblock'],
 
