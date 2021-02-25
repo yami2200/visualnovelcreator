@@ -160,7 +160,7 @@ export default {
     },
     linkEnd(data){
       if(this.linkingBlock == -1) return;
-      if(this.linkingOutput!=-1){
+      if(this.linkingOutput!=-1 && this.linkingBlock!=data.indexD){
         this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = data.indexD;
         this.linkingBlock = -1;
       }
