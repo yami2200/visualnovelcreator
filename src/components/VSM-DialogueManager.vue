@@ -1,7 +1,7 @@
 <template>
-  <v-card :height="height+'px'" width="100%" class="overflow-hidden justify-center">
+  <v-card :height="height+'px'" width="100%" class="overflow-hidden justify-center" @mouseleave="leaveDialogueManager">
 
-          <panZoom @panstart="pan" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
+          <panZoom ref="panzoomelement" @init="initPanZoom" @panstart="pan" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
             <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp">
                 <!--<path :x="xTest" :y="yTest" @mousemove="mouseMove" @mousedown="mouseDown" @mouseup="mouseUp" @mouseenter="printtest('Enter')" d="M150 0 L75 200 L225 200 Z" />
@@ -50,6 +50,8 @@ export default {
     yTest: 500,
     color: "red",
 
+    updateScroll: null,
+    panzoom: null,
     linkingBlock: -1,
     linkingOutput: -1,
     xMouse: 0,
@@ -166,7 +168,21 @@ export default {
     mouseMoveLink(e){
       this.xMouse = e.offsetX;
       this.yMouse = e.offsetY;
+      //console.log(this.panzoom);
+      /*this.updateScroll = setInterval(() => {
+        if (e.screenX<50) {
+          this.panzoom.smoothMoveTo(this.panzoom.getTransform().x + 50, this.panzoom.getTransform().y);
+        }
+      }, 100)*/
     },
+    leaveDialogueManager(){
+      if(this.linkingBlock != -1) {
+        this.linkingBlock = -1;
+      }
+    },
+    initPanZoom(instance){
+      this.panzoom = instance;
+    }
   },
 
 }
