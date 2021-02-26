@@ -1,7 +1,7 @@
 <template>
   <v-card :height="height+'px'" width="100%" class="overflow-hidden justify-center" @mouseleave="leaveDialogueManager">
 
-          <panZoom ref="panzoomelement" @init="initPanZoom" @panstart="pan" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
+          <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
             <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp">
                 <!--<path :x="xTest" :y="yTest" @mousemove="mouseMove" @mousedown="mouseDown" @mouseup="mouseUp" @mouseenter="printtest('Enter')" d="M150 0 L75 200 L225 200 Z" />
@@ -43,7 +43,7 @@ export default {
     'vsm-dialogueblock' : testComp,
   },
 
-  props: ['height'],
+  props: ['height', 'width'],
 
   data : () => ({
     xTest: 500,
@@ -51,6 +51,8 @@ export default {
     color: "red",
 
     updateScroll: null,
+    scrollDirLinking: [0,0],
+
     panzoom: null,
     linkingBlock: -1,
     linkingOutput: -1,
@@ -132,9 +134,6 @@ export default {
     testIgnore(){
       return this.selectedDialogue != -1 || this.linkingBlock != -1;
     },
-    pan(){
-      console.log("pan");
-    },
     mouseUp(){
       if(this.selectedDialogue != -1){
         this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove)
@@ -142,9 +141,7 @@ export default {
         this.selectedDialogue = -1;
       }
       if(this.linkingBlock != -1) {
-        console.log(this.linkingBlock);
-        this.$refs.svgBox.removeEventListener('mousemove', this.mouseMoveLink)
-        this.linkingBlock = -1;
+        this.stopLinking();
       }
     },
     mouseMove(e){
@@ -162,26 +159,50 @@ export default {
       if(this.linkingBlock == -1) return;
       if(this.linkingOutput!=-1 && this.linkingBlock!=data.indexD){
         this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = data.indexD;
-        this.linkingBlock = -1;
+        this.stopLinking();
+      }
+    },
+    stopLinking(){
+      this.linkingBlock = -1;
+      this.$refs.svgBox.removeEventListener('mousemove', this.mouseMoveLink);
+      if(this.scrollDirLinking[0] != 0 || this.scrollDirLinking[1] != 0){
+        clearInterval(this.updateScroll);
       }
     },
     mouseMoveLink(e){
       this.xMouse = e.offsetX;
       this.yMouse = e.offsetY;
-      //console.log(this.panzoom);
-      /*this.updateScroll = setInterval(() => {
-        if (e.screenX<50) {
-          this.panzoom.smoothMoveTo(this.panzoom.getTransform().x + 50, this.panzoom.getTransform().y);
+      console.log(this.panzoom.getTransform().x);
+
+      if(e.screenX < 50) {
+        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        this.scrollDirLinking = [1, this.scrollDirLinking[1]];
+      } else if(e.screenX > this.width-50) {
+        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        this.scrollDirLinking = [-1, this.scrollDirLinking[1]];
+      } else if(this.scrollDirLinking[0] != 0){
+        this.scrollDirLinking = [0, this.scrollDirLinking[1]];
+        if(this.scrollDirLinking[1] == 0) {
+          clearInterval(this.updateScroll);
         }
-      }, 100)*/
+      }
+
+    },
+    addScrollInterval(){
+      this.updateScroll = setInterval(() => {
+        this.panzoom.moveTo(this.panzoom.getTransform().x + this.scrollDirLinking[0]*10, this.panzoom.getTransform().y + this.scrollDirLinking[1]*10);
+        if(this.panzoom.getTransform().x != 0 && this.panzoom.getTransform().x > (-1)*this.width*(this.panzoom.getTransform().scale-1) + 10) this.xMouse -= this.scrollDirLinking[0] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+        if(this.panzoom.getTransform().y != 0) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+      }, 20)
     },
     leaveDialogueManager(){
       if(this.linkingBlock != -1) {
-        this.linkingBlock = -1;
+        this.stopLinking();
       }
     },
     initPanZoom(instance){
       this.panzoom = instance;
+      this.panzoom.zoomTo(0.5,0.5,1.5);
     }
   },
 

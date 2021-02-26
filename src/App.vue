@@ -7,7 +7,7 @@
           <v-col cols="8">
             <!-- https://github.com/thecodealer/vue-panzoom -->
 
-                  <vsm-dialogue-manager :height="sizeDialogPanel">  </vsm-dialogue-manager>
+                  <vsm-dialogue-manager :width="widthDialogPanel" :height="sizeDialogPanel">  </vsm-dialogue-manager>
 
 
           </v-col>
@@ -56,6 +56,7 @@ export default {
   methods: {
     resizeWindow() {
       this.height = window.innerHeight;
+      this.width = window.innerWidth;
     },
     print() {
       console.log("text parent");
@@ -71,11 +72,16 @@ export default {
     },
     sizeDialogPanel: function(){
       return (this.height * 0.97);
+    },
+    widthDialogPanel: function(){
+      console.log(this.width*2/3);
+      return this.width*2/3;
     }
   },
 
   data: () => ({
     height: window.innerHeight,
+    width: window.innerWidth,
     assets : jsonAssets,
     bus: new Vue(),
     project_properties: jsonProjectProperties,
