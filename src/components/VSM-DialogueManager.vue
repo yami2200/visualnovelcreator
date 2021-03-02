@@ -136,13 +136,16 @@ export default {
     },
     mouseUp(){
       if(this.selectedDialogue != -1){
-        this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove)
-        this.bus.$emit('unselect'+this.selectedDialogue);
-        this.selectedDialogue = -1;
+        this.stopSelecting();
       }
       if(this.linkingBlock != -1) {
         this.stopLinking();
       }
+    },
+    stopSelecting(){
+      this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove)
+      this.bus.$emit('unselect'+this.selectedDialogue);
+      this.selectedDialogue = -1;
     },
     mouseMove(e){
         this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
@@ -210,6 +213,9 @@ export default {
     leaveDialogueManager(){
       if(this.linkingBlock != -1) {
         this.stopLinking();
+      }
+      if(this.selectedDialogue != -1){
+        this.stopSelecting();
       }
     },
     initPanZoom(instance){
