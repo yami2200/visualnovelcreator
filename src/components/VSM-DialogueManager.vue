@@ -19,7 +19,9 @@
               <line v-if="linkingBlock != -1" :x1="linkingOutput==-1 ? getInputLocX(linkingBlock) : getOutputLocX(linkingBlock, linkingOutput, listDialogues[linkingBlock].nextDialogue.length)" :y1="linkingOutput==-1 ? getInputLocY(linkingBlock) : getOutputLocY(linkingBlock)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-dialogueblock :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
+                <vsm-dialogueblock v-if="value.type == 'dialogue'" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
+                <vsm-dialoguecondition v-if="value.type == 'condition'" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
                 </g>
@@ -35,12 +37,14 @@
 <script>
 import Vue from "vue";
 import testComp from './VSM-DialogueBlock';
+import condition from './VSM-DialogueConditionnalBlock';
 
 export default {
   name: "VSM-DialogueManager",
 
   components: {
     'vsm-dialogueblock' : testComp,
+    'vsm-dialoguecondition' : condition,
   },
 
   props: ['height', 'width'],
@@ -99,6 +103,16 @@ export default {
         y : 360,
         text : "",
         type : "dialogue",
+        choices : [],
+        action : [],
+        nextDialogue : [-1]
+      },
+      {
+        title : "conditionnal block",
+        x : 500,
+        y : 380,
+        text : "",
+        type : "condition",
         choices : [],
         action : [],
         nextDialogue : [-1]
