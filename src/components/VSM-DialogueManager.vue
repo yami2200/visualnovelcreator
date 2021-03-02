@@ -172,12 +172,11 @@ export default {
     mouseMoveLink(e){
       this.xMouse = e.offsetX;
       this.yMouse = e.offsetY;
-      console.log(this.panzoom.getTransform().x);
 
-      if(e.screenX < 50) {
+      if(e.x < 50) {
         if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
         this.scrollDirLinking = [1, this.scrollDirLinking[1]];
-      } else if(e.screenX > this.width-50) {
+      } else if(e.x > this.width-50) {
         if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
         this.scrollDirLinking = [-1, this.scrollDirLinking[1]];
       } else if(this.scrollDirLinking[0] != 0){
@@ -187,12 +186,25 @@ export default {
         }
       }
 
+      if(e.y < 100) {
+        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        this.scrollDirLinking = [this.scrollDirLinking[0], 1];
+      } else if(e.y > this.height-50) {
+        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        this.scrollDirLinking = [this.scrollDirLinking[0], -1];
+      } else if(this.scrollDirLinking[1] != 0){
+        this.scrollDirLinking = [this.scrollDirLinking[0], 0];
+        if(this.scrollDirLinking[0] == 0) {
+          clearInterval(this.updateScroll);
+        }
+      }
+
     },
     addScrollInterval(){
       this.updateScroll = setInterval(() => {
         this.panzoom.moveTo(this.panzoom.getTransform().x + this.scrollDirLinking[0]*10, this.panzoom.getTransform().y + this.scrollDirLinking[1]*10);
         if(this.panzoom.getTransform().x != 0 && this.panzoom.getTransform().x > (-1)*this.width*(this.panzoom.getTransform().scale-1) + 10) this.xMouse -= this.scrollDirLinking[0] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
-        if(this.panzoom.getTransform().y != 0) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+        if(this.panzoom.getTransform().y != 0 && this.panzoom.getTransform().y > (-1)*this.height*(this.panzoom.getTransform().scale-1) + 10) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
       }, 20)
     },
     leaveDialogueManager(){

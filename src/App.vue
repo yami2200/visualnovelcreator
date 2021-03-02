@@ -55,8 +55,16 @@ export default {
 
   methods: {
     resizeWindow() {
-      this.height = window.innerHeight;
-      this.width = window.innerWidth;
+      console.log("Resize");
+      process.nextTick((data = this) => {
+        if(remote.getCurrentWindow().isMaximized()){
+          data.height = window.outerHeight-20;
+        } else {
+          data.height = window.outerHeight-37;
+        }
+        //data.height = window.outerHeight-37;
+        data.width = window.innerWidth;
+      });
     },
     print() {
       console.log("text parent");
@@ -74,7 +82,6 @@ export default {
       return (this.height * 0.97);
     },
     widthDialogPanel: function(){
-      console.log(this.width*2/3);
       return this.width*2/3;
     }
   },
