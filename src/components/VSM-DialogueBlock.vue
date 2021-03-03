@@ -3,7 +3,7 @@
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, -1)"
         @mousedown="selecting"
         fill="#dadada"
         :stroke="selected ? '#e5ae00' : '#000000'"
@@ -18,7 +18,7 @@
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, 0)"
         @mousedown="selecting"
         class="button_diag"
         stroke="#000000"
@@ -33,7 +33,7 @@
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, -1)"
         @mousedown="startLinkingFromOutput($event, 0)"
         class="button_diag clickable"
         stroke="#000000"
@@ -47,7 +47,7 @@
 
     <text
         @mousedown="selecting"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, -1)"
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
         :x="xText"

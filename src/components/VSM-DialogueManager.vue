@@ -4,29 +4,18 @@
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
             <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp">
-                <!--<path :x="xTest" :y="yTest" @mousemove="mouseMove" @mousedown="mouseDown" @mouseup="mouseUp" @mouseenter="printtest('Enter')" d="M150 0 L75 200 L225 200 Z" />
-                -->
-               <!-- <rect
-                    width="10"
-                    height="10"
-                    class="square"
-                    :fill="color"
-                    :x="xTest"
-                    :y="yTest"
-                    @mousedown="mouseDown"
-                > @mouseIn="mouseEnterDialogue" @mouseOut="mouseLeaveDialogue"
-                </rect>-->
-              <line v-if="linkingBlock != -1" :x1="linkingOutput==-1 ? getInputLocX(linkingBlock) : getOutputLocX(linkingBlock, linkingOutput, listDialogues[linkingBlock].nextDialogue.length)" :y1="linkingOutput==-1 ? getInputLocY(linkingBlock) : getOutputLocY(linkingBlock)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
+
+              <line v-if="linkingBlock != -1" pointer-events="none" :x1="linkingOutput==-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput==-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-dialogueblock v-if="value.type == 'dialogue'" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
-                <vsm-dialoguecondition v-if="value.type == 'condition'" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+                <vsm-dialogueblock v-if="value.type == 'dialogue'" @updatePlugsLoc="updatePlugsLocFromChild" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
+                <vsm-dialoguecondition v-if="value.type == 'condition'" @updatePlugsLoc="updatePlugsLocFromChild" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
-                  <line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
+                  <!--<line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line> -->
+                  <line v-if="valueL.id != -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
                 </g>
               </g>
-
 
             </svg>
           </panZoom>
@@ -60,6 +49,7 @@ export default {
     panzoom: null,
     linkingBlock: -1,
     linkingOutput: -1,
+    linkingInput: -1,
     xMouse: 0,
     yMouse: 0,
     bus: new Vue(),
@@ -75,7 +65,16 @@ export default {
         type : "dialogue",
         choices : [],
         action : [],
-        nextDialogue : [1]
+        previousDialogue : [[{id: -1, ii: 0}]],
+        nextDialogue : [{id: 1, ii: 0}],
+        outputsLoc : [{
+          x: 0,
+          y: 0
+        }],
+        inputsLoc : [{
+          x: 0,
+          y: 0
+        }]
       },
       {
         title : "A",
@@ -85,7 +84,16 @@ export default {
         type : "dialogue",
         choices : [],
         action : [],
-        nextDialogue : [2]
+        previousDialogue : [[{id: 0, ii: 0}]],
+        nextDialogue : [{id: 2, ii: 0}],
+        outputsLoc : [{
+          x: 0,
+          y: 0
+        }],
+        inputsLoc : [{
+          x: 0,
+          y: 0
+        }]
       },
       {
         title : "Supra dialogue long azeoids",
@@ -95,7 +103,16 @@ export default {
         type : "dialogue",
         choices : [],
         action : [],
-        nextDialogue : [3]
+        previousDialogue : [[{id: 1, ii: 0}]],
+        nextDialogue : [{id: 3, ii: 0}],
+        outputsLoc : [{
+          x: 0,
+          y: 0
+        }],
+        inputsLoc : [{
+          x: 0,
+          y: 0
+        }]
       },
       {
         title : "Dialogue Middle",
@@ -105,7 +122,16 @@ export default {
         type : "dialogue",
         choices : [],
         action : [],
-        nextDialogue : [-1]
+        previousDialogue : [[{id: 2, ii: 0}]],
+        nextDialogue : [{id: -1, ii: 0}],
+        outputsLoc : [{
+          x: 0,
+          y: 0
+        }],
+        inputsLoc : [{
+          x: 0,
+          y: 0
+        }]
       },
       {
         title : "conditionnal block",
@@ -115,30 +141,38 @@ export default {
         type : "condition",
         choices : [],
         action : [],
-        nextDialogue : [-1]
+        previousDialogue : [[{id: -1, ii: 0}], [{id: -1, ii: 0}]],
+        nextDialogue : [{id: -1, ii: 0}],
+        outputsLoc : [{
+          x: 0,
+          y: 0
+        }],
+        inputsLoc : [{
+          x: 0,
+          y: 0
+        }, {
+          x: 0,
+          y: 0
+        }]
       },
     ]
   }),
 
   methods:{
-    getInputLocX(index){
-      return this.listDialogues[index].x + 10.5;
+    linkXOut(id, ii){
+      return this.listDialogues[id].outputsLoc[ii].x;
     },
-    getInputLocY(index){
-      return this.listDialogues[index].y;
+    linkYOut(id, ii){
+      return this.listDialogues[id].outputsLoc[ii].y;
     },
-    getOutputLocY(index){
-      return this.listDialogues[index].y + 9;
+    linkXInp(id, ii) {
+      return this.listDialogues[id].inputsLoc[ii].x;
     },
-    getOutputLocX(indexD, indexO, length){
-      if(length==1){
-        return this.listDialogues[indexD].x + 10.5;
-      }
-      return indexO; // TO DO FOR CHOICES
+    linkYInp(id, ii){
+      return  this.listDialogues[id].inputsLoc[ii].y;
     },
-    printtest(text){
-      console.log(text);
-    },
+
+
     selectDialogue(data){
       this.selectedDialogue = data.index;
       this.dragOffsetX = data.e.offsetX - this.listDialogues[this.selectedDialogue].x;
@@ -157,16 +191,25 @@ export default {
       }
     },
     stopSelecting(){
-      this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove)
+      this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove);
       this.bus.$emit('unselect'+this.selectedDialogue);
       this.selectedDialogue = -1;
     },
     mouseMove(e){
-        this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
-        this.listDialogues[this.selectedDialogue].y = e.offsetY - this.dragOffsetY;
+      this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
+      this.listDialogues[this.selectedDialogue].y = e.offsetY - this.dragOffsetY;
+      this.bus.$emit('moving'+this.selectedDialogue);
+
     },
     startingLinkFromOutput(data){
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
+      if(data.previous != -1) {
+        if(this.listDialogues[data.previous].previousDialogue[data.previousI].length>1){
+          this.listDialogues[data.previous].previousDialogue[data.previousI].splice(this.listDialogues[data.previous].previousDialogue[data.previousI].findIndex(v => v.id === data.indexD && v.ii === data.indexO), 1);
+        } else {
+          this.listDialogues[data.previous].previousDialogue[data.previousI] = [{id: -1, ii:0}];
+        }
+      }
       this.linkingOutput = data.indexO;
       this.linkingBlock = data.indexD;
       this.xMouse = data.e.offsetX;
@@ -175,8 +218,20 @@ export default {
     linkEnd(data){
       if(this.linkingBlock == -1) return;
       if(this.linkingOutput!=-1 && this.linkingBlock!=data.indexD){
-        this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = data.indexD;
+        this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = {id : data.indexD, ii: data.indexInput};
+        if(this.listDialogues[data.indexD].previousDialogue[data.indexInput][0].id != -1){
+          if(data.onePerInput){
+            this.listDialogues[this.listDialogues[data.indexD].previousDialogue[data.indexInput][0].id].nextDialogue[this.listDialogues[data.indexD].previousDialogue[data.indexInput][0].ii] = {id: -1, ii:0}
+            this.listDialogues[data.indexD].previousDialogue[data.indexInput] = [{id : this.linkingBlock, ii: this.linkingOutput}];
+          } else {
+            this.listDialogues[data.indexD].previousDialogue[data.indexInput].push({id : this.linkingBlock, ii: this.linkingOutput});
+          }
+        } else {
+          this.listDialogues[data.indexD].previousDialogue[data.indexInput] = [{id : this.linkingBlock, ii: this.linkingOutput}];
+        }
+
         this.stopLinking();
+        console.log(this.listDialogues);
       }
     },
     stopLinking(){
@@ -235,6 +290,10 @@ export default {
     initPanZoom(instance){
       this.panzoom = instance;
       this.panzoom.zoomTo(0.5,0.5,1.5);
+    },
+    updatePlugsLocFromChild(data){
+      this.listDialogues[data.index].outputsLoc = data.outputsLoc;
+      this.listDialogues[data.index].inputsLoc = data.inputsLoc;
     }
   },
 

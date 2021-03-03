@@ -3,7 +3,7 @@
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, -1)"
         @mousedown="selecting"
         fill="#707070"
         :stroke="selected ? '#e5ae00' : '#000000'"
@@ -11,14 +11,14 @@
         :x="dialogue.x"
         :y="dialogue.y"
         width="21"
-        height="10"
+        height="15"
         rx="1"
         ry="1"/>
 
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, 0)"
         @mousedown="selecting"
         class="button_diag"
         stroke="#000000"
@@ -33,7 +33,7 @@
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, 1)"
         @mousedown="selecting"
         class="button_diag"
         stroke="#000000"
@@ -48,7 +48,7 @@
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, -1)"
         @mousedown="startLinkingFromOutput($event, 0)"
         class="button_diag clickable"
         stroke="#000000"
@@ -62,7 +62,7 @@
 
     <text
         @mousedown="selecting"
-        @mouseup="linkEnd"
+        @mouseup="linkEnd($event, -1)"
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
         :x="xText"
@@ -83,6 +83,10 @@ export default {
 
   mixins: [mix_dialogueblock],
 
+  data: () => ({
+    onePerInput: true,
+  }),
+
   computed: {
     input1X : function() {
       return this.dialogue.x + 1.5;
@@ -90,7 +94,13 @@ export default {
     input2X : function() {
       return this.dialogue.x + 11.5;
     },
-  }
+  },
+
+  methods: {
+    updatePlugsLocations(){
+      this.$emit("updatePlugsLoc", {index: this.index, outputsLoc: [{x : this.dialogue.x + 10.5, y : this.dialogue.y + 9}], inputsLoc: [{x : this.dialogue.x + 1.5, y : this.dialogue.y}, {x : this.dialogue.x + 11.5, y : this.dialogue.y}]});
+    }
+  },
 }
 </script>
 

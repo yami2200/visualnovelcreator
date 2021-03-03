@@ -4,6 +4,7 @@ export const mix_dialogueblock = {
 
     data: () => ({
         selected: false,
+        onePerInput: false,
     }),
 
     computed: {
@@ -41,13 +42,23 @@ export const mix_dialogueblock = {
         unselect(){
             this.selected = false;
         },
-        linkEnd(e){
-            this.$emit("linkEnd", {indexD: this.index, e:e});
+        linkEnd(e, ii){
+            var indexI = ii;
+            if(indexI == -1){ // TO DO
+                for(var i = 0; i<this.dialogue.previousDialogue.length ;i++){
+                    if(this.dialogue.previousDialogue[i].length == 1 && this.dialogue.previousDialogue[i][0].id == -1){
+                        indexI = i;
+                        break;
+                    }
+                }
+                if(indexI == -1) indexI = 0;
+            }
+            this.$emit("linkEnd", {indexD: this.index, e:e, indexInput: indexI, onePerInput: this.onePerInput});
             if(this.selected) this.unselect();
         },
         startLinkingFromOutput(e, indexO){
-            this.dialogue.nextDialogue[indexO] = -1;
-            this.$emit("linkingOutput", {indexD: this.index, indexO: indexO, e:e});
+            this.$emit("linkingOutput", {indexD: this.index, indexO: indexO, e:e, previous: this.dialogue.nextDialogue[indexO].id, previousI: this.dialogue.nextDialogue[indexO].ii});
+            this.dialogue.nextDialogue[indexO] = {id: -1, ii: 0};
         },
         mouseEnter(){
             if(this.linkingblock != -1 && this.linkingblock != this.index){
@@ -56,12 +67,17 @@ export const mix_dialogueblock = {
         },
         mouseLeave(){
             if(this.linkingblock != -1 && this.selected) this.unselect();
+        },
+        updatePlugsLocations(){
+            this.$emit("updatePlugsLoc", {index: this.index, outputsLoc: [{x : this.dialogue.x + 10.5, y : this.dialogue.y + 9}], inputsLoc: [{x : this.dialogue.x + 10.5, y : this.dialogue.y}]});
         }
     },
 
     mounted() {
-        this.bus.$on('unselect'+this.index, this.unselect)
-        this.bus.$on('select'+this.index, this.selecting)
+        this.bus.$on('unselect'+this.index, this.unselect);
+        this.bus.$on('select'+this.index, this.selecting);
+        this.bus.$on('moving'+this.index, this.updatePlugsLocations);
+        this.updatePlugsLocations();
     },
 
 }
