@@ -141,16 +141,17 @@ export default {
         type : "condition",
         choices : [],
         action : [],
-        previousDialogue : [[{id: -1, ii: 0}], [{id: -1, ii: 0}]],
-        nextDialogue : [{id: -1, ii: 0}],
+        previousDialogue : [[{id: -1, ii: 0}]],
+        nextDialogue : [{id: -1, ii: 0}, {id: -1, ii: 0}],
         outputsLoc : [{
+          x: 0,
+          y: 0
+        },
+          {
           x: 0,
           y: 0
         }],
         inputsLoc : [{
-          x: 0,
-          y: 0
-        }, {
           x: 0,
           y: 0
         }]

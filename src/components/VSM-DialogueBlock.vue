@@ -46,10 +46,7 @@
         ry="1"/>
 
     <text
-        @mousedown="selecting"
-        @mouseup="linkEnd($event, -1)"
-        @mouseenter="mouseEnter"
-        @mouseleave="mouseLeave"
+        pointer-events="none"
         :x="xText"
         :y="yText"
         class="text"

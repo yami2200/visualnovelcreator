@@ -18,28 +18,13 @@
     <rect
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
-        @mouseup="linkEnd($event, 0)"
-        @mousedown="selecting"
-        class="button_diag"
+        @mouseup="linkEnd($event, -1)"
+        @mousedown="startLinkingFromOutput($event, 0)"
+        class="button_diag clickable"
         stroke="#000000"
         stroke-width="0.3"
         :x="input1X"
-        :y="yTop"
-        width="8"
-        height="3"
-        rx="1"
-        ry="1"/>
-
-    <rect
-        @mouseenter="mouseEnter"
-        @mouseleave="mouseLeave"
-        @mouseup="linkEnd($event, 1)"
-        @mousedown="selecting"
-        class="button_diag"
-        stroke="#000000"
-        stroke-width="0.3"
-        :x="input2X"
-        :y="yTop"
+        :y="yBottom"
         width="8"
         height="3"
         rx="1"
@@ -49,22 +34,54 @@
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
         @mouseup="linkEnd($event, -1)"
-        @mousedown="startLinkingFromOutput($event, 0)"
+        @mousedown="startLinkingFromOutput($event, 1)"
+        class="button_diag clickable"
+        stroke="#000000"
+        stroke-width="0.3"
+        :x="input2X"
+        :y="yBottom"
+        width="8"
+        height="3"
+        rx="1"
+        ry="1"/>
+
+    <rect
+        @mouseenter="mouseEnter"
+        @mouseleave="mouseLeave"
+        @mouseup="linkEnd($event, 0)"
+        @mousedown="selecting"
         class="button_diag clickable"
         stroke="#000000"
         stroke-width="0.3"
         :x="xChild"
-        :y="yBottom"
+        :y="yTop"
         width="5.5"
         height="2"
         rx="1"
         ry="1"/>
 
     <text
-        @mousedown="selecting"
-        @mouseup="linkEnd($event, -1)"
-        @mouseenter="mouseEnter"
-        @mouseleave="mouseLeave"
+        pointer-events="none"
+        :x="xT"
+        :y="yTF"
+        class="text"
+        font-family="Nunito"
+        :font-size="fontSizeText">
+      True
+    </text>
+
+    <text
+        pointer-events="none"
+        :x="xF"
+        :y="yTF"
+        class="text"
+        font-family="Nunito"
+        :font-size="fontSizeText">
+      False
+    </text>
+
+    <text
+        pointer-events="none"
         :x="xText"
         :y="yText"
         class="text"
@@ -83,10 +100,6 @@ export default {
 
   mixins: [mix_dialogueblock],
 
-  data: () => ({
-    onePerInput: true,
-  }),
-
   computed: {
     input1X : function() {
       return this.dialogue.x + 1.5;
@@ -94,11 +107,23 @@ export default {
     input2X : function() {
       return this.dialogue.x + 11.5;
     },
+    yBottom: function () {
+      return this.dialogue.y + 12.5;
+    },
+    yTF: function(){
+      return this.dialogue.y + 11.5;
+    },
+    xT: function(){
+      return this.dialogue.x + 13.5;
+    },
+    xF: function(){
+      return this.dialogue.x + 3.5;
+    },
   },
 
   methods: {
     updatePlugsLocations(){
-      this.$emit("updatePlugsLoc", {index: this.index, outputsLoc: [{x : this.dialogue.x + 10.5, y : this.dialogue.y + 9}], inputsLoc: [{x : this.dialogue.x + 1.5, y : this.dialogue.y}, {x : this.dialogue.x + 11.5, y : this.dialogue.y}]});
+      this.$emit("updatePlugsLoc", {index: this.index, outputsLoc: [{x : this.dialogue.x + 5.5, y : this.dialogue.y + 14}, {x : this.dialogue.x + 15.5, y : this.dialogue.y + 14}], inputsLoc: [{x : this.dialogue.x + 10.5, y : this.dialogue.y}]});
     }
   },
 }
