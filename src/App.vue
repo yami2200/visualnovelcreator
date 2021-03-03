@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <vsm-menu-bar></vsm-menu-bar>
+      <vsm-menu-bar :height="height"></vsm-menu-bar>
 
         <v-row no-gutters>
           <v-col cols="8">
@@ -55,15 +55,20 @@ export default {
 
   methods: {
     resizeWindow() {
-      console.log("Resize");
       process.nextTick((data = this) => {
-        if(remote.getCurrentWindow().isMaximized()){
-          data.height = window.outerHeight-20;
+        if(!remote.getCurrentWindow().isMinimized()) {
+          data.width = window.innerWidth;
+          if(this.minimized){
+            this.minimized = false;
+            data.height = window.innerHeight;
+          } else if(remote.getCurrentWindow().isMaximized()){
+            data.height = window.outerHeight-20;
+          } else {
+            data.height = window.outerHeight-37;
+          }
         } else {
-          data.height = window.outerHeight-37;
+          this.minimized = true;
         }
-        //data.height = window.outerHeight-37;
-        data.width = window.innerWidth;
       });
     },
     print() {
@@ -92,6 +97,7 @@ export default {
     assets : jsonAssets,
     bus: new Vue(),
     project_properties: jsonProjectProperties,
+    minimized: false,
   }),
 
 

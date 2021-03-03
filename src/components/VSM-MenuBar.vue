@@ -4,6 +4,7 @@
       <vsm-dropdown-menu
           :items="FileItems"
           name="File"
+          :height="height"
           sizeHeight=3
           @newproject="newProjectButton"
           @openproject="openProjectButton"
@@ -13,6 +14,7 @@
       </vsm-dropdown-menu>
       <vsm-dropdown-menu
           :items="EditItems"
+          :height="height"
           name="Edit"
           sizeHeight=3
           @projectproperties="properties"
@@ -20,6 +22,7 @@
       </vsm-dropdown-menu>
       <vsm-dropdown-menu
           :items="HelpItems"
+          :height="height"
           name="Help"
           sizeHeight=3
           @github="githublink"
@@ -40,6 +43,8 @@ export default {
   components: {
     'vsm-dropdown-menu' : Dropdown
   },
+
+  props : ['height'],
 
   data: () => ({
     w: remote.getCurrentWindow(),

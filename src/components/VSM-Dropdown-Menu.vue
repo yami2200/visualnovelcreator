@@ -20,7 +20,7 @@
 </template>
 
 <script>
-const remote = require('electron').remote;
+//const remote = require('electron').remote;
 
 export default {
   name: "VSM-Dropdown-Menu",
@@ -28,24 +28,25 @@ export default {
   props: {
     name: { required: true, type: String },
     sizeHeight : {required: true},
+    height : {required: true},
     items: {
       required: true,
     },
   },
 
-  created() {
+  /*created() {
     remote.getCurrentWindow().addListener("resize", this.myEventHandler);
   },
 
   destroyed() {
     remote.getCurrentWindow().removeListener("resize", this.myEventHandler);
-  },
+  },*/
 
-  methods: {
+  /*methods: {
     myEventHandler() {
       this.height = window.innerHeight;
     }
-  },
+  },*/
 
   computed: {
     sizeButton: function () {
@@ -53,9 +54,9 @@ export default {
     }
   },
 
-  data: () => ({
+  /*data: () => ({
     height: window.innerHeight,
-  }),
+  }),*/
 }
 </script>
 
