@@ -49,7 +49,7 @@
         @mouseenter="mouseEnter"
         @mouseleave="mouseLeave"
         @mouseup="linkEnd($event, 0, 'input')"
-        @mousedown="selecting"
+        @mousedown="startLinkingFromInput($event, 0)"
         class="button_diag clickable"
         stroke="#000000"
         stroke-width="0.3"
