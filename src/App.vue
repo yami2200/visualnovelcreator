@@ -7,12 +7,12 @@
           <v-col cols="8">
             <!-- https://github.com/thecodealer/vue-panzoom -->
 
-                  <vsm-dialogue-manager :width="widthDialogPanel" :height="sizeDialogPanel">  </vsm-dialogue-manager>
+                  <vsm-dialogue-manager :width="widthDialogPanel" height="100vh">  </vsm-dialogue-manager>
 
 
           </v-col>
           <v-col cols="4">
-            <v-card :height="sizePreviewPannel">
+            <v-card height="30vh">
             </v-card>
             <vsm-assets-panel :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus"></vsm-assets-panel>
           </v-col>

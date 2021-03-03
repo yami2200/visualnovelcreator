@@ -1,5 +1,5 @@
 <template>
-  <v-card :height="sizeTabsPannel">
+  <v-card height="67vh">
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
     <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" ></vsm-character-edition-modal>
@@ -12,7 +12,7 @@
         v-model="tab"
         icon
         show-arrows
-        :height="sizeTabs"
+        height="5vh"
     >
       <v-tabs-slider></v-tabs-slider>
 
@@ -45,7 +45,7 @@
           :value="'tab-' + (assets.indexOf(item)+1)"
       >
 
-        <v-list shaped :height="sizeList" class="overflow-y-auto">
+        <v-list shaped height="57vh" class="overflow-y-auto">
           <v-subheader> {{ item.type }} : </v-subheader>
           <v-list-item-group
               v-model="selectedItem[assets.indexOf(item)]"
@@ -76,7 +76,7 @@
 
     <v-app-bar
         dense
-        :height="sizeTabs"
+        height="50vh"
     >
       <v-spacer></v-spacer>
 
