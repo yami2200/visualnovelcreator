@@ -7,7 +7,7 @@
           <v-col cols="8">
             <!-- https://github.com/thecodealer/vue-panzoom -->
 
-                  <vsm-dialogue-manager :width="widthDialogPanel" height="100vh">  </vsm-dialogue-manager>
+                  <vsm-dialogue-manager :width="widthDialogPanel" :height="sizeDialogPanel">  </vsm-dialogue-manager>
 
 
           </v-col>

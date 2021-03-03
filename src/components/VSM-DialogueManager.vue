@@ -58,7 +58,7 @@ export default {
     selectedDialogue: -1,
     listDialogues: [
       {
-        title : "Dialogue 1",
+        title : "Beginning",
         x : 500,
         y : 300,
         text : "",
@@ -77,7 +77,7 @@ export default {
         }]
       },
       {
-        title : "A",
+        title : "Meeting Sabrina",
         x : 500,
         y : 320,
         text : "",
@@ -96,7 +96,7 @@ export default {
         }]
       },
       {
-        title : "Supra dialogue long azeoids",
+        title : "Sabrina likes you",
         x : 500,
         y : 340,
         text : "",
@@ -115,7 +115,7 @@ export default {
         }]
       },
       {
-        title : "Dialogue Middle",
+        title : "Sabrina doesn't like you",
         x : 500,
         y : 360,
         text : "",
@@ -134,7 +134,7 @@ export default {
         }]
       },
       {
-        title : "conditionnal block",
+        title : "Conditionnal Block",
         x : 500,
         y : 380,
         text : "",
