@@ -8,8 +8,8 @@
               <line v-if="linkingBlock != -1" pointer-events="none" :x1="linkingOutput==-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput==-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-dialogueblock v-if="value.type == 'dialogue'" @updatePlugsLoc="updatePlugsLocFromChild" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
-                <vsm-dialoguecondition v-if="value.type == 'condition'" @updatePlugsLoc="updatePlugsLocFromChild" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+                <vsm-dialogueblock v-if="value.type == 'dialogue'" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
+                <vsm-dialoguecondition v-if="value.type == 'condition'" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <!--<line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line> -->
@@ -202,6 +202,8 @@ export default {
       this.bus.$emit('moving'+this.selectedDialogue);
 
     },
+
+
     startingLinkFromOutput(data){
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
       if(data.previous != -1) {
@@ -216,25 +218,53 @@ export default {
       this.xMouse = data.e.offsetX;
       this.yMouse = data.e.offsetY;
     },
+
+    startingLinkFromInput(data){
+      this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
+      this.linkingOutput = -1;
+      this.linkingBlock = data.indexD;
+      this.linkingInput = data.indexI;
+      this.xMouse = data.e.offsetX;
+      this.yMouse = data.e.offsetY;
+    },
+
+
     linkEnd(data){
-      if(this.linkingBlock == -1) return;
-      if(this.linkingOutput!=-1 && this.linkingBlock!=data.indexD){
-        this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = {id : data.indexD, ii: data.indexInput};
-        if(this.listDialogues[data.indexD].previousDialogue[data.indexInput][0].id != -1){
+      if(this.linkingBlock == -1 || this.linkingBlock==data.indexD) return;
+      if(this.linkingOutput!=-1){
+        this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = {id : data.indexD, ii: data.indexIO};
+        if(this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].id != -1){
           if(data.onePerInput){
-            this.listDialogues[this.listDialogues[data.indexD].previousDialogue[data.indexInput][0].id].nextDialogue[this.listDialogues[data.indexD].previousDialogue[data.indexInput][0].ii] = {id: -1, ii:0}
-            this.listDialogues[data.indexD].previousDialogue[data.indexInput] = [{id : this.linkingBlock, ii: this.linkingOutput}];
+            this.listDialogues[this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].id].nextDialogue[this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].ii] = {id: -1, ii:0}
+            this.listDialogues[data.indexD].previousDialogue[data.indexIO] = [{id : this.linkingBlock, ii: this.linkingOutput}];
           } else {
-            this.listDialogues[data.indexD].previousDialogue[data.indexInput].push({id : this.linkingBlock, ii: this.linkingOutput});
+            this.listDialogues[data.indexD].previousDialogue[data.indexIO].push({id : this.linkingBlock, ii: this.linkingOutput});
           }
         } else {
-          this.listDialogues[data.indexD].previousDialogue[data.indexInput] = [{id : this.linkingBlock, ii: this.linkingOutput}];
+          this.listDialogues[data.indexD].previousDialogue[data.indexIO] = [{id : this.linkingBlock, ii: this.linkingOutput}];
         }
 
         this.stopLinking();
         console.log(this.listDialogues);
+      } else {
+        if(this.listDialogues[data.indexD].nextDialogue.length === 0) return;
+        if(this.listDialogues[data.indexD].nextDialogue[data.indexIO].id === this.linkingBlock && this.listDialogues[data.indexD].nextDialogue[data.indexIO].ii === this.linkingInput) return;
+
+        var oldNext = this.listDialogues[data.indexD].nextDialogue[data.indexIO];
+        if(oldNext.id != -1){
+          if(this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].length <=1) this.listDialogues[oldNext.id].previousDialogue[oldNext.ii] = [{id: -1, ii:0}];
+          else this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].splice(this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].findIndex(v => v.id === data.indexD && v.ii === data.indexIO), 1);
+        }
+        this.listDialogues[data.indexD].nextDialogue[data.indexIO] = {id : this.linkingBlock, ii: this.linkingInput};
+
+        if(this.listDialogues[this.linkingBlock].previousDialogue[this.linkingInput].length<=1) this.listDialogues[this.linkingBlock].previousDialogue[this.linkingInput] = [{id: data.indexD, ii:data.indexIO}]
+        else this.listDialogues[this.linkingBlock].previousDialogue[this.linkingInput].push({id: data.indexD, ii:data.indexIO});
+
+        this.stopLinking();
       }
     },
+
+
     stopLinking(){
       this.linkingBlock = -1;
       this.$refs.svgBox.removeEventListener('mousemove', this.mouseMoveLink);
