@@ -8,6 +8,8 @@
           @breakoutputs="breakOutputLinks(true)"
           @breaklinks="breakLinks"
           @deletedialogue="deleteDialogue"
+
+          @adddialogue="addDialogue('dialogue')"
       > </vsm-contextmenu>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
@@ -38,6 +40,9 @@ import testComp from './VSM-DialogueBlock';
 import condition from './VSM-DialogueConditionnalBlock';
 import contextMenu from './VSM-ContextMenu';
 import { removePreviousDialoguesFromOutput} from "@/lib";
+import jsonBaseDialogue from './../assets/base_dialogue.json';
+
+const baseDialogue = jsonBaseDialogue;
 
 export default {
   name: "VSM-DialogueManager",
@@ -58,6 +63,7 @@ export default {
     itemsMenu: [{title : "yes", action : "test1"}, {title : "no", action : "test2"}],
     contextMenuSelection: null,
     contextMenuNode: false,
+    contextMenuGlobalEvent: null,
 
     updateScroll: null,
     scrollDirLinking: [0,0],
@@ -346,7 +352,7 @@ export default {
 
     contextMenuDM(e){
       if(!this.contextMenuNode){
-        console.log("context Menu Global");
+        this.contextMenuGlobalEvent = e;
         this.itemsMenu = [{title: "Add Dialogue", action: "adddialogue"},{title: "Add Dialogue Choices", action: "adddialoguechoices"}, {title: "Add Condition", action: "addcondition"}, {title: "Add Function Node", action: "addfunctionnode"}]
         this.bus.$emit("showContextMenu", e);
       }
@@ -360,6 +366,24 @@ export default {
       this.bus.$emit("showContextMenu", data.e);
     },
 
+
+    addDialogue(type){
+      if(this.contextMenuGlobalEvent==null) return;
+      switch (type) {
+        case 'dialogue':
+          var dialogue = JSON.parse(JSON.stringify(baseDialogue));
+          dialogue.x = this.contextMenuGlobalEvent.offsetX + dialogue.offsetLoc.x;
+          dialogue.y = this.contextMenuGlobalEvent.offsetY + dialogue.offsetLoc.y;
+          this.listDialogues.push(dialogue);
+          break;
+        case 'choices':
+          break;
+        case 'condition':
+          break;
+        case 'function':
+          break;
+      }
+    },
     editDialogue(){
       console.log("edit dialogue");
     },

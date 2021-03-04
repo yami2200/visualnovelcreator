@@ -4,13 +4,13 @@
   "y" : 0,
   "text" : "",
   "type" : "dialogue",
-  "choices" : [],
   "action" : [],
+  "offsetLoc" : {"x" :  5, "y" :  2.5},
   "previousDialogue" : [
-    {
+    [{
       "id": -1,
       "ii": 0
-    }
+    }]
   ],
   "nextDialogue" : [{
     "id": -1,
