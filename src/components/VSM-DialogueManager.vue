@@ -1,5 +1,11 @@
 <template>
-  <v-card :height="height+'px'" width="100%" class="overflow-hidden justify-center" @mouseleave="leaveDialogueManager">
+  <v-card
+      :height="height+'px'"
+      width="100%"
+      class="overflow-hidden justify-center"
+      @mouseleave="leaveDialogueManager"
+      @keyup.delete="deletePress"
+  >
       <vsm-contextmenu
           :bus="bus"
           :item-context-menu="itemsMenu"
@@ -366,6 +372,14 @@ export default {
       this.bus.$emit("showContextMenu", data.e);
     },
 
+
+    deletePress(){
+      if(this.selectedDialogue != -1){
+        this.contextMenuSelection = {index: this.selectedDialogue, type: "global", indexIO: -1};
+        this.stopSelecting();
+        this.deleteDialogue();
+      }
+    },
 
     addDialogue(type){
       if(this.contextMenuGlobalEvent==null) return;
