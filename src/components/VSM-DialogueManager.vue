@@ -204,7 +204,7 @@ export default {
       return  this.listDialogues[id].inputsLoc[ii].y;
     },
 
-
+    // ############################# SELECTION BEHAVIOR
     selectDialogue(data){
       this.selectedDialogue = data.index;
       this.dragOffsetX = data.e.offsetX - this.listDialogues[this.selectedDialogue].x;
@@ -234,7 +234,7 @@ export default {
 
     },
 
-
+    // ############################# LINKING BEHAVIOR
     startingLinkFromOutput(data){
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
       if(data.previous != -1) {
@@ -249,7 +249,6 @@ export default {
       this.xMouse = data.e.offsetX;
       this.yMouse = data.e.offsetY;
     },
-
     startingLinkFromInput(data){
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
       this.linkingOutput = -1;
@@ -258,8 +257,6 @@ export default {
       this.xMouse = data.e.offsetX;
       this.yMouse = data.e.offsetY;
     },
-
-
     linkEnd(data){
       if(this.linkingBlock == -1 || this.linkingBlock==data.indexD) return;
       if(this.linkingOutput!=-1){
@@ -295,8 +292,6 @@ export default {
         this.stopLinking();
       }
     },
-
-
     stopLinking(){
       this.linkingBlock = -1;
       this.$refs.svgBox.removeEventListener('mousemove', this.mouseMoveLink);
@@ -350,6 +345,8 @@ export default {
         this.stopSelecting();
       }
     },
+
+    // ############################ LOCATIONS MANAGEMENT
     initPanZoom(instance){
       this.panzoom = instance;
       this.panzoom.zoomTo(0.5,0.5,1.5);
@@ -359,6 +356,7 @@ export default {
       this.listDialogues[data.index].inputsLoc = data.inputsLoc;
     },
 
+    // ############################ CONTEXT MENU BEHAVIOR
     contextMenuDM(e){
       if(!this.contextMenuNode){
         this.itemsMenu = [{title: "Add Dialogue", action: "adddialogue"},{title: "Add Dialogue Choices", action: "adddialoguechoices"}, {title: "Add Condition", action: "addcondition"}, {title: "Add Function Node", action: "addfunctionnode"}]
@@ -366,7 +364,6 @@ export default {
       }
       this.contextMenuNode = false;
     },
-
     contextMenu(data){
       this.contextMenuNode = true;
       this.itemsMenu = data.items;
@@ -374,7 +371,7 @@ export default {
       this.bus.$emit("showContextMenu", data.e);
     },
 
-
+    // ############################ INPUT (KEYBOARD MOUSE) MANAGEMENT
     deletePress(){
       if(this.selectedDialogue != -1){
         this.contextMenuSelection = {index: this.selectedDialogue, type: "global", indexIO: -1};
@@ -382,11 +379,11 @@ export default {
         this.deleteDialogue();
       }
     },
-
     trackMouse(e){
       this.mouseEvent = e;
     },
 
+    // ############################ DIALOGUES EDITING
     addDialogue(type){
       if(this.mouseEvent==null) return;
       switch (type) {
@@ -446,6 +443,7 @@ export default {
       this.contextMenuSelection=null;
     },
 
+    // ########################### LINKS BETWEEN DIALOGUES EDITING
     breakLinks(){
       if(this.contextMenuSelection==null) return;
       if(this.contextMenuSelection.type == "input") this.breakInputLinks();
