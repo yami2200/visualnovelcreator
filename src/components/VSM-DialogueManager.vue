@@ -270,9 +270,10 @@ export default {
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMove)
     },
     testIgnore(e){
-      return this.selectionDialogue.length > 0 || this.linkingBlock !== -1 || e.shiftKey;
+      return this.selectionDialogue.length > 0 || this.linkingBlock !== -1 || e.button !==1;
     },
     mouseDownSVG(e){
+      if(e.button === 1 && e.buttons === 4) e.preventDefault();
       if(this.justClick){
         this.justClick = false;
         return;
@@ -280,10 +281,8 @@ export default {
       if(this.selectionDialogue.length > 0){
         this.stopSelecting(this.selectionDialogue);
       }
-      if(e.shiftKey){
-        this.selectingBox = true;
-        this.selectingBoxLoc = {x: e.offsetX, y:e.offsetY};
-      }
+      this.selectingBox = true;
+      this.selectingBoxLoc = {x: e.offsetX, y:e.offsetY};
     },
     mouseUp(e){
       if(this.selectionDialogue.length > 0){
