@@ -4,15 +4,15 @@
           :bus="bus"
           :item-context-menu="itemsMenu"
           @editdialogue="editDialogue"
-          @breakinputs="breakInputLinks"
-          @breakoutputs="breakOutputLinks"
+          @breakinputs="breakInputLinks(true)"
+          @breakoutputs="breakOutputLinks(true)"
           @breaklinks="breakLinks"
           @deletedialogue="deleteDialogue"
       > </vsm-contextmenu>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
-            <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp">
+            <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp" @contextmenu="contextMenuDM">
 
               <line v-if="linkingBlock != -1" pointer-events="none" :x1="linkingOutput==-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput==-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
@@ -57,6 +57,7 @@ export default {
 
     itemsMenu: [{title : "yes", action : "test1"}, {title : "no", action : "test2"}],
     contextMenuSelection: null,
+    contextMenuNode: false,
 
     updateScroll: null,
     scrollDirLinking: [0,0],
@@ -343,7 +344,17 @@ export default {
       this.listDialogues[data.index].inputsLoc = data.inputsLoc;
     },
 
+    contextMenuDM(e){
+      if(!this.contextMenuNode){
+        console.log("context Menu Global");
+        this.itemsMenu = [{title: "Add Dialogue", action: "adddialogue"},{title: "Add Dialogue Choices", action: "adddialoguechoices"}, {title: "Add Condition", action: "addcondition"}, {title: "Add Function Node", action: "addfunctionnode"}]
+        this.bus.$emit("showContextMenu", e);
+      }
+      this.contextMenuNode = false;
+    },
+
     contextMenu(data){
+      this.contextMenuNode = true;
       this.itemsMenu = data.items;
       this.contextMenuSelection = {index: data.indexD, type: data.type, indexIO: data.indexIO}
       this.bus.$emit("showContextMenu", data.e);
@@ -355,8 +366,8 @@ export default {
     deleteDialogue(){
       if(this.contextMenuSelection==null && this.contextMenuSelection.index === -1) return;
       this.contextMenuSelection.indexIO = -1;
-      this.breakInputLinks();
-      this.breakOutputLinks();
+      this.breakInputLinks(false);
+      this.breakOutputLinks(false);
       this.listDialogues.splice(this.contextMenuSelection.index, 1);
 
       var deleteIndex = this.contextMenuSelection.index;
@@ -385,6 +396,8 @@ export default {
         });
 
       }
+
+      this.contextMenuSelection=null;
     },
 
     breakLinks(){
@@ -392,7 +405,7 @@ export default {
       if(this.contextMenuSelection.type == "input") this.breakInputLinks();
       else if(this.contextMenuSelection.type == "output") this.breakOutputLinks();
     },
-    breakInputLinks(){
+    breakInputLinks(removeCMD){
       if(this.contextMenuSelection==null) return;
       var j = 0;
       var i = 0;
@@ -411,8 +424,9 @@ export default {
         }
       }
       this.$forceUpdate();
+      if(removeCMD) this.contextMenuSelection=null;
     },
-    breakOutputLinks(){
+    breakOutputLinks(removeCMD){
       if(this.contextMenuSelection==null) return;
       var i = 0;
       if(this.contextMenuSelection.indexIO === -1){
@@ -426,6 +440,7 @@ export default {
         this.listDialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
       }
       this.$forceUpdate();
+      if(removeCMD) this.contextMenuSelection=null;
     },
 
   },
