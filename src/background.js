@@ -26,6 +26,11 @@ async function createWindow() {
     }
   })
 
+  win.on('close', function(e) {
+    e.preventDefault();
+    win.destroy();
+  });
+
   win.on('page-title-updated', function(e) {
     e.preventDefault()
   });
