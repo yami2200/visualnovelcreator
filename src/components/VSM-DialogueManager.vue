@@ -7,6 +7,7 @@
           @breakinputs="breakInputLinks"
           @breakoutputs="breakOutputLinks"
           @breaklinks="breakLinks"
+          @deletedialogue="deleteDialogue"
       > </vsm-contextmenu>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
@@ -351,6 +352,41 @@ export default {
     editDialogue(){
       console.log("edit dialogue");
     },
+    deleteDialogue(){
+      if(this.contextMenuSelection==null && this.contextMenuSelection.index === -1) return;
+      this.contextMenuSelection.indexIO = -1;
+      this.breakInputLinks();
+      this.breakOutputLinks();
+      this.listDialogues.splice(this.contextMenuSelection.index, 1);
+
+      var deleteIndex = this.contextMenuSelection.index;
+      var ref = this;
+
+      for(var i = 0; i<this.listDialogues.length; i++){
+
+        var j = 0;
+        this.listDialogues[i].nextDialogue.forEach(function(nD){
+          if(nD.id > deleteIndex) {
+            ref.listDialogues[i].nextDialogue[j] = {id : nD.id -1, ii: nD.ii}; // this.listDialogues[i].nextDialogue[j]
+          }
+          j++;
+        });
+
+        j = 0;
+        var k = 0;
+        this.listDialogues[i].previousDialogue.forEach(function(pD){
+          pD.forEach(function(prev){
+            if(prev.id > deleteIndex) {
+              ref.listDialogues[i].previousDialogue[j][k] = {id : prev.id -1, ii: prev.ii}; //this.listDialogues[i].previousDialogue[j][k]
+            }
+            k++;
+          });
+          j++;
+        });
+
+      }
+    },
+
     breakLinks(){
       if(this.contextMenuSelection==null) return;
       if(this.contextMenuSelection.type == "input") this.breakInputLinks();
@@ -374,7 +410,6 @@ export default {
           this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i] = {id: -1, ii:0 };
         }
       }
-      this.contextMenuSelection=null;
       this.$forceUpdate();
     },
     breakOutputLinks(){
@@ -390,7 +425,6 @@ export default {
         removePreviousDialoguesFromOutput(this.listDialogues, this.contextMenuSelection.index, i);
         this.listDialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
       }
-      this.contextMenuSelection=null;
       this.$forceUpdate();
     },
 
