@@ -48,4 +48,10 @@ function removePreviousDialoguesFromOutput(listdialogues, indexDialogue, indexOu
     }
 }
 
-export {readFileSync, writeFile, renameFile, deleteFile, existFile, getDate, removePreviousDialoguesFromOutput};
+function squareIntoSelection(minX, maxX, minY, maxY, x, y, width, height){
+    return (
+        (((x+width >= minX && x+width <=maxX) || (x >= minX && x <= maxX)) && ((y >=minY && y <= maxY) || (y+height >=minY && y+height <= maxY)))
+    );
+}
+
+export {readFileSync, writeFile, renameFile, deleteFile, existFile, getDate, removePreviousDialoguesFromOutput, squareIntoSelection};

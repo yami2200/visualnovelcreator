@@ -32,10 +32,22 @@
                 <vsm-dialoguecondition v-if="value.type == 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
-                  <!--<line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line> -->
                   <line v-if="valueL.id != -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
                 </g>
               </g>
+
+              <rect
+                v-if="selectingBox"
+                rx="0"
+                ry="0"
+                :x="selectionBoxX"
+                :y="selectionBoxY"
+                :width="selectionBoxWidth"
+                :height="selectionBoxHeight"
+                class="selectionBox"
+              >
+              </rect>
+
 
             </svg>
           </panZoom>
@@ -48,7 +60,7 @@ import Vue from "vue";
 import testComp from './VSM-DialogueBlock';
 import condition from './VSM-DialogueConditionnalBlock';
 import contextMenu from './VSM-ContextMenu';
-import { removePreviousDialoguesFromOutput} from "@/lib";
+import { removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from './../assets/base_dialogue.json';
 
 const baseDialogue = jsonBaseDialogue;
@@ -76,6 +88,9 @@ export default {
 
     updateScroll: null,
     scrollDirLinking: [0,0],
+    selectingBox: false,
+    selectingBoxContent: [],
+    selectingBoxLoc: {x: 0,y:0},
 
     justClick: false,
     panzoom: null,
@@ -98,8 +113,8 @@ export default {
         y : 300,
         text : "",
         type : "dialogue",
-        choices : [],
         action : [],
+        offsetLoc : {x :  -10, y :  -5},
         previousDialogue : [[{id: -1, ii: 0}]],
         nextDialogue : [{id: 1, ii: 0}],
         outputsLoc : [{
@@ -117,8 +132,8 @@ export default {
         y : 320,
         text : "",
         type : "dialogue",
-        choices : [],
         action : [],
+        offsetLoc : {x :  -10, y :  -5},
         previousDialogue : [[{id: 0, ii: 0}]],
         nextDialogue : [{id: 2, ii: 0}],
         outputsLoc : [{
@@ -136,8 +151,8 @@ export default {
         y : 340,
         text : "",
         type : "dialogue",
-        choices : [],
         action : [],
+        offsetLoc : {x :  -10, y :  -5},
         previousDialogue : [[{id: 1, ii: 0}]],
         nextDialogue : [{id: 3, ii: 0}],
         outputsLoc : [{
@@ -155,8 +170,8 @@ export default {
         y : 360,
         text : "",
         type : "dialogue",
-        choices : [],
         action : [],
+        offsetLoc : {x :  -10, y :  -5},
         previousDialogue : [[{id: 2, ii: 0}]],
         nextDialogue : [{id: -1, ii: 0}],
         outputsLoc : [{
@@ -174,8 +189,8 @@ export default {
         y : 380,
         text : "",
         type : "condition",
-        choices : [],
         action : [],
+        offsetLoc : {x :  -10, y :  -7.5},
         previousDialogue : [[{id: -1, ii: 0}]],
         nextDialogue : [{id: -1, ii: 0}, {id: -1, ii: 0}],
         outputsLoc : [{
@@ -194,7 +209,23 @@ export default {
     ]
   }),
 
+  computed : {
+    selectionBoxX(){
+      return Math.min(this.selectingBoxLoc.x, this.mouseEvent.offsetX);
+    },
+    selectionBoxY(){
+      return Math.min(this.selectingBoxLoc.y, this.mouseEvent.offsetY);
+    },
+    selectionBoxWidth(){
+      return Math.abs(Math.max(this.selectingBoxLoc.x, this.mouseEvent.offsetX) - Math.min(this.selectingBoxLoc.x, this.mouseEvent.offsetX));
+    },
+    selectionBoxHeight(){
+      return Math.abs(Math.max(this.selectingBoxLoc.y, this.mouseEvent.offsetY) - Math.min(this.selectingBoxLoc.y, this.mouseEvent.offsetY));
+    },
+  },
+
   methods:{
+    // ########################### GETTER FOR PLUGS LINKS LOCATIONS
     linkXOut(id, ii){
       return this.listDialogues[id].outputsLoc[ii].x;
     },
@@ -210,6 +241,7 @@ export default {
 
     // ############################# SELECTION BEHAVIOR
     selectDialogue(data){
+      if(this.selectingBox) return;
       this.justClick = true;
       if(this.selectionDialogue.length > 0 && (!data.shift || data.e.button ==2)) this.stopSelecting(this.selectionDialogue, [data.index]);
       var index = this.selectionDialogue.findIndex(v => v.index === data.index);
@@ -229,7 +261,7 @@ export default {
     testIgnore(e){
       return this.selectionDialogue.length > 0 || this.linkingBlock !== -1 || e.shiftKey;
     },
-    mouseDownSVG(){
+    mouseDownSVG(e){
       if(this.justClick){
         this.justClick = false;
         return;
@@ -237,13 +269,31 @@ export default {
       if(this.selectionDialogue.length > 0){
         this.stopSelecting(this.selectionDialogue);
       }
+      if(e.shiftKey){
+        this.selectingBox = true;
+        this.selectingBoxLoc = {x: e.offsetX, y:e.offsetY};
+      }
     },
-    mouseUp(){
+    mouseUp(e){
       if(this.selectionDialogue.length > 0){
         this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove);
       }
       if(this.linkingBlock !== -1) {
         this.stopLinking();
+      }
+      if(this.selectingBox) {
+        this.stopSelecting(this.selectionDialogue);
+        var ref = this;
+        this.selectingBoxContent.forEach(dialogue => {
+          this.selectDialogue({e:e, index: this.listDialogues.indexOf(dialogue), shift: true});
+          var index = ref.listDialogues.indexOf(dialogue);
+          ref.selectionDialogue.push({
+            index: ref.listDialogues.indexOf(dialogue),
+            offsetX: e.offsetX - ref.listDialogues[index].x,
+            offsetY: e.offsetY - ref.listDialogues[index].y,
+          });
+        });
+        this.selectingBox = false;
       }
     },
     stopSelecting(array, ignoreIndex){
@@ -269,11 +319,11 @@ export default {
       /*this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
       this.listDialogues[this.selectedDialogue].y = e.offsetY - this.dragOffsetY;
       this.bus.$emit('moving'+this.selectedDialogue);*/
-
     },
 
     // ############################# LINKING BEHAVIOR
     startingLinkFromOutput(data){
+      this.justClick = true;
       this.stopSelecting(this.selectionDialogue);
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
       if(data.previous != -1) {
@@ -289,6 +339,7 @@ export default {
       this.yMouse = data.e.offsetY;
     },
     startingLinkFromInput(data){
+      this.justClick = true;
       this.stopSelecting(this.selectionDialogue);
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
       this.linkingOutput = -1;
@@ -422,6 +473,26 @@ export default {
     },
     trackMouse(e){
       this.mouseEvent = e;
+      if(this.selectingBox){
+        var minX = this.selectionBoxX;
+        var maxX = Math.max(this.selectingBoxLoc.x, this.mouseEvent.offsetX)
+        var minY = this.selectionBoxY;
+        var maxY = Math.max(this.selectingBoxLoc.y, this.mouseEvent.offsetY)
+        var ref = this;
+        var indexs = this.listDialogues.filter(v => squareIntoSelection(minX, maxX, minY, maxY, v.x, v.y, -v.offsetLoc.x*2, -v.offsetLoc.y*2));
+        var i = 0;
+        this.listDialogues.forEach(dialogue => {
+          if(indexs.includes(dialogue)){
+            if(!this.selectingBoxContent.includes(dialogue)){
+              ref.bus.$emit('select'+i, e);
+            }
+          } else if(this.selectingBoxContent.includes(dialogue)){
+            ref.bus.$emit('unselect'+i, e);
+          }
+          i++;
+        });
+        this.selectingBoxContent = indexs;
+      }
     },
 
     // ############################ DIALOGUES EDITING
@@ -553,5 +624,8 @@ export default {
 </script>
 
 <style scoped>
-
+.selectionBox {
+  fill: #1a91ff;
+  opacity: 0.33;
+}
 </style>
