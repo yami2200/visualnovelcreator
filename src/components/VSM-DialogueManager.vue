@@ -4,7 +4,10 @@
       width="100%"
       class="overflow-hidden justify-center"
       @mouseleave="leaveDialogueManager"
+      @mousemove="trackMouse"
       @keyup.delete="deletePress"
+
+      @keyup.&="addDialogue('dialogue')"
   >
       <vsm-contextmenu
           :bus="bus"
@@ -69,7 +72,7 @@ export default {
     itemsMenu: [{title : "yes", action : "test1"}, {title : "no", action : "test2"}],
     contextMenuSelection: null,
     contextMenuNode: false,
-    contextMenuGlobalEvent: null,
+    mouseEvent: null,
 
     updateScroll: null,
     scrollDirLinking: [0,0],
@@ -358,7 +361,6 @@ export default {
 
     contextMenuDM(e){
       if(!this.contextMenuNode){
-        this.contextMenuGlobalEvent = e;
         this.itemsMenu = [{title: "Add Dialogue", action: "adddialogue"},{title: "Add Dialogue Choices", action: "adddialoguechoices"}, {title: "Add Condition", action: "addcondition"}, {title: "Add Function Node", action: "addfunctionnode"}]
         this.bus.$emit("showContextMenu", e);
       }
@@ -381,13 +383,17 @@ export default {
       }
     },
 
+    trackMouse(e){
+      this.mouseEvent = e;
+    },
+
     addDialogue(type){
-      if(this.contextMenuGlobalEvent==null) return;
+      if(this.mouseEvent==null) return;
       switch (type) {
         case 'dialogue':
           var dialogue = JSON.parse(JSON.stringify(baseDialogue));
-          dialogue.x = this.contextMenuGlobalEvent.offsetX + dialogue.offsetLoc.x;
-          dialogue.y = this.contextMenuGlobalEvent.offsetY + dialogue.offsetLoc.y;
+          dialogue.x = this.mouseEvent.offsetX + dialogue.offsetLoc.x;
+          dialogue.y = this.mouseEvent.offsetY + dialogue.offsetLoc.y;
           this.listDialogues.push(dialogue);
           break;
         case 'choices':
@@ -395,6 +401,8 @@ export default {
         case 'condition':
           break;
         case 'function':
+          break;
+        case 'transition':
           break;
       }
     },
