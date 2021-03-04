@@ -8,6 +8,11 @@
       @keyup.delete="deletePress"
 
       @keyup.&="addDialogue('dialogue')"
+      @keyup.é="addDialogue('choices')"
+      @keyup.51="addDialogue('condition')"
+      @keyup.52="addDialogue('function')"
+      @keyup.53="addDialogue('transition')"
+      @keyup.54="addDialogue('input')"
   >
       <vsm-contextmenu
           :bus="bus"
@@ -19,6 +24,7 @@
           @deletedialogue="deleteDialogue"
 
           @adddialogue="addDialogue('dialogue')"
+          @addcondition="addDialogue('condition')"
       > </vsm-contextmenu>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
@@ -62,8 +68,10 @@ import condition from './VSM-DialogueConditionnalBlock';
 import contextMenu from './VSM-ContextMenu';
 import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from './../assets/base_dialogue.json';
+import jsonBaseDialogueCondition from './../assets/base_dialogueconditionnal.json';
 
 const baseDialogue = jsonBaseDialogue;
+const baseDialogueCondition = jsonBaseDialogueCondition;
 
 export default {
   name: "VSM-DialogueManager",
@@ -507,22 +515,25 @@ export default {
     // ############################ DIALOGUES EDITING
     addDialogue(type){
       if(this.mouseEvent==null) return;
+      var dialogue = null;
       switch (type) {
         case 'dialogue':
-          var dialogue = JSON.parse(JSON.stringify(baseDialogue));
-          dialogue.x = this.mouseEvent.offsetX + dialogue.offsetLoc.x;
-          dialogue.y = this.mouseEvent.offsetY + dialogue.offsetLoc.y;
-          this.listDialogues.push(dialogue);
+          dialogue = JSON.parse(JSON.stringify(baseDialogue));
           break;
         case 'choices':
           break;
         case 'condition':
+          dialogue = JSON.parse(JSON.stringify(baseDialogueCondition));
           break;
         case 'function':
           break;
         case 'transition':
           break;
       }
+      if(dialogue == null) return;
+      dialogue.x = this.mouseEvent.offsetX + dialogue.offsetLoc.x;
+      dialogue.y = this.mouseEvent.offsetY + dialogue.offsetLoc.y;
+      this.listDialogues.push(dialogue);
     },
     editDialogue(){
       console.log("edit dialogue");

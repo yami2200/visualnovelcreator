@@ -1,0 +1,34 @@
+{
+  "title" : "Conditionnal Block",
+  "x" : 0,
+  "y" : 0,
+  "text" : "",
+  "type" : "condition",
+  "offsetLoc" : {"x" :  -10, "y" :  -7.5},
+  "previousDialogue" : [
+    [{
+      "id": -1,
+      "ii": 0
+    }]
+  ],
+  "nextDialogue" : [{
+    "id": -1,
+    "ii": 0
+  },
+    {
+      "id": -1,
+      "ii": 0
+    }],
+  "outputsLoc" : [{
+    "x": 0,
+    "y": 0
+  },
+    {
+      "x": 0,
+      "y": 0
+    }],
+  "inputsLoc" : [{
+    "x": 0,
+    "y": 0
+  }]
+}
