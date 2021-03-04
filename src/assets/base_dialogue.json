@@ -5,7 +5,7 @@
   "text" : "",
   "type" : "dialogue",
   "action" : [],
-  "offsetLoc" : {"x" :  5, "y" :  2.5},
+  "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [
     [{
       "id": -1,

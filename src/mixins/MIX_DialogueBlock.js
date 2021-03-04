@@ -43,7 +43,7 @@ export const mix_dialogueblock = {
         },
         selecting(e){
             this.selected = true;
-            this.$emit("selectD", {e:e, index: this.index});
+            this.$emit("selectD", {e:e, index: this.index, shift: e.shiftKey});
         },
         unselect(){
             this.selected = false;
@@ -80,9 +80,7 @@ export const mix_dialogueblock = {
 
                 if(indexI == -1) indexI = 0;
             }
-
             this.$emit("linkEnd", {indexD: this.index, e:e, indexIO: indexI, onePerInput: this.onePerInput});
-            if(this.selected) this.unselect();
         },
         startLinkingFromOutput(e, indexO){
             if(e.button === 0){

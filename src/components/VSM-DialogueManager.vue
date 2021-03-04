@@ -23,7 +23,7 @@
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
-            <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp" @contextmenu="contextMenuDM">
+            <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
 
               <line v-if="linkingBlock != -1" pointer-events="none" :x1="linkingOutput==-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput==-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
@@ -77,6 +77,7 @@ export default {
     updateScroll: null,
     scrollDirLinking: [0,0],
 
+    justClick: false,
     panzoom: null,
     linkingBlock: -1,
     linkingOutput: -1,
@@ -87,6 +88,9 @@ export default {
     dragOffsetX: 0,
     dragOffsetY: 0,
     selectedDialogue: -1,
+
+    selectionDialogue: [],
+
     listDialogues: [
       {
         title : "Beginning",
@@ -206,36 +210,71 @@ export default {
 
     // ############################# SELECTION BEHAVIOR
     selectDialogue(data){
-      this.selectedDialogue = data.index;
-      this.dragOffsetX = data.e.offsetX - this.listDialogues[this.selectedDialogue].x;
-      this.dragOffsetY = data.e.offsetY - this.listDialogues[this.selectedDialogue].y;
+      this.justClick = true;
+      if(this.selectionDialogue.length > 0 && (!data.shift || data.e.button ==2)) this.stopSelecting(this.selectionDialogue, [data.index]);
+      var index = this.selectionDialogue.findIndex(v => v.index === data.index);
+      if(index === -1) {
+        this.selectionDialogue.push({
+          index: data.index,
+          offsetX: data.e.offsetX - this.listDialogues[data.index].x,
+          offsetY: data.e.offsetY - this.listDialogues[data.index].y,
+        });
+      }
+      for(var i = 0; i<this.selectionDialogue.length;i++){
+        this.selectionDialogue[i].offsetX = data.e.offsetX - this.listDialogues[this.selectionDialogue[i].index].x;
+        this.selectionDialogue[i].offsetY = data.e.offsetY - this.listDialogues[this.selectionDialogue[i].index].y;
+      }
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMove)
     },
-    testIgnore(){
-      return this.selectedDialogue != -1 || this.linkingBlock != -1;
+    testIgnore(e){
+      return this.selectionDialogue.length > 0 || this.linkingBlock !== -1 || e.shiftKey;
+    },
+    mouseDownSVG(){
+      if(this.justClick){
+        this.justClick = false;
+        return;
+      }
+      if(this.selectionDialogue.length > 0){
+        this.stopSelecting(this.selectionDialogue);
+      }
     },
     mouseUp(){
-      if(this.selectedDialogue != -1){
-        this.stopSelecting();
+      if(this.selectionDialogue.length > 0){
+        this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove);
       }
-      if(this.linkingBlock != -1) {
+      if(this.linkingBlock !== -1) {
         this.stopLinking();
       }
     },
-    stopSelecting(){
-      this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove);
-      this.bus.$emit('unselect'+this.selectedDialogue);
-      this.selectedDialogue = -1;
+    stopSelecting(array, ignoreIndex){
+      if(array === this.selectionDialogue) this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove);
+      var newSelection = [];
+      var ref = this;
+      this.selectionDialogue.forEach(function(element){
+        if(array.includes(element) && (ignoreIndex===undefined || !ignoreIndex.includes(element.index))){
+          ref.bus.$emit('unselect'+element.index);
+        } else {
+          newSelection.push(element);
+        }
+      });
+      this.selectionDialogue = newSelection;
     },
     mouseMove(e){
-      this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
+      var ref = this;
+      this.selectionDialogue.forEach((element) => {
+        ref.listDialogues[element.index].x = e.offsetX - element.offsetX;
+        ref.listDialogues[element.index].y = e.offsetY - element.offsetY;
+        ref.bus.$emit('moving'+element.index);
+      })
+      /*this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
       this.listDialogues[this.selectedDialogue].y = e.offsetY - this.dragOffsetY;
-      this.bus.$emit('moving'+this.selectedDialogue);
+      this.bus.$emit('moving'+this.selectedDialogue);*/
 
     },
 
     // ############################# LINKING BEHAVIOR
     startingLinkFromOutput(data){
+      this.stopSelecting(this.selectionDialogue);
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
       if(data.previous != -1) {
         if(this.listDialogues[data.previous].previousDialogue[data.previousI].length>1){
@@ -250,6 +289,7 @@ export default {
       this.yMouse = data.e.offsetY;
     },
     startingLinkFromInput(data){
+      this.stopSelecting(this.selectionDialogue);
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
       this.linkingOutput = -1;
       this.linkingBlock = data.indexD;
@@ -259,6 +299,7 @@ export default {
     },
     linkEnd(data){
       if(this.linkingBlock == -1 || this.linkingBlock==data.indexD) return;
+      this.bus.$emit('unselect'+data.indexD);
       if(this.linkingOutput!=-1){
         this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = {id : data.indexD, ii: data.indexIO};
         if(this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].id != -1){
@@ -341,9 +382,9 @@ export default {
       if(this.linkingBlock != -1) {
         this.stopLinking();
       }
-      if(this.selectedDialogue != -1){
+      /*if(this.selectedDialogue != -1){
         this.stopSelecting();
-      }
+      }*/
     },
 
     // ############################ LOCATIONS MANAGEMENT
@@ -367,15 +408,15 @@ export default {
     contextMenu(data){
       this.contextMenuNode = true;
       this.itemsMenu = data.items;
-      this.contextMenuSelection = {index: data.indexD, type: data.type, indexIO: data.indexIO}
+      this.contextMenuSelection = {index: [data.indexD], type: data.type, indexIO: data.indexIO}
       this.bus.$emit("showContextMenu", data.e);
     },
 
     // ############################ INPUT (KEYBOARD MOUSE) MANAGEMENT
     deletePress(){
-      if(this.selectedDialogue != -1){
-        this.contextMenuSelection = {index: this.selectedDialogue, type: "global", indexIO: -1};
-        this.stopSelecting();
+      if(this.selectionDialogue.length > 0){
+        this.contextMenuSelection = {index: this.selectionDialogue, type: "global", indexIO: -1};
+        this.stopSelecting(this.selectionDialogue);
         this.deleteDialogue();
       }
     },
@@ -407,39 +448,58 @@ export default {
       console.log("edit dialogue");
     },
     deleteDialogue(){
-      if(this.contextMenuSelection==null && this.contextMenuSelection.index === -1) return;
+      if(this.contextMenuSelection==null) return;
+
+      var list = this.contextMenuSelection.index;
+      if(list.length === 0) return;
+
+      this.stopSelecting(this.selectionDialogue);
+
+      if(list[0].index === undefined) list[0] = {index: list[0]};
       this.contextMenuSelection.indexIO = -1;
-      this.breakInputLinks(false);
-      this.breakOutputLinks(false);
-      this.listDialogues.splice(this.contextMenuSelection.index, 1);
 
-      var deleteIndex = this.contextMenuSelection.index;
       var ref = this;
+      list.forEach(function(element){
+        if(element.index !== -1) {
 
-      for(var i = 0; i<this.listDialogues.length; i++){
+          ref.contextMenuSelection.index = element.index;
+          ref.breakInputLinks(false);
+          ref.breakOutputLinks(false);
 
-        var j = 0;
-        this.listDialogues[i].nextDialogue.forEach(function(nD){
-          if(nD.id > deleteIndex) {
-            ref.listDialogues[i].nextDialogue[j] = {id : nD.id -1, ii: nD.ii}; // this.listDialogues[i].nextDialogue[j]
+          ref.listDialogues.splice(element.index, 1);
+
+          var deleteIndex = element.index;
+
+          for(var i = 0; i<ref.listDialogues.length; i++){
+
+            var j = 0;
+            ref.listDialogues[i].nextDialogue.forEach(function(nD){
+              if(nD.id > deleteIndex) {
+                ref.listDialogues[i].nextDialogue[j] = {id : nD.id -1, ii: nD.ii}; // this.listDialogues[i].nextDialogue[j]
+              }
+              j++;
+            });
+
+            j = 0;
+            var k = 0;
+            ref.listDialogues[i].previousDialogue.forEach(function(pD){
+              pD.forEach(function(prev){
+                if(prev.id > deleteIndex) {
+                  ref.listDialogues[i].previousDialogue[j][k] = {id : prev.id -1, ii: prev.ii}; //this.listDialogues[i].previousDialogue[j][k]
+                }
+                k++;
+              });
+              j++;
+            });
+
           }
-          j++;
-        });
 
-        j = 0;
-        var k = 0;
-        this.listDialogues[i].previousDialogue.forEach(function(pD){
-          pD.forEach(function(prev){
-            if(prev.id > deleteIndex) {
-              ref.listDialogues[i].previousDialogue[j][k] = {id : prev.id -1, ii: prev.ii}; //this.listDialogues[i].previousDialogue[j][k]
-            }
-            k++;
-          });
-          j++;
-        });
+          for(var o = 0; o<list.length; o++){
+            if(list[o].index > element.index) list[o].index--;
+          }
 
-      }
-
+        }
+      })
       this.contextMenuSelection=null;
     },
 
