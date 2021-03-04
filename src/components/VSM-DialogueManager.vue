@@ -60,7 +60,7 @@ import Vue from "vue";
 import testComp from './VSM-DialogueBlock';
 import condition from './VSM-DialogueConditionnalBlock';
 import contextMenu from './VSM-ContextMenu';
-import { removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
+import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from './../assets/base_dialogue.json';
 
 const baseDialogue = jsonBaseDialogue;
@@ -91,6 +91,7 @@ export default {
     selectingBox: false,
     selectingBoxContent: [],
     selectingBoxLoc: {x: 0,y:0},
+    lastSelectionGroup: null,
 
     justClick: false,
     panzoom: null,
@@ -243,14 +244,16 @@ export default {
     selectDialogue(data){
       if(this.selectingBox) return;
       this.justClick = true;
-      if(this.selectionDialogue.length > 0 && (!data.shift || data.e.button ==2)) this.stopSelecting(this.selectionDialogue, [data.index]);
       var index = this.selectionDialogue.findIndex(v => v.index === data.index);
       if(index === -1) {
+        if(this.selectionDialogue.length > 0 && (!data.shift || data.e.button ==2)) this.stopSelecting(this.selectionDialogue, [data.index]);
         this.selectionDialogue.push({
           index: data.index,
           offsetX: data.e.offsetX - this.listDialogues[data.index].x,
           offsetY: data.e.offsetY - this.listDialogues[data.index].y,
         });
+      } else {
+        this.lastSelectionGroup = {time: getDate(), index: data.index};
       }
       for(var i = 0; i<this.selectionDialogue.length;i++){
         this.selectionDialogue[i].offsetX = data.e.offsetX - this.listDialogues[this.selectionDialogue[i].index].x;
@@ -277,6 +280,12 @@ export default {
     mouseUp(e){
       if(this.selectionDialogue.length > 0){
         this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove);
+        if(this.lastSelectionGroup!=null){
+          if(getDate() - this.lastSelectionGroup.time < 150){
+            this.stopSelecting(this.selectionDialogue, [this.lastSelectionGroup.index])
+          }
+        }
+        this.lastSelectionGroup = null;
       }
       if(this.linkingBlock !== -1) {
         this.stopLinking();
