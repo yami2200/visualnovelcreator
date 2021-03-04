@@ -5,6 +5,9 @@ export const mix_dialogueblock = {
     data: () => ({
         selected: false,
         onePerInput: false,
+        contextMenuX: 0,
+        contextMenuY: 0,
+        itemContextMenu: ["Edit", "Break Input Links", "Break Output Links"],
     }),
 
     computed: {
@@ -35,12 +38,25 @@ export const mix_dialogueblock = {
     },
 
     methods: {
+        printDebug(text){
+            console.log(text);
+        },
         selecting(e){
             this.selected = true;
             this.$emit("selectD", {e:e, index: this.index});
         },
         unselect(){
             this.selected = false;
+        },
+        showContextMenu(e, type, indexIO){
+            if(type === "global"){
+                this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Input Links", action:"breakinputs"}, {title : "Break Output Links", action:"breakoutputs"}, {title : "Edit Dialogue", action:"editdialogue"}, {title : "Delete Dialogue", action:"deletedialogue"}]});
+            } else{
+                this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Links", action:"breaklinks"}]});
+            }
+        },
+        clickOnDialogue(){
+            console.log("clicked dialogue !")
         },
         linkEnd(e, ii, plugType){
             var indexI = ii;
@@ -69,11 +85,13 @@ export const mix_dialogueblock = {
             if(this.selected) this.unselect();
         },
         startLinkingFromOutput(e, indexO){
-            this.$emit("linkingOutput", {indexD: this.index, indexO: indexO, e:e, previous: this.dialogue.nextDialogue[indexO].id, previousI: this.dialogue.nextDialogue[indexO].ii});
-            this.dialogue.nextDialogue[indexO] = {id: -1, ii: 0};
+            if(e.button === 0){
+                this.$emit("linkingOutput", {indexD: this.index, indexO: indexO, e:e, previous: this.dialogue.nextDialogue[indexO].id, previousI: this.dialogue.nextDialogue[indexO].ii});
+                this.dialogue.nextDialogue[indexO] = {id: -1, ii: 0};
+            }
         },
         startLinkingFromInput(e, indexI){
-            this.$emit("linkingInput", {indexD: this.index, indexI: indexI, e:e});
+            if(e.button === 0) this.$emit("linkingInput", {indexD: this.index, indexI: indexI, e:e});
         },
         mouseEnter(){
             if(this.linkingblock != -1 && this.linkingblock != this.index){

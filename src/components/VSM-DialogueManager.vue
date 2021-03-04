@@ -1,5 +1,13 @@
 <template>
   <v-card :height="height+'px'" width="100%" class="overflow-hidden justify-center" @mouseleave="leaveDialogueManager">
+      <vsm-contextmenu
+          :bus="bus"
+          :item-context-menu="itemsMenu"
+          @editdialogue="editDialogue"
+          @breakinputs="breakInputLinks"
+          @breakoutputs="breakOutputLinks"
+          @breaklinks="breakLinks"
+      > </vsm-contextmenu>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
@@ -8,8 +16,8 @@
               <line v-if="linkingBlock != -1" pointer-events="none" :x1="linkingOutput==-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput==-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-dialogueblock v-if="value.type == 'dialogue'" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
-                <vsm-dialoguecondition v-if="value.type == 'condition'" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+                <vsm-dialogueblock v-if="value.type == 'dialogue'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
+                <vsm-dialoguecondition v-if="value.type == 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <!--<line v-if="valueL != -1" :x1="getOutputLocX(index, indexL, value.nextDialogue.length)" :y1="getOutputLocY(index)" :x2="getInputLocX(valueL)" :y2="getInputLocY(valueL)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line> -->
@@ -27,6 +35,8 @@
 import Vue from "vue";
 import testComp from './VSM-DialogueBlock';
 import condition from './VSM-DialogueConditionnalBlock';
+import contextMenu from './VSM-ContextMenu';
+import { removePreviousDialoguesFromOutput} from "@/lib";
 
 export default {
   name: "VSM-DialogueManager",
@@ -34,6 +44,7 @@ export default {
   components: {
     'vsm-dialogueblock' : testComp,
     'vsm-dialoguecondition' : condition,
+    'vsm-contextmenu' : contextMenu,
   },
 
   props: ['height', 'width'],
@@ -42,6 +53,9 @@ export default {
     xTest: 500,
     yTest: 500,
     color: "red",
+
+    itemsMenu: [{title : "yes", action : "test1"}, {title : "no", action : "test2"}],
+    contextMenuSelection: null,
 
     updateScroll: null,
     scrollDirLinking: [0,0],
@@ -245,16 +259,17 @@ export default {
         }
 
         this.stopLinking();
-        console.log(this.listDialogues);
       } else {
         if(this.listDialogues[data.indexD].nextDialogue.length === 0) return;
         if(this.listDialogues[data.indexD].nextDialogue[data.indexIO].id === this.linkingBlock && this.listDialogues[data.indexD].nextDialogue[data.indexIO].ii === this.linkingInput) return;
 
-        var oldNext = this.listDialogues[data.indexD].nextDialogue[data.indexIO];
+        removePreviousDialoguesFromOutput(this.listDialogues, data.indexD, data.indexIO);
+
+        /*var oldNext = this.listDialogues[data.indexD].nextDialogue[data.indexIO];
         if(oldNext.id != -1){
           if(this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].length <=1) this.listDialogues[oldNext.id].previousDialogue[oldNext.ii] = [{id: -1, ii:0}];
           else this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].splice(this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].findIndex(v => v.id === data.indexD && v.ii === data.indexIO), 1);
-        }
+        }*/
         this.listDialogues[data.indexD].nextDialogue[data.indexIO] = {id : this.linkingBlock, ii: this.linkingInput};
 
         if(this.listDialogues[this.linkingBlock].previousDialogue[this.linkingInput].length<=1) this.listDialogues[this.linkingBlock].previousDialogue[this.linkingInput] = [{id: data.indexD, ii:data.indexIO}]
@@ -325,7 +340,60 @@ export default {
     updatePlugsLocFromChild(data){
       this.listDialogues[data.index].outputsLoc = data.outputsLoc;
       this.listDialogues[data.index].inputsLoc = data.inputsLoc;
-    }
+    },
+
+    contextMenu(data){
+      this.itemsMenu = data.items;
+      this.contextMenuSelection = {index: data.indexD, type: data.type, indexIO: data.indexIO}
+      this.bus.$emit("showContextMenu", data.e);
+    },
+
+    editDialogue(){
+      console.log("edit dialogue");
+    },
+    breakLinks(){
+      if(this.contextMenuSelection==null) return;
+      if(this.contextMenuSelection.type == "input") this.breakInputLinks();
+      else if(this.contextMenuSelection.type == "output") this.breakOutputLinks();
+    },
+    breakInputLinks(){
+      if(this.contextMenuSelection==null) return;
+      var j = 0;
+      var i = 0;
+      if(this.contextMenuSelection.indexIO === -1){
+        for(j = 0; j<this.listDialogues[this.contextMenuSelection.index].previousDialogue.length ;j++){
+          for(i = 0; i<this.listDialogues[this.contextMenuSelection.index].previousDialogue[j].length; i++){
+            if(this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id !== -1) this.listDialogues[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id].nextDialogue[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].ii] = {id: -1, i:0};
+            this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i] = {id: -1, ii:0 };
+          }
+        }
+      } else {
+        j = this.contextMenuSelection.indexIO;
+        for(i = 0; i<this.listDialogues[this.contextMenuSelection.index].previousDialogue[j].length; i++){
+          if(this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id !== -1) this.listDialogues[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id].nextDialogue[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].ii] = {id: -1, i:0};
+          this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i] = {id: -1, ii:0 };
+        }
+      }
+      this.contextMenuSelection=null;
+      this.$forceUpdate();
+    },
+    breakOutputLinks(){
+      if(this.contextMenuSelection==null) return;
+      var i = 0;
+      if(this.contextMenuSelection.indexIO === -1){
+        for(i = 0; i<this.listDialogues[this.contextMenuSelection.index].nextDialogue.length ;i++){
+          removePreviousDialoguesFromOutput(this.listDialogues, this.contextMenuSelection.index, i);
+          this.listDialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
+        }
+      } else {
+        i = this.contextMenuSelection.indexIO;
+        removePreviousDialoguesFromOutput(this.listDialogues, this.contextMenuSelection.index, i);
+        this.listDialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
+      }
+      this.contextMenuSelection=null;
+      this.$forceUpdate();
+    },
+
   },
 
 }
