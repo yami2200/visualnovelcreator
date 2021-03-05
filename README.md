@@ -12,7 +12,7 @@ For every project, you will be able to manage all your assets in one app. Import
 ## 📢 Dialogue Manager :
 For your games, you will able to create all the dialogues and choices that the players will make.
 
-# ![Dialogue Manager Demo](README/DialogueManagerDemo.gif)
+# ![Dialogue Manager Demo](README/DialogueManagerDemov2.gif)
 
 ## ⚙ Tech :
 
