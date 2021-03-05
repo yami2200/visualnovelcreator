@@ -29,7 +29,7 @@
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
-            <svg :height="height+'px'" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
+            <svg :height="height+'px'" :style="{cursor: getCursor}" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
 
               <line v-if="linkingBlock != -1" pointer-events="none" :x1="linkingOutput==-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput==-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
@@ -100,6 +100,9 @@ export default {
     selectingBoxContent: [],
     selectingBoxLoc: {x: 0,y:0},
     lastSelectionGroup: null,
+    panButtonPress: false,
+
+    movingDialogue: false,
 
     justClick: false,
     panzoom: null,
@@ -231,6 +234,9 @@ export default {
     selectionBoxHeight(){
       return Math.abs(Math.max(this.selectingBoxLoc.y, this.mouseEvent.offsetY) - Math.min(this.selectingBoxLoc.y, this.mouseEvent.offsetY));
     },
+    getCursor(){
+      return (this.panButtonPress ? 'grabbing' : (this.movingDialogue ? 'move' : 'default'));
+    },
   },
 
   methods:{
@@ -273,7 +279,10 @@ export default {
       return this.selectionDialogue.length > 0 || this.linkingBlock !== -1 || e.button !==1;
     },
     mouseDownSVG(e){
-      if(e.button === 1 && e.buttons === 4) e.preventDefault();
+      if(e.button === 1 && e.buttons === 4) {
+        e.preventDefault();
+        this.panButtonPress = true;
+      }
       if(this.justClick){
         this.justClick = false;
         return;
@@ -281,8 +290,10 @@ export default {
       if(this.selectionDialogue.length > 0){
         this.stopSelecting(this.selectionDialogue);
       }
-      this.selectingBox = true;
-      this.selectingBoxLoc = {x: e.offsetX, y:e.offsetY};
+      if(!this.panButtonPress && e.button === 0 && e.button !== 2){
+        this.selectingBox = true;
+        this.selectingBoxLoc = {x: e.offsetX, y:e.offsetY};
+      }
     },
     mouseUp(e){
       if(this.selectionDialogue.length > 0){
@@ -300,6 +311,8 @@ export default {
       if(this.selectingBox) {
         this.endSelectingBox(e);
       }
+      if(this.panButtonPress) this.panButtonPress = false;
+      if(this.movingDialogue) this.movingDialogue = false;
     },
     stopSelecting(array, ignoreIndex){
       if(array === this.selectionDialogue) this.$refs.svgBox.removeEventListener('mousemove', this.mouseMove);
@@ -315,6 +328,7 @@ export default {
       this.selectionDialogue = newSelection;
     },
     mouseMove(e){
+      this.movingDialogue = true;
       var ref = this;
       this.selectionDialogue.forEach((element) => {
         ref.listDialogues[element.index].x = e.offsetX - element.offsetX;
@@ -455,6 +469,8 @@ export default {
       if(this.selectingBox){
         this.endSelectingBox(e);
       }
+      if(this.panButtonPress) this.panButtonPress = false;
+      if(this.movingDialogue) this.movingDialogue = false;
     },
 
     // ############################ LOCATIONS MANAGEMENT
@@ -649,5 +665,8 @@ export default {
 .selectionBox {
   fill: #1a91ff;
   opacity: 0.33;
+}
+.pan {
+  cursor: grabbing;
 }
 </style>
