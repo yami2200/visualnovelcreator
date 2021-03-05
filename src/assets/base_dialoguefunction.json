@@ -1,11 +1,10 @@
 {
-  "title" : "Conditionnal Block",
+  "title" : "Function Node",
   "x" : 0,
   "y" : 0,
-  "text" : "",
-  "type" : "condition",
-  "condition" : "",
-  "offsetLoc" : {"x" :  -10, "y" :  -7.5},
+  "type" : "function",
+  "action" : [],
+  "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [
     [{
       "id": -1,
@@ -15,19 +14,11 @@
   "nextDialogue" : [{
     "id": -1,
     "ii": 0
-  },
-    {
-      "id": -1,
-      "ii": 0
-    }],
+  }],
   "outputsLoc" : [{
     "x": 0,
     "y": 0
-  },
-    {
-      "x": 0,
-      "y": 0
-    }],
+  }],
   "inputsLoc" : [{
     "x": 0,
     "y": 0

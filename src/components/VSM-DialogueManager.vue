@@ -25,6 +25,8 @@
 
           @adddialogue="addDialogue('dialogue')"
           @addcondition="addDialogue('condition')"
+          @addfunctionnode="addDialogue('function')"
+
       > </vsm-contextmenu>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
@@ -36,6 +38,7 @@
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
                 <vsm-dialogueblock v-if="value.type == 'dialogue'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
                 <vsm-dialoguecondition v-if="value.type == 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+                <vsm-dialoguefunction v-if="value.type == 'function'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <line v-if="valueL.id != -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
@@ -65,13 +68,16 @@
 import Vue from "vue";
 import testComp from './VSM-DialogueBlock';
 import condition from './VSM-DialogueConditionnalBlock';
+import functionDia from './VSM-DialogueFunctionBlock';
 import contextMenu from './VSM-ContextMenu';
 import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from './../assets/base_dialogue.json';
 import jsonBaseDialogueCondition from './../assets/base_dialogueconditionnal.json';
+import jsonBaseDialogueFunction from './../assets/base_dialoguefunction.json';
 
 const baseDialogue = jsonBaseDialogue;
 const baseDialogueCondition = jsonBaseDialogueCondition;
+const baseDialogueFunction = jsonBaseDialogueFunction;
 
 export default {
   name: "VSM-DialogueManager",
@@ -79,6 +85,7 @@ export default {
   components: {
     'vsm-dialogueblock' : testComp,
     'vsm-dialoguecondition' : condition,
+    'vsm-dialoguefunction' : functionDia,
     'vsm-contextmenu' : contextMenu,
   },
 
@@ -544,6 +551,7 @@ export default {
           dialogue = JSON.parse(JSON.stringify(baseDialogueCondition));
           break;
         case 'function':
+          dialogue = JSON.parse(JSON.stringify(baseDialogueFunction));
           break;
         case 'transition':
           break;
@@ -665,8 +673,5 @@ export default {
 .selectionBox {
   fill: #1a91ff;
   opacity: 0.33;
-}
-.pan {
-  cursor: grabbing;
 }
 </style>
