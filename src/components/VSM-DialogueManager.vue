@@ -298,18 +298,7 @@ export default {
         this.stopLinking();
       }
       if(this.selectingBox) {
-        this.stopSelecting(this.selectionDialogue);
-        var ref = this;
-        this.selectingBoxContent.forEach(dialogue => {
-          this.selectDialogue({e:e, index: this.listDialogues.indexOf(dialogue), shift: true});
-          var index = ref.listDialogues.indexOf(dialogue);
-          ref.selectionDialogue.push({
-            index: ref.listDialogues.indexOf(dialogue),
-            offsetX: e.offsetX - ref.listDialogues[index].x,
-            offsetY: e.offsetY - ref.listDialogues[index].y,
-          });
-        });
-        this.selectingBox = false;
+        this.endSelectingBox(e);
       }
     },
     stopSelecting(array, ignoreIndex){
@@ -335,6 +324,20 @@ export default {
       /*this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
       this.listDialogues[this.selectedDialogue].y = e.offsetY - this.dragOffsetY;
       this.bus.$emit('moving'+this.selectedDialogue);*/
+    },
+    endSelectingBox(e){
+      this.stopSelecting(this.selectionDialogue);
+      var ref = this;
+      this.selectingBoxContent.forEach(dialogue => {
+        this.selectDialogue({e:e, index: this.listDialogues.indexOf(dialogue), shift: true});
+        var index = ref.listDialogues.indexOf(dialogue);
+        ref.selectionDialogue.push({
+          index: ref.listDialogues.indexOf(dialogue),
+          offsetX: e.offsetX - ref.listDialogues[index].x,
+          offsetY: e.offsetY - ref.listDialogues[index].y,
+        });
+      });
+      this.selectingBox = false;
     },
 
     // ############################# LINKING BEHAVIOR
@@ -445,13 +448,13 @@ export default {
         if(this.panzoom.getTransform().y != 0 && this.panzoom.getTransform().y > (-1)*this.height*(this.panzoom.getTransform().scale-1) + 10) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
       }, 20)
     },
-    leaveDialogueManager(){
+    leaveDialogueManager(e){
       if(this.linkingBlock != -1) {
         this.stopLinking();
       }
-      /*if(this.selectedDialogue != -1){
-        this.stopSelecting();
-      }*/
+      if(this.selectingBox){
+        this.endSelectingBox(e);
+      }
     },
 
     // ############################ LOCATIONS MANAGEMENT
