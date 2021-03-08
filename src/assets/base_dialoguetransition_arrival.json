@@ -1,0 +1,18 @@
+{
+  "title" : "Transition Page",
+  "x" : 0,
+  "y" : 0,
+  "type" : "transition",
+  "transition_index" : 0,
+  "offsetLoc" : {"x" :  -10, "y" :  -5},
+  "previousDialogue" : [],
+  "nextDialogue" : [{
+    "id": -1,
+    "ii": 0
+  }],
+  "outputsLoc" : [{
+    "x": 0,
+    "y": 0
+  }],
+  "inputsLoc" : []
+}

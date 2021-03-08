@@ -11,8 +11,8 @@
       @keyup.é="addDialogue('choices')"
       @keyup.51="addDialogue('condition')"
       @keyup.52="addDialogue('function')"
-      @keyup.53="addDialogue('transition')"
-      @keyup.54="addDialogue('input')"
+      @keyup.54="addDialogue('transition')"
+      @keyup.53="addDialogue('input')"
   >
       <vsm-contextmenu
           :bus="bus"
@@ -26,6 +26,7 @@
           @adddialogue="addDialogue('dialogue')"
           @addcondition="addDialogue('condition')"
           @addfunctionnode="addDialogue('function')"
+          @addinputnode="addDialogue('input')"
 
       > </vsm-contextmenu>
 
@@ -39,6 +40,7 @@
                 <vsm-dialogueblock v-if="value.type == 'dialogue'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
                 <vsm-dialoguecondition v-if="value.type == 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
                 <vsm-dialoguefunction v-if="value.type == 'function'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
+                <vsm-dialogueinput v-if="value.type == 'input'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <line v-if="valueL.id != -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
@@ -69,15 +71,18 @@ import Vue from "vue";
 import testComp from './VSM-DialogueBlock';
 import condition from './VSM-DialogueConditionnalBlock';
 import functionDia from './VSM-DialogueFunctionBlock';
+import inputDia from './VSM-DialogueInput';
 import contextMenu from './VSM-ContextMenu';
 import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from './../assets/base_dialogue.json';
 import jsonBaseDialogueCondition from './../assets/base_dialogueconditionnal.json';
 import jsonBaseDialogueFunction from './../assets/base_dialoguefunction.json';
+import jsonBaseDialogueInput from './../assets/base_dialogueinput.json';
 
 const baseDialogue = jsonBaseDialogue;
 const baseDialogueCondition = jsonBaseDialogueCondition;
 const baseDialogueFunction = jsonBaseDialogueFunction;
+const baseDialogueInput = jsonBaseDialogueInput;
 
 export default {
   name: "VSM-DialogueManager",
@@ -87,6 +92,7 @@ export default {
     'vsm-dialoguecondition' : condition,
     'vsm-dialoguefunction' : functionDia,
     'vsm-contextmenu' : contextMenu,
+    'vsm-dialogueinput' : inputDia,
   },
 
   props: ['height', 'width'],
@@ -493,7 +499,7 @@ export default {
     // ############################ CONTEXT MENU BEHAVIOR
     contextMenuDM(e){
       if(!this.contextMenuNode){
-        this.itemsMenu = [{title: "Add Dialogue", action: "adddialogue"},{title: "Add Dialogue Choices", action: "adddialoguechoices"}, {title: "Add Condition", action: "addcondition"}, {title: "Add Function Node", action: "addfunctionnode"}]
+        this.itemsMenu = [{title: "Add Dialogue", action: "adddialogue"},{title: "Add Dialogue Choices", action: "adddialoguechoices"}, {title: "Add Condition", action: "addcondition"}, {title: "Add Function Node", action: "addfunctionnode"}, {title: "Add Input Node", action: "addinputnode"}, {title: "Add Transition Node", action: "addtransitionnode"}]
         this.bus.$emit("showContextMenu", e);
       }
       this.contextMenuNode = false;
@@ -554,6 +560,9 @@ export default {
           dialogue = JSON.parse(JSON.stringify(baseDialogueFunction));
           break;
         case 'transition':
+          break;
+        case 'input':
+          dialogue = JSON.parse(JSON.stringify(baseDialogueInput));
           break;
       }
       if(dialogue == null) return;

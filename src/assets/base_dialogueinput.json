@@ -1,0 +1,27 @@
+{
+  "title" : "Input Node",
+  "x" : 0,
+  "y" : 0,
+  "type" : "input",
+  "input" : "text",
+  "variable" : "",
+  "offsetLoc" : {"x" :  -10, "y" :  -5},
+  "previousDialogue" : [
+    [{
+      "id": -1,
+      "ii": 0
+    }]
+  ],
+  "nextDialogue" : [{
+    "id": -1,
+    "ii": 0
+  }],
+  "outputsLoc" : [{
+    "x": 0,
+    "y": 0
+  }],
+  "inputsLoc" : [{
+    "x": 0,
+    "y": 0
+  }]
+}
