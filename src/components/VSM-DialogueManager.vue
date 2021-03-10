@@ -27,6 +27,7 @@
           @addcondition="addDialogue('condition')"
           @addfunctionnode="addDialogue('function')"
           @addinputnode="addDialogue('input')"
+          @addtransitionnode="addDialogue('transition')"
 
       > </vsm-contextmenu>
 
@@ -38,9 +39,10 @@
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
                 <vsm-dialogueblock v-if="value.type == 'dialogue'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
-                <vsm-dialoguecondition v-if="value.type == 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
-                <vsm-dialoguefunction v-if="value.type == 'function'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
-                <vsm-dialogueinput v-if="value.type == 'input'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
+                <vsm-dialoguecondition v-else-if="value.type == 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+                <vsm-dialoguefunction v-else-if="value.type == 'function'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
+                <vsm-dialogueinput v-else-if="value.type == 'input'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
+                <vsm-dialoguetransition v-else-if="value.type == 'transition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguetransition>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
                   <line v-if="valueL.id != -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
@@ -72,17 +74,21 @@ import testComp from './VSM-DialogueBlock';
 import condition from './VSM-DialogueConditionnalBlock';
 import functionDia from './VSM-DialogueFunctionBlock';
 import inputDia from './VSM-DialogueInput';
+import transitionDia from './VSM-DialogueTransitionPage';
 import contextMenu from './VSM-ContextMenu';
 import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from './../assets/base_dialogue.json';
 import jsonBaseDialogueCondition from './../assets/base_dialogueconditionnal.json';
 import jsonBaseDialogueFunction from './../assets/base_dialoguefunction.json';
 import jsonBaseDialogueInput from './../assets/base_dialogueinput.json';
+import jsonBaseDialogueTransitionEntry from './../assets/base_dialoguetransition_entry.json';
+//import jsonBaseDialogueTransitionArrival from './../assets/base_dialoguetransition_entry.json';
 
 const baseDialogue = jsonBaseDialogue;
 const baseDialogueCondition = jsonBaseDialogueCondition;
 const baseDialogueFunction = jsonBaseDialogueFunction;
 const baseDialogueInput = jsonBaseDialogueInput;
+const baseDialogueTransition = jsonBaseDialogueTransitionEntry;
 
 export default {
   name: "VSM-DialogueManager",
@@ -93,6 +99,7 @@ export default {
     'vsm-dialoguefunction' : functionDia,
     'vsm-contextmenu' : contextMenu,
     'vsm-dialogueinput' : inputDia,
+    'vsm-dialoguetransition' : transitionDia,
   },
 
   props: ['height', 'width'],
@@ -560,6 +567,7 @@ export default {
           dialogue = JSON.parse(JSON.stringify(baseDialogueFunction));
           break;
         case 'transition':
+          dialogue = JSON.parse(JSON.stringify(baseDialogueTransition));
           break;
         case 'input':
           dialogue = JSON.parse(JSON.stringify(baseDialogueInput));

@@ -1,0 +1,89 @@
+<template>
+  <g>
+    <rect
+        @mouseenter="mouseEnter"
+        @mouseleave="mouseLeave"
+        @mouseup="linkEnd($event, -1, 'global')"
+        @mousedown="selecting"
+        @dblclick="clickOnDialogue"
+        @contextmenu="showContextMenu($event, 'global', -1)"
+        fill="#be5cd1"
+        :stroke="selected ? '#e5ae00' : '#000000'"
+        stroke-width="0.5"
+        :x="dialogue.x"
+        :y="dialogue.y"
+        width="21"
+        height="10"
+        rx="1"
+        ry="1"/>
+
+    <rect
+        v-if="dialogue.nextDialogue.length==0"
+        @mouseenter="mouseEnter"
+        @mouseleave="mouseLeave"
+        @mouseup="linkEnd($event, 0, 'input')"
+        @mousedown="startLinkingFromInput($event, 0)"
+        @contextmenu="showContextMenu($event, 'input', 0)"
+        class="button_diag clickable"
+        stroke="#000000"
+        stroke-width="0.3"
+        :x="xChild"
+        :y="yTop"
+        width="5.5"
+        height="2"
+        rx="1"
+        ry="1"/>
+
+    <rect
+        v-if="dialogue.nextDialogue.length>0"
+        @mouseenter="mouseEnter"
+        @mouseleave="mouseLeave"
+        @mouseup="linkEnd($event, 0, 'output')"
+        @mousedown="startLinkingFromOutput($event, 0)"
+        @contextmenu="showContextMenu($event, 'output', 0)"
+        class="button_diag clickable"
+        stroke="#000000"
+        stroke-width="0.3"
+        :x="xChild"
+        :y="yBottom"
+        width="5.5"
+        height="2"
+        rx="1"
+        ry="1"/>
+
+    <text
+        pointer-events="none"
+        :x="xText"
+        :y="yText"
+        class="text"
+        font-family="Nunito"
+        :font-size="fontSizeText">
+      {{ textValue }}
+    </text>
+  </g>
+</template>
+
+<script>
+import { mix_dialogueblock } from "@/mixins/MIX_DialogueBlock";
+
+export default {
+  name: "VSM-DialogueTransitionPage",
+  mixins: [mix_dialogueblock],
+}
+</script>
+
+<style scoped>
+.button_diag {
+  fill: #451ca5;
+}
+
+.clickable:hover {
+  fill: #4c257c;
+  cursor: pointer;
+  transition: fill 0.3s;
+}
+
+.text {
+  user-select: none;
+}
+</style>
