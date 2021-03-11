@@ -7,7 +7,7 @@
         @mousedown="selecting"
         @dblclick="clickOnDialogue"
         @contextmenu="showContextMenu($event, 'global', -1)"
-        fill="#e38e27"
+        fill="#FF9D4F"
         :stroke="selected ? '#e5ae00' : '#000000'"
         stroke-width="0.5"
         :x="dialogue.x"
@@ -73,11 +73,11 @@ export default {
 
 <style scoped>
 .button_diag {
-  fill: #ae272c;
+  fill: #de6723;
 }
 
 .clickable:hover {
-  fill: #d95f5f;
+  fill: #ab4a2c;
   cursor: pointer;
   transition: fill 0.3s;
 }

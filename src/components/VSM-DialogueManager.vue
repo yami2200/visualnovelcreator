@@ -14,6 +14,13 @@
       @keyup.54="addDialogue('transition')"
       @keyup.53="addDialogue('input')"
   >
+    <vsm-tooltip
+      :bus="bus"
+      :text="textTooltip"
+    >
+
+    </vsm-tooltip>
+
       <vsm-contextmenu
           :bus="bus"
           :item-context-menu="itemsMenu"
@@ -28,6 +35,7 @@
           @addfunctionnode="addDialogue('function')"
           @addinputnode="addDialogue('input')"
           @addtransitionnode="addDialogue('transition')"
+          @adddialoguechoices="addDialogue('choices')"
 
       > </vsm-contextmenu>
 
@@ -35,17 +43,18 @@
 
             <svg :height="height+'px'" :style="{cursor: getCursor}" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
 
-              <line v-if="linkingBlock != -1" pointer-events="none" :x1="linkingOutput==-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput==-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
+              <line v-if="linkingBlock !== -1" pointer-events="none" :x1="linkingOutput===-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput===-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <vsm-dialogueblock v-if="value.type == 'dialogue'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
-                <vsm-dialoguecondition v-else-if="value.type == 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
-                <vsm-dialoguefunction v-else-if="value.type == 'function'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
-                <vsm-dialogueinput v-else-if="value.type == 'input'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
-                <vsm-dialoguetransition v-else-if="value.type == 'transition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguetransition>
+                <vsm-dialogueblock v-if="value.type === 'dialogue'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
+                <vsm-dialoguechoices v-if="value.type === 'choices'" @choiceHover="onChoiceHovered" @choiceStopHover="onChoiceStopHovered" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguechoices>
+                <vsm-dialoguecondition v-else-if="value.type === 'condition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+                <vsm-dialoguefunction v-else-if="value.type === 'function'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
+                <vsm-dialogueinput v-else-if="value.type === 'input'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
+                <vsm-dialoguetransition v-else-if="value.type === 'transition'" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguetransition>
 
                 <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
-                  <line v-if="valueL.id != -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
+                  <line v-if="valueL.id !== -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
                 </g>
               </g>
 
@@ -75,13 +84,16 @@ import condition from './VSM-DialogueConditionnalBlock';
 import functionDia from './VSM-DialogueFunctionBlock';
 import inputDia from './VSM-DialogueInput';
 import transitionDia from './VSM-DialogueTransitionPage';
+import choicesDia from './VSM-DialogueChoices';
 import contextMenu from './VSM-ContextMenu';
+import tooltip from './VSM-Tooltip';
 import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from './../assets/base_dialogue.json';
 import jsonBaseDialogueCondition from './../assets/base_dialogueconditionnal.json';
 import jsonBaseDialogueFunction from './../assets/base_dialoguefunction.json';
 import jsonBaseDialogueInput from './../assets/base_dialogueinput.json';
 import jsonBaseDialogueTransitionEntry from './../assets/base_dialoguetransition_entry.json';
+import jsonBaseDialogueChoices from './../assets/base_dialoguechoices.json';
 //import jsonBaseDialogueTransitionArrival from './../assets/base_dialoguetransition_entry.json';
 
 const baseDialogue = jsonBaseDialogue;
@@ -89,6 +101,7 @@ const baseDialogueCondition = jsonBaseDialogueCondition;
 const baseDialogueFunction = jsonBaseDialogueFunction;
 const baseDialogueInput = jsonBaseDialogueInput;
 const baseDialogueTransition = jsonBaseDialogueTransitionEntry;
+const baseDialogueChoices = jsonBaseDialogueChoices;
 
 export default {
   name: "VSM-DialogueManager",
@@ -100,6 +113,8 @@ export default {
     'vsm-contextmenu' : contextMenu,
     'vsm-dialogueinput' : inputDia,
     'vsm-dialoguetransition' : transitionDia,
+    'vsm-dialoguechoices' : choicesDia,
+    'vsm-tooltip' : tooltip,
   },
 
   props: ['height', 'width'],
@@ -113,6 +128,8 @@ export default {
     contextMenuSelection: null,
     contextMenuNode: false,
     mouseEvent: null,
+
+    textTooltip: "",
 
     updateScroll: null,
     scrollDirLinking: [0,0],
@@ -559,6 +576,7 @@ export default {
           dialogue = JSON.parse(JSON.stringify(baseDialogue));
           break;
         case 'choices':
+          dialogue = JSON.parse(JSON.stringify(baseDialogueChoices));
           break;
         case 'condition':
           dialogue = JSON.parse(JSON.stringify(baseDialogueCondition));
@@ -679,6 +697,15 @@ export default {
       }
       this.$forceUpdate();
       if(removeCMD) this.contextMenuSelection=null;
+    },
+
+    // ############################# CHOICES HOVERED
+    onChoiceHovered(data){
+      this.textTooltip = data.text;
+      this.bus.$emit("showTooltip", data.e);
+    },
+    onChoiceStopHovered(){
+      this.bus.$emit("hideTooltip");
     },
 
   },

@@ -7,7 +7,7 @@
         @mousedown="selecting"
         @dblclick="clickOnDialogue"
         @contextmenu="showContextMenu($event, 'global', -1)"
-        fill="#be5cd1"
+        fill="#5B4DB7"
         :stroke="selected ? '#e5ae00' : '#000000'"
         stroke-width="0.5"
         :x="dialogue.x"
