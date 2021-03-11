@@ -260,9 +260,11 @@ export default {
 
   computed : {
     selectionBoxX(){
+      if(this.mouseEvent == null) return this.selectingBoxLoc.x;
       return Math.min(this.selectingBoxLoc.x, this.mouseEvent.offsetX);
     },
     selectionBoxY(){
+      if(this.mouseEvent == null) return this.selectingBoxLoc.y;
       return Math.min(this.selectingBoxLoc.y, this.mouseEvent.offsetY);
     },
     selectionBoxWidth(){
@@ -329,6 +331,7 @@ export default {
       }
       if(!this.panButtonPress && e.button === 0 && e.button !== 2){
         this.selectingBox = true;
+        this.selectingBoxContent = [];
         this.selectingBoxLoc = {x: e.offsetX, y:e.offsetY};
       }
     },
@@ -362,6 +365,7 @@ export default {
           newSelection.push(element);
         }
       });
+      this.selectionDialogue.length = 0;
       this.selectionDialogue = newSelection;
     },
     mouseMove(e){
