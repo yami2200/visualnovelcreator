@@ -117,7 +117,7 @@ export default {
     'vsm-tooltip' : tooltip,
   },
 
-  props: ['height', 'width'],
+  props: ['height', 'width', 'listDialogues'],
 
   data : () => ({
     xTest: 500,
@@ -155,7 +155,7 @@ export default {
 
     selectionDialogue: [],
 
-    listDialogues: [
+    /*listDialogues: [
       {
         title : "Beginning",
         x : 500,
@@ -255,7 +255,7 @@ export default {
           y: 0
         }]
       },
-    ]
+    ]*/
   }),
 
   computed : {

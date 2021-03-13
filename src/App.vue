@@ -3,17 +3,18 @@
     <v-main>
       <vsm-menu-bar :height="height"></vsm-menu-bar>
 
+      <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage"></vsm-inputtext>
+
         <v-row no-gutters>
           <v-col cols="8">
             <!-- https://github.com/thecodealer/vue-panzoom -->
 
-                  <vsm-dialogue-manager :width="widthDialogPanel" :height="sizeDialogPanel">  </vsm-dialogue-manager>
+                  <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listPage[selectedDialoguePage].listDialogues">  </vsm-dialogue-manager>
 
 
           </v-col>
           <v-col cols="4">
-            <v-card height="30vh">
-            </v-card>
+            <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
             <vsm-assets-panel :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus"></vsm-assets-panel>
           </v-col>
         </v-row>
@@ -28,8 +29,13 @@ const remote = require('electron').remote;
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/VSM-AssetsPanel.vue';
 import DialogueManager from './components/VSM-DialogueManager.vue';
+import PagesPanel from './components/VSM-PagesPanel';
 import jsonAssets from './test/assets.json';
 import jsonProjectProperties from './test/project_properties.json';
+import jsonBasePage from './assets/base_page.json';
+import inputText from "@/components/VSM-InputTextModal";
+
+const basePage = jsonBasePage;
 
 export default {
   name: 'App',
@@ -38,6 +44,8 @@ export default {
     'vsm-menu-bar' : MenuBar,
     'vsm-assets-panel' : AssetsPanel,
     'vsm-dialogue-manager' : DialogueManager,
+    'vsm-pagespanel' : PagesPanel,
+    'vsm-inputtext' : inputText,
   },
 
   mounted() {
@@ -73,7 +81,37 @@ export default {
     },
     print() {
       console.log("text parent");
-    }
+    },
+    onSwitchPage(selectedPage){
+      if(selectedPage==null || selectedPage == undefined){
+        this.selectedDialoguePage = null;
+      } else {
+        this.selectedDialoguePage = selectedPage;
+      }
+    },
+    requestPage(data){
+      if(data.type === "new"){
+        this.listPage.push(JSON.parse(JSON.stringify(basePage)));
+      }
+      if(data.index == null || data.index == undefined) return;
+      if(data.type === "rename"){
+        this.bus.$emit("showInputText", this.listPage[data.index].title);
+      }
+      if(data.type === "delete"){
+        if(!this.listPage[this.selectedDialoguePage].unkillable){
+          this.deleteCurentPage();
+        }
+      }
+    },
+    renamePage(newname){
+      this.listPage[this.selectedDialoguePage].title = newname;
+    },
+    deleteCurentPage(){
+      var index = this.selectedDialoguePage;
+      this.bus.$emit("changeSelectedPage", index-1)
+      this.selectedDialoguePage = Math.max(0, index-1);
+      this.listPage.splice(index, 1);
+    },
   },
 
   computed: {
@@ -98,6 +136,19 @@ export default {
     bus: new Vue(),
     project_properties: jsonProjectProperties,
     minimized: false,
+    selectedDialoguePage: 0,
+    listPage: [
+      {
+        title : "First Page",
+        unkillable : true,
+        listDialogues: [],
+      },
+      {
+        title : "Untitled Page",
+        unkillable : false,
+        listDialogues: [],
+      },
+    ]
   }),
 
 
