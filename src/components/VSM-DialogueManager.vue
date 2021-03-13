@@ -542,7 +542,7 @@ export default {
     // ############################ INPUT (KEYBOARD MOUSE) MANAGEMENT
     deletePress(){
       if(this.selectionDialogue.length > 0){
-        this.contextMenuSelection = {index: this.selectionDialogue, type: "global", indexIO: -1};
+        this.contextMenuSelection = {index: JSON.parse(JSON.stringify(this.selectionDialogue)), type: "global", indexIO: -1};
         this.stopSelecting(this.selectionDialogue);
         this.deleteDialogue();
       }
