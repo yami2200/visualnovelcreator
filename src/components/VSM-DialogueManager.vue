@@ -13,7 +13,11 @@
       @keyup.52="addDialogue('function')"
       @keyup.54="addDialogue('transition')"
       @keyup.53="addDialogue('input')"
+
+      @keyup.f2="renameDialogueRequest"
   >
+    <vsm-inputtext :bus="bus" :maxLetters="30" :text="'Write a new name for your dialogue'+(selectionDialogue.length>1 ? 's' : '')+' :'" :headline="'Rename dialogue'+(selectionDialogue.length>1 ? 's' : '')" @accept="renameDialogues"></vsm-inputtext>
+
     <vsm-tooltip
       :bus="bus"
       :text="textTooltip"
@@ -94,6 +98,7 @@ import jsonBaseDialogueFunction from './../assets/base_dialoguefunction.json';
 import jsonBaseDialogueInput from './../assets/base_dialogueinput.json';
 import jsonBaseDialogueTransitionEntry from './../assets/base_dialoguetransition_entry.json';
 import jsonBaseDialogueChoices from './../assets/base_dialoguechoices.json';
+import inputText from "@/components/VSM-InputTextModal";
 //import jsonBaseDialogueTransitionArrival from './../assets/base_dialoguetransition_entry.json';
 
 const baseDialogue = jsonBaseDialogue;
@@ -115,6 +120,7 @@ export default {
     'vsm-dialoguetransition' : transitionDia,
     'vsm-dialoguechoices' : choicesDia,
     'vsm-tooltip' : tooltip,
+    'vsm-inputtext' : inputText,
   },
 
   props: ['height', 'width', 'listDialogues'],
@@ -710,6 +716,21 @@ export default {
     },
     onChoiceStopHovered(){
       this.bus.$emit("hideTooltip");
+    },
+
+    // ################################# RENAME DIALOGUE
+    renameDialogueRequest(){
+      if(this.selectionDialogue.length==0) return;
+      this.bus.$emit("showInputText", this.listDialogues[this.selectionDialogue[0].index].title);
+    },
+    renameDialogues(newname){
+      if(this.selectionDialogue.length==0) return;
+      var index = 1;
+      var ref = this;
+      this.selectionDialogue.forEach((element) => {
+        ref.listDialogues[element.index].title = newname+(index==1 ? '' : '_'+index);
+        index++;
+      });
     },
 
   },
