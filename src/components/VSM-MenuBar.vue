@@ -6,11 +6,11 @@
           name="File"
           :height="height"
           sizeHeight=3
-          @newproject="newProjectButton"
-          @openproject="openProjectButton"
-          @save="saveProjectButton"
-          @saveas="saveAsProjectButton"
-          @exit="exitButton">
+          @newproject="bus.$emit('newproject')"
+          @openproject="bus.$emit('openproject')"
+          @save="bus.$emit('save')"
+          @saveas="bus.$emit('saveas')"
+          @exit="bus.$emit('exit')">
       </vsm-dropdown-menu>
       <vsm-dropdown-menu
           :items="EditItems"
@@ -44,7 +44,7 @@ export default {
     'vsm-dropdown-menu' : Dropdown
   },
 
-  props : ['height'],
+  props : ['height', 'bus'],
 
   data: () => ({
     w: remote.getCurrentWindow(),
@@ -61,6 +61,10 @@ export default {
         action: "exit"},
     ],
     EditItems: [
+      {title: "Variables",
+        action: "variablespanel"},
+      {title: "Custom Functions",
+        action: "functionspanel"},
       {title: "Project Properties",
       action: "projectproperties"},
       {title: "App Preferences",

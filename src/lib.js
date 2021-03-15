@@ -54,4 +54,24 @@ function squareIntoSelection(minX, maxX, minY, maxY, x, y, width, height){
     );
 }
 
-export {readFileSync, writeFile, renameFile, deleteFile, existFile, getDate, removePreviousDialoguesFromOutput, squareIntoSelection};
+function createFileProject(directory, properties, assets){
+    if(!fs.existsSync(directory)) return;
+    var propertiesWrite = JSON.parse(JSON.stringify(properties));
+    propertiesWrite.directory = directory+"\\"+properties.name+"\\";
+
+    var folderAssets = ["Characters","Musics","Objects","Scenes","Sounds"];
+
+    folderAssets.forEach((dir) => {
+        try {
+            fs.mkdirSync(propertiesWrite.directory+"Assets\\"+dir+"\\", { recursive: true });
+        } catch (err) {
+            if (err.code !== 'EEXIST') throw err
+        }
+    });
+
+    writeFile(propertiesWrite.directory+properties.name+".vsm", JSON.stringify(propertiesWrite));
+    writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
+
+}
+
+export {readFileSync, writeFile, renameFile, deleteFile, existFile, getDate, removePreviousDialoguesFromOutput, squareIntoSelection, createFileProject};

@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-main>
-      <vsm-menu-bar :height="height"></vsm-menu-bar>
-
+      <vsm-menu-bar :bus="bus" :height="height"></vsm-menu-bar>
+      <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage"></vsm-inputtext>
 
         <v-row no-gutters>
@@ -26,6 +26,8 @@
 import Vue from "vue";
 
 const remote = require('electron').remote;
+const {dialog} = require('electron').remote;
+
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/VSM-AssetsPanel.vue';
 import DialogueManager from './components/VSM-DialogueManager.vue';
@@ -34,6 +36,10 @@ import jsonAssets from './test/assets.json';
 import jsonProjectProperties from './test/project_properties.json';
 import jsonBasePage from './assets/base_page.json';
 import inputText from "@/components/VSM-InputTextModal";
+import newProject from "@/components/VSM-NewProjectModal";
+import jsonBaseAsset from './assets/base_assets.json';
+
+import {createFileProject, readFileSync} from "@/lib";
 
 const basePage = jsonBasePage;
 
@@ -46,10 +52,16 @@ export default {
     'vsm-dialogue-manager' : DialogueManager,
     'vsm-pagespanel' : PagesPanel,
     'vsm-inputtext' : inputText,
+    'vsm-newproject-modal' : newProject,
   },
 
   mounted() {
     this.bus.$on('testParent', this.print);
+    this.bus.$on('newproject', this.newProjectButton);
+    this.bus.$on('openproject', this.openProjectButton);
+    this.bus.$on('save', this.saveProjectButton);
+    this.bus.$on('saveas', this.saveAsProjectButton);
+    this.bus.$on('exit', this.exitButton);
   },
 
   created() {
@@ -111,6 +123,51 @@ export default {
       this.bus.$emit("changeSelectedPage", index-1)
       this.selectedDialoguePage = Math.max(0, index-1);
       this.listPage.splice(index, 1);
+    },
+
+    loadProjectFromProperties(){
+
+    },
+
+    // ######################### FILE MENU
+    newProjectButton() {
+      this.bus.$emit("showNewProjectModal");
+    },
+    newProjectCreated(data){
+      this.assets = JSON.parse(JSON.stringify(jsonBaseAsset));
+      createFileProject(data.directory, data, this.assets)
+      this.project_properties = data;
+      this.project_properties.directory = data.directory+"\\"+data.name+"\\";
+    },
+    openProjectButton() {
+      var path = dialog.showOpenDialogSync({
+        properties: ["openFile"],
+        filters: [
+          { name : 'Visual Novel Maker Project', extensions: ['vsm'] }
+          ],
+      });
+      if(path == null || path == undefined) return;
+      var file_properties = null;
+      if(path.length>0) file_properties = JSON.parse(readFileSync(path[0]));
+      if(file_properties!=null){
+        var realpath = path[0].substring(0, path[0].lastIndexOf("\\"));
+        file_properties.directory = realpath+"\\";
+        var assetsTempo = JSON.parse(readFileSync(file_properties.directory+"assets.json"));
+        if(assetsTempo!=null){
+          this.project_properties = file_properties;
+          this.assets = assetsTempo;
+        }
+      }
+    },
+    saveProjectButton(){
+
+      console.log("Save project");
+    },
+    saveAsProjectButton(){
+      console.log("Save as project");
+    },
+    exitButton(){
+      this.w.close()
     },
   },
 
