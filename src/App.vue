@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <vsm-menu-bar :bus="bus" :height="height"></vsm-menu-bar>
+      <vsm-menu-bar :loading="processing" :bus="bus" :height="height"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage"></vsm-inputtext>
         <v-row no-gutters>
@@ -130,10 +130,14 @@ export default {
       this.bus.$emit("showNewProjectModal");
     },
     newProjectCreated(data){
+      this.processing = true;
+
       this.assets = JSON.parse(JSON.stringify(jsonBaseAsset));
       createFileProject(data.directory, data, this.assets)
       this.project_properties = data;
       this.project_properties.directory = data.directory+"\\"+data.name+"\\";
+
+      this.endProcessing();
     },
     openProjectButton() {
       var path = dialog.showOpenDialogSync({
@@ -156,17 +160,21 @@ export default {
       }
     },
     saveProjectButton(){
-      console.log("save");
-      this.saving = true;
+      this.processing = true;
+
       saveProperties(this.project_properties)
       saveAssets(this.project_properties, this.assets);
-      setTimeout(function(){ this.saving = false; console.log("end save"); }, 100);
+
+      this.endProcessing();
     },
     saveAsProjectButton(){
       var path = dialog.showOpenDialogSync({
         properties: ["openDirectory"],
       });
       if(path == null || path == undefined || path.length==0) return;
+
+      this.processing = true;
+
       const realpath = path[0]+"\\";
       var tempoProperties = JSON.parse(JSON.stringify(this.project_properties));
       tempoProperties.directory = realpath+this.project_properties.name+"\\";
@@ -178,6 +186,8 @@ export default {
       fse.copySync(srcDir, destDir,{ overwrite: true });
 
       this.project_properties = tempoProperties;
+
+      this.endProcessing();
     },
     exitButton(){
       this.w.close()
@@ -194,6 +204,12 @@ export default {
             break;
         }
       }
+    },
+    endProcessing(){
+      setTimeout(() => {
+        this.processing = false;
+        console.log(this.processing);
+      }, 300);
     },
   },
 
@@ -215,7 +231,7 @@ export default {
   data: () => ({
     height: window.innerHeight,
     width: window.innerWidth,
-    saving: false,
+    processing : false,
     assets : jsonAssets,
     bus: new Vue(),
     project_properties: jsonProjectProperties,

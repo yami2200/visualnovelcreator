@@ -29,6 +29,30 @@
           @websiteauthor="authorwebsiteLink">
       </vsm-dropdown-menu>
     </v-toolbar-items>
+    <v-spacer></v-spacer>
+    <v-row
+        class="fill-height"
+        align-content="center"
+        justify="center"
+    >
+      <v-col
+          class="subtitle-1"
+          cols="10"
+      ></v-col>
+      <v-col
+          class="subtitle-1"
+          cols="2"
+      >
+        <v-progress-linear
+            striped
+            height="10"
+            color="lime"
+            class="mb-8"
+            :indeterminate="loading"
+            :active="loading"
+        ></v-progress-linear>
+      </v-col></v-row>
+
   </v-app-bar>
 </template>
 
@@ -44,7 +68,7 @@ export default {
     'vsm-dropdown-menu' : Dropdown
   },
 
-  props : ['height', 'bus'],
+  props : ['height', 'bus','loading'],
 
   data: () => ({
     w: remote.getCurrentWindow(),
