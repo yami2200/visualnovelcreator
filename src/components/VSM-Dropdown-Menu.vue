@@ -12,6 +12,8 @@
           v-for="(item, index) in items"
           :key="index"
           @click="$emit(item.action)"
+          dense
+          class="listBtn"
       >
         <v-list-item-title>{{ item.title }}</v-list-item-title>
       </v-list-item>
@@ -60,6 +62,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+::v-deep .listBtn {
+  max-height: 5px !important;
+}
 
 </style>
