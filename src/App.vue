@@ -39,7 +39,8 @@ import inputText from "@/components/VSM-InputTextModal";
 import newProject from "@/components/VSM-NewProjectModal";
 import jsonBaseAsset from './assets/base_assets.json';
 
-import {createFileProject, readFileSync} from "@/lib";
+import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";
+const fse = require('fs-extra');
 
 const basePage = jsonBasePage;
 
@@ -125,10 +126,6 @@ export default {
       this.listPage.splice(index, 1);
     },
 
-    loadProjectFromProperties(){
-
-    },
-
     // ######################### FILE MENU
     newProjectButton() {
       this.bus.$emit("showNewProjectModal");
@@ -160,11 +157,25 @@ export default {
       }
     },
     saveProjectButton(){
-
-      console.log("Save project");
+      saveProperties(this.project_properties)
+      saveAssets(this.project_properties, this.assets);
     },
     saveAsProjectButton(){
-      console.log("Save as project");
+      var path = dialog.showOpenDialogSync({
+        properties: ["openDirectory"],
+      });
+      if(path == null || path == undefined || path.length==0) return;
+      const realpath = path[0]+"\\";
+      var tempoProperties = JSON.parse(JSON.stringify(this.project_properties));
+      tempoProperties.directory = realpath+this.project_properties.name+"\\";
+      createFileProject(realpath, tempoProperties, this.assets)
+
+      const srcDir = this.project_properties.directory + "Assets\\";
+      const destDir = tempoProperties.directory+"Assets\\";
+
+      fse.copySync(srcDir, destDir,{ overwrite: true });
+
+      this.project_properties = tempoProperties;
     },
     exitButton(){
       this.w.close()

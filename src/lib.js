@@ -74,4 +74,12 @@ function createFileProject(directory, properties, assets){
 
 }
 
-export {readFileSync, writeFile, renameFile, deleteFile, existFile, getDate, removePreviousDialoguesFromOutput, squareIntoSelection, createFileProject};
+function saveProperties(properties){
+    writeFile(properties.directory+properties.name+".vsm", JSON.stringify(properties));
+}
+
+function saveAssets(properties, assets){
+    writeFile(properties.directory+"Assets.json", JSON.stringify(assets));
+}
+
+export {readFileSync, writeFile, renameFile, deleteFile, existFile, getDate, removePreviousDialoguesFromOutput, squareIntoSelection, createFileProject, saveProperties, saveAssets};
