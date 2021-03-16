@@ -1,6 +1,7 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcRenderer } from 'electron'
+
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -29,6 +30,10 @@ async function createWindow() {
   win.on('close', function(e) {
     e.preventDefault();
     win.destroy();
+  });
+
+  win.webContents.on("before-input-event", (event, input) => {
+    win.webContents.send("shortcut", input)
   });
 
   win.on('page-title-updated', function(e) {

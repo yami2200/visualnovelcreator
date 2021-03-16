@@ -4,14 +4,9 @@
       <vsm-menu-bar :bus="bus" :height="height"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage"></vsm-inputtext>
-
         <v-row no-gutters>
           <v-col cols="8">
-            <!-- https://github.com/thecodealer/vue-panzoom -->
-
-                  <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listPage[selectedDialoguePage].listDialogues">  </vsm-dialogue-manager>
-
-
+            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listPage[selectedDialoguePage].listDialogues">  </vsm-dialogue-manager>
           </v-col>
           <v-col cols="4">
             <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
@@ -27,6 +22,7 @@ import Vue from "vue";
 
 const remote = require('electron').remote;
 const {dialog} = require('electron').remote;
+const render = require('electron').ipcRenderer;
 
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/VSM-AssetsPanel.vue';
@@ -63,6 +59,9 @@ export default {
     this.bus.$on('save', this.saveProjectButton);
     this.bus.$on('saveas', this.saveAsProjectButton);
     this.bus.$on('exit', this.exitButton);
+    render.on('shortcut', (event, message) => {
+      if(event.senderId === 0) this.shortcuts(message);
+    })
   },
 
   created() {
@@ -157,8 +156,11 @@ export default {
       }
     },
     saveProjectButton(){
+      console.log("save");
+      this.saving = true;
       saveProperties(this.project_properties)
       saveAssets(this.project_properties, this.assets);
+      setTimeout(function(){ this.saving = false; console.log("end save"); }, 100);
     },
     saveAsProjectButton(){
       var path = dialog.showOpenDialogSync({
@@ -180,6 +182,19 @@ export default {
     exitButton(){
       this.w.close()
     },
+
+    // ############################# INPUTS
+    shortcuts(event){
+      if(event.type === "keyUp"){
+        switch (event.key){
+          case "s":
+            if(event.control) {
+              this.saveProjectButton();
+            }
+            break;
+        }
+      }
+    },
   },
 
   computed: {
@@ -200,6 +215,7 @@ export default {
   data: () => ({
     height: window.innerHeight,
     width: window.innerWidth,
+    saving: false,
     assets : jsonAssets,
     bus: new Vue(),
     project_properties: jsonProjectProperties,
