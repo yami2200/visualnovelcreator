@@ -94,6 +94,7 @@ export default {
     print() {
       console.log("text parent");
     },
+    // ######################## PAGES MANAGEMENT
     onSwitchPage(selectedPage){
       if(selectedPage==null || selectedPage == undefined){
         this.selectedDialoguePage = null;

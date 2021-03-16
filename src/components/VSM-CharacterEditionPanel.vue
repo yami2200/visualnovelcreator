@@ -154,20 +154,21 @@
 <script>
 import jsonBaseCharacter from './../assets/base_characters.json';
 import {readFileSync, writeFile, renameFile, deleteFile, getDate} from './../lib.js';
+import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseCharacter = jsonBaseCharacter;
 
 export default {
   name: "VSM-CharacterEditionPanel",
 
+  mixins: [mix_editassetpanel],
+
   data () {
     return {
-      dialog: false,
+      type:"CharacterEditPanel",
+      indexAsset: 0,
       baseImage: null,
       currentCharacter: null,
-      editionMode : false,
-      indexEdition: 0,
-      previousName: "",
       imageImportList: [],
       rules: {
         required: value => !!value || 'Required.',
@@ -196,12 +197,6 @@ export default {
     },
   },
 
-  props: {
-    bus: {required: true},
-    assets: {required: true},
-    projectProp : {required: true},
-  },
-
   methods: {
     show() {
 
@@ -223,13 +218,6 @@ export default {
         this.baseImage = null;
       }
       this.dialog = true;
-    },
-    hide() {
-      this.dialog = false;
-    },
-    cancel() {
-      this.hide();
-      this.$emit("cancel");
     },
     save() {
       if(this.canSave) {
@@ -349,14 +337,6 @@ export default {
     }
   },
 
-  mounted() {
-    this.bus.$on('showCharacterEditPanel', (data) => {
-      this.editionMode = data.type;
-      this.indexEdition = data.index;
-      this.show();
-    });
-    this.bus.$on('hideCharacterEditPanel', this.hide)
-  },
 }
 </script>
 

@@ -77,6 +77,7 @@
 <script>
 import jsonBaseCharacter from './../assets/base_characters.json';
 import {readFileSync, writeFile, renameFile, deleteFile, getDate} from './../lib.js';
+import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseScene = jsonBaseCharacter;
 
@@ -84,20 +85,16 @@ export default {
   name: "VSM-SceneEditPanel",
 
   props: {
-    bus: {required: true},
-    assets: {required: true},
-    projectProp : {required: true},
     height: {required: true},
   },
 
+  mixins: [mix_editassetpanel],
+
   data () {
     return {
-      dialog: false,
+      type:"SceneEditPanel",
       baseImage: null,
       currentScene: null,
-      editionMode : false,
-      indexEdition: 0,
-      previousName: "",
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
@@ -132,13 +129,6 @@ export default {
         this.baseImage = null;
       }
       this.dialog = true;
-    },
-    hide() {
-      this.dialog = false;
-    },
-    cancel(){
-      this.hide();
-      this.$emit("cancel");
     },
     save(){
       if(this.canSave) {
@@ -185,14 +175,6 @@ export default {
     }
   },
 
-  mounted() {
-    this.bus.$on('showSceneEditPanel', (data) => {
-      this.editionMode = data.type;
-      this.indexEdition = data.index;
-      this.show();
-    });
-    this.bus.$on('hideSceneEditPanel', this.hide);
-  },
 }
 </script>
 

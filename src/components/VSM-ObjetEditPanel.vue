@@ -78,26 +78,20 @@
 <script>
 import jsonBaseObject from './../assets/base_object.json';
 import {deleteFile, getDate, readFileSync, renameFile, writeFile} from "@/lib";
+import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseObject = jsonBaseObject;
 
 export default {
   name: "VSM-ObjetEditPanel",
 
-  props: {
-    bus: {required: true},
-    assets: {required: true},
-    projectProp : {required: true},
-  },
+  mixins: [mix_editassetpanel],
 
   data () {
     return {
-      dialog: false,
+      type: "ObjectEditPanel",
       baseImage: null,
       currentObject: null,
-      editionMode : false,
-      indexEdition: 0,
-      previousName: "",
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
@@ -129,13 +123,6 @@ export default {
         this.baseImage = null;
       }
       this.dialog = true;
-    },
-    hide() {
-      this.dialog = false;
-    },
-    cancel(){
-      this.hide();
-      this.$emit("cancel");
     },
     save(){
       if(this.canSave) {
@@ -182,14 +169,6 @@ export default {
     }
   },
 
-  mounted() {
-    this.bus.$on('showObjectEditPanel', (data) => {
-      this.editionMode = data.type;
-      this.indexEdition = data.index;
-      this.show();
-    });
-    this.bus.$on('hideObjectEditPanel', this.hide);
-  },
 }
 </script>
 

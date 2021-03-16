@@ -73,6 +73,7 @@ import {deleteFile, getDate, readFileSync, renameFile, writeFile} from "@/lib";
 import AudioPlayer from './VSM-Audio-Player';
 import jsonBaseSound from "@/assets/base_sound.json";
 import Vue from "vue";
+import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseSound = jsonBaseSound;
 
@@ -83,20 +84,13 @@ export default {
     'vsm-audioplayer' : AudioPlayer,
   },
 
-  props: {
-    bus: {required: true},
-    assets: {required: true},
-    projectProp : {required: true},
-  },
+  mixins: [mix_editassetpanel],
 
   data () {
     return {
-      dialog: false,
+      type:"SoundEditPanel",
       soundInputFile: null,
       currentSound: null,
-      editionMode : false,
-      indexEdition: 0,
-      previousName: "",
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
@@ -141,10 +135,6 @@ export default {
     hide() {
       this.audiobus.$emit('newAudio', null);
       this.dialog = false;
-    },
-    cancel(){
-      this.hide();
-      this.$emit("cancel");
     },
     save(){
       if(this.canSave) {
@@ -198,15 +188,6 @@ export default {
     onChangeVolume(){
       this.audiobus.$emit('changeVolume', this.volume);
     },
-  },
-
-  mounted() {
-    this.bus.$on('showSoundEditPanel', (data) => {
-      this.editionMode = data.type;
-      this.indexEdition = data.index;
-      this.show();
-    });
-    this.bus.$on('hideSoundEditPanel', this.hide);
   },
 
 }
