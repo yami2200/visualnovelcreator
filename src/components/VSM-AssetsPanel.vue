@@ -8,6 +8,13 @@
     <vsm-sound-edit-modal @accept="saveEditSound" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-sound-edit-modal>
     <vsm-music-edit-modal @accept="saveEditMusic" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-music-edit-modal>
 
+    <vsm-contextmenu
+        :bus="bus"
+        :item-context-menu="itemsMenu"
+        @editasset="editAssetRequest"
+        @deleteasset="deleteAssetsRequest"
+    > </vsm-contextmenu>
+
     <v-tabs
         v-model="tab"
         icon
@@ -54,6 +61,7 @@
             <v-list-item
                 v-for="(iteml, i) in item.content"
                 :key="i"
+                @contextmenu="contextMenuClick($event, i)"
             >
               <v-list-item-avatar v-if="item.type == 'Characters' || item.type == 'Scenes' || item.type == 'Objects'">
                 <v-img :src="project_prop.directory + 'Assets\\' + item.type + '\\' + iteml.img"></v-img>
@@ -106,6 +114,7 @@ import ObjectEditPanel from './VSM-ObjetEditPanel';
 import SoundEditPanel from './VSM-Sound-Edit-Panel';
 import MusicEditPanel from './VSM-Music-Edit-Panel';
 import {deleteFile} from './../lib.js';
+import contextMenu from "@/components/VSM-ContextMenu";
 
 export default {
   name: "VSM-AssetsPanel",
@@ -124,6 +133,7 @@ export default {
     'vsm-object-edit-modal' :ObjectEditPanel,
     'vsm-sound-edit-modal' : SoundEditPanel,
     'vsm-music-edit-modal' : MusicEditPanel,
+    'vsm-contextmenu' : contextMenu,
   },
 
   computed: {
@@ -148,6 +158,7 @@ export default {
     textCRM: "",
     EditionMode: true,
     EditionIndex: 0,
+    itemsMenu: [],
   }),
 
   methods: {
@@ -242,7 +253,14 @@ export default {
     },
     saveEditMusic(){
       this.$forceUpdate();
-    }
+    },
+
+    contextMenuClick(e, index){
+      this.itemsMenu = [{title: "Edit Asset", action: "editasset"},{title: "Delete Asset", action: "deleteasset"}]
+      var indextab = this.tab.substring(4,5)-1;
+      this.selectedItem[indextab] = index;
+      this.bus.$emit("showContextMenu", e);
+    },
   },
 
 }
