@@ -1,6 +1,13 @@
 <template>
   <v-card height="30vh">
 
+    <vsm-contextmenu
+        :bus="bus"
+        :item-context-menu="itemsMenu"
+        @editpage="renameRequest"
+        @deletepage="deletePageRequest"
+    > </vsm-contextmenu>
+
     <v-list shaped height="25vh" class="overflow-y-auto">
       <v-list-item-group
           mandatory
@@ -11,6 +18,7 @@
             v-for="(item, i) in listPage"
             :key="i"
             @click="onChange"
+            @contextmenu="contextMenuClick($event, i)"
         >
           <v-list-item-icon>
             <v-icon> mdi-book-open-page-variant-outline </v-icon>
@@ -48,13 +56,20 @@
 </template>
 
 <script>
+import contextMenu from "@/components/VSM-ContextMenu";
+
 export default {
   name: "VSM-PagesPanel",
 
   props:['listPage', 'bus'],
 
+  components:{
+    'vsm-contextmenu' : contextMenu,
+  },
+
   data: () => ({
     selectedItem: null,
+    itemsMenu: [],
   }),
 
   computed: {
@@ -82,6 +97,13 @@ export default {
       if(newIndex<0) this.selectedItem = 0;
       else this.selectedItem = newIndex;
     },
+
+    contextMenuClick(e, index){
+      this.itemsMenu = [{title: "Rename Page", action: "editpage"},{title: "Delete Page", action: "deletepage"}]
+      this.selectedItem = index;
+      this.bus.$emit("showContextMenu", e);
+    },
+
   },
 
   mounted() {
