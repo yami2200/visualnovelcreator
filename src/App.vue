@@ -25,13 +25,13 @@ const {dialog} = require('electron').remote;
 const render = require('electron').ipcRenderer;
 
 import MenuBar from './components/VSM-MenuBar.vue';
-import AssetsPanel from './components/VSM-AssetsPanel.vue';
-import DialogueManager from './components/VSM-DialogueManager.vue';
-import PagesPanel from './components/VSM-PagesPanel';
+import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
+import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
+import PagesPanel from './components/pages/VSM-PagesPanel';
 import jsonAssets from './test/assets.json';
 import jsonProjectProperties from './test/project_properties.json';
 import jsonBasePage from './assets/base_page.json';
-import inputText from "@/components/VSM-InputTextModal";
+import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import newProject from "@/components/VSM-NewProjectModal";
 import jsonBaseAsset from './assets/base_assets.json';
 

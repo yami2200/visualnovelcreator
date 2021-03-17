@@ -107,13 +107,13 @@
 </template>
 
 <script>
-import ConfirmationRequest from './VSM-ConfirmationRequestModal.vue';
-import CharacterEdition from './VSM-CharacterEditionPanel.vue';
-import SceneEditPanel from './VSM-SceneEditPanel';
-import ObjectEditPanel from './VSM-ObjetEditPanel';
-import SoundEditPanel from './VSM-Sound-Edit-Panel';
-import MusicEditPanel from './VSM-Music-Edit-Panel';
-import {deleteFile} from './../lib.js';
+import ConfirmationRequest from '../modalrequest/VSM-ConfirmationRequestModal.vue';
+import CharacterEdition from './editpanel/VSM-CharacterEditionPanel.vue';
+import SceneEditPanel from './editpanel/VSM-SceneEditPanel';
+import ObjectEditPanel from './editpanel/VSM-ObjetEditPanel';
+import SoundEditPanel from './editpanel/VSM-Sound-Edit-Panel';
+import MusicEditPanel from './editpanel/VSM-Music-Edit-Panel';
+import {deleteFile} from '../../lib.js';
 import contextMenu from "@/components/VSM-ContextMenu";
 
 export default {

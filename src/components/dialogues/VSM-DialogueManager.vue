@@ -83,22 +83,22 @@
 
 <script>
 import Vue from "vue";
-import testComp from './VSM-DialogueBlock';
-import condition from './VSM-DialogueConditionnalBlock';
-import functionDia from './VSM-DialogueFunctionBlock';
-import inputDia from './VSM-DialogueInput';
-import transitionDia from './VSM-DialogueTransitionPage';
-import choicesDia from './VSM-DialogueChoices';
-import contextMenu from './VSM-ContextMenu';
-import tooltip from './VSM-Tooltip';
+import testComp from './nodes/VSM-DialogueBlock';
+import condition from './nodes/VSM-DialogueConditionnalBlock';
+import functionDia from './nodes/VSM-DialogueFunctionBlock';
+import inputDia from './nodes/VSM-DialogueInput';
+import transitionDia from './nodes/VSM-DialogueTransitionPage';
+import choicesDia from './nodes/VSM-DialogueChoices';
+import contextMenu from '../VSM-ContextMenu';
+import tooltip from '../VSM-Tooltip';
 import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
-import jsonBaseDialogue from './../assets/base_dialogue.json';
-import jsonBaseDialogueCondition from './../assets/base_dialogueconditionnal.json';
-import jsonBaseDialogueFunction from './../assets/base_dialoguefunction.json';
-import jsonBaseDialogueInput from './../assets/base_dialogueinput.json';
-import jsonBaseDialogueTransitionEntry from './../assets/base_dialoguetransition_entry.json';
-import jsonBaseDialogueChoices from './../assets/base_dialoguechoices.json';
-import inputText from "@/components/VSM-InputTextModal";
+import jsonBaseDialogue from '../../assets/base_dialogue.json';
+import jsonBaseDialogueCondition from '../../assets/base_dialogueconditionnal.json';
+import jsonBaseDialogueFunction from '../../assets/base_dialoguefunction.json';
+import jsonBaseDialogueInput from '../../assets/base_dialogueinput.json';
+import jsonBaseDialogueTransitionEntry from '../../assets/base_dialoguetransition_entry.json';
+import jsonBaseDialogueChoices from '../../assets/base_dialoguechoices.json';
+import inputText from "@/components/modalrequest/VSM-InputTextModal";
 //import jsonBaseDialogueTransitionArrival from './../assets/base_dialoguetransition_entry.json';
 
 const baseDialogue = jsonBaseDialogue;

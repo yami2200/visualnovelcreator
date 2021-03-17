@@ -42,7 +42,7 @@
                 >
                 <img
                     v-else
-                    :src="require('../assets/logo.png')"
+                    :src="require('../../../assets/logo.png')"
                 >
               </v-avatar>
 
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import jsonBaseObject from './../assets/base_object.json';
+import jsonBaseObject from '../../../assets/base_object.json';
 import {deleteFile, getDate, readFileSync, renameFile, writeFile} from "@/lib";
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 

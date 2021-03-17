@@ -70,7 +70,7 @@
 
 <script>
 import {deleteFile, getDate, readFileSync, renameFile, writeFile} from "@/lib";
-import AudioPlayer from './VSM-Audio-Player';
+import AudioPlayer from '../../VSM-Audio-Player';
 import jsonBaseMusic from "@/assets/base_music.json";
 import Vue from "vue";
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";

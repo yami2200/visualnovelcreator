@@ -42,7 +42,7 @@
                 v-else
                 contain
                 :height="maxHeightImage"
-                :src="require('../assets/logo.png')"
+                :src="require('../../../assets/logo.png')"
             >
 
             <v-spacer></v-spacer>
@@ -75,8 +75,8 @@
 </template>
 
 <script>
-import jsonBaseCharacter from './../assets/base_characters.json';
-import {readFileSync, writeFile, renameFile, deleteFile, getDate} from './../lib.js';
+import jsonBaseCharacter from '../../../assets/base_characters.json';
+import {readFileSync, writeFile, renameFile, deleteFile, getDate} from '../../../lib.js';
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseScene = jsonBaseCharacter;
