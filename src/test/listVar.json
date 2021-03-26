@@ -1,0 +1,22 @@
+[
+  {
+    "type" : {
+      "name" : "Integer",
+      "icon" : "mdi-numeric",
+      "color" : "#22c74e",
+      "defaultValue" : 0
+    },
+    "name" : "NbPommes",
+    "initialValue" : 3
+  },
+  {
+    "type" : {
+      "name" : "String",
+      "icon" : "mdi-format-letter-case",
+      "color" : "#e34dd7",
+      "defaultValue" : ""
+    },
+    "name" : "Nom du joueur",
+    "initialValue" : "Tabarnak !"
+  }
+]

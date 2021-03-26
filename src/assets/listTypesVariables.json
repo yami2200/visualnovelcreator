@@ -1,0 +1,56 @@
+[
+  {
+    "name" : "Integer",
+    "icon" : "mdi-numeric",
+    "color" : "#22c74e",
+    "defaultValue" : 0
+  },
+  {
+    "name" : "Float",
+    "icon" : "mdi-decimal",
+    "color" : "#4de396",
+    "defaultValue" : 1.0
+  },
+  {
+    "name" : "String",
+    "icon" : "mdi-format-letter-case",
+    "color" : "#e34dd7",
+    "defaultValue" : ""
+  },
+  {
+    "name" : "Boolean",
+    "icon" : "mdi-order-bool-descending-variant",
+    "color" : "#94000a",
+    "defaultValue" : true
+  },
+  {
+    "name" : "Character",
+    "icon" : "mdi-account-multiple",
+    "color" : "#1f18b5",
+    "defaultValue" : null
+  },
+  {
+    "name" : "Scene",
+    "icon" : "mdi-home-city",
+    "color" : "#9c4321",
+    "defaultValue" : null
+  },
+  {
+    "name" : "Object",
+    "icon" : "mdi-sword",
+    "color" : "#ded82a",
+    "defaultValue" : null
+  },
+  {
+    "name" : "Music",
+    "icon" : "mdi-music-circle-outline",
+    "color" : "#7129e6",
+    "defaultValue" : null
+  },
+  {
+    "name" : "Sound",
+    "icon" : "mdi-music-note-outline",
+    "color" : "#ad29e6",
+    "defaultValue" : null
+  }
+]

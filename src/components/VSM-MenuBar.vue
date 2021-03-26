@@ -17,6 +17,7 @@
           :height="height"
           name="Edit"
           sizeHeight=3
+          @variablespanel="bus.$emit('variables')"
           @projectproperties="properties"
           @apppreferences="preferences">
       </vsm-dropdown-menu>

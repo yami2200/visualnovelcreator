@@ -4,6 +4,7 @@
       <vsm-menu-bar :loading="processing" :bus="bus" :height="height"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage"></vsm-inputtext>
+      <vsm-variables-panel :bus="bus" :variables="variables"></vsm-variables-panel>
         <v-row no-gutters>
           <v-col cols="8">
             <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listPage[selectedDialoguePage].listDialogues">  </vsm-dialogue-manager>
@@ -29,10 +30,12 @@ import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
 import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
 import PagesPanel from './components/pages/VSM-PagesPanel';
 import jsonAssets from './test/assets.json';
+import jsonVariables from './test/listVar.json';
 import jsonProjectProperties from './test/project_properties.json';
 import jsonBasePage from './assets/base_page.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import newProject from "@/components/VSM-NewProjectModal";
+import VarPanel from "@/components/VSM-VariablesPanel";
 import jsonBaseAsset from './assets/base_assets.json';
 
 import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";
@@ -50,6 +53,7 @@ export default {
     'vsm-pagespanel' : PagesPanel,
     'vsm-inputtext' : inputText,
     'vsm-newproject-modal' : newProject,
+    'vsm-variables-panel' : VarPanel,
   },
 
   mounted() {
@@ -59,6 +63,7 @@ export default {
     this.bus.$on('save', this.saveProjectButton);
     this.bus.$on('saveas', this.saveAsProjectButton);
     this.bus.$on('exit', this.exitButton);
+    this.bus.$on('variables', this.variablesPanel);
     render.on('shortcut', (event, message) => {
       if(event.senderId === 0) this.shortcuts(message);
     })
@@ -194,6 +199,12 @@ export default {
       this.w.close()
     },
 
+    // ############################ EDIT MENU
+
+    variablesPanel(){
+      this.bus.$emit("showVariablesPanel");
+    },
+
     // ############################# INPUTS
     shortcuts(event){
       if(event.type === "keyUp"){
@@ -236,6 +247,7 @@ export default {
     assets : jsonAssets,
     bus: new Vue(),
     project_properties: jsonProjectProperties,
+    variables: JSON.parse(JSON.stringify(jsonVariables)),
     minimized: false,
     selectedDialoguePage: 0,
     listPage: [
