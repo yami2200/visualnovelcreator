@@ -9,6 +9,7 @@
     <vsm-music-edit-modal @accept="saveEditMusic" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-music-edit-modal>
 
     <vsm-contextmenu
+        id="5"
         :bus="bus"
         :item-context-menu="itemsMenu"
         @editasset="editAssetRequest"
@@ -259,7 +260,7 @@ export default {
       this.itemsMenu = [{title: "Edit Asset", action: "editasset"},{title: "Delete Asset", action: "deleteasset"}]
       var indextab = this.tab.substring(4,5)-1;
       this.selectedItem[indextab] = index;
-      this.bus.$emit("showContextMenu", e);
+      this.bus.$emit("showContextMenu5", e);
     },
   },
 

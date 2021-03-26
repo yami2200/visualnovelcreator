@@ -24,7 +24,7 @@
 export default {
   name: "VSM-ContextMenu",
 
-  props : ['itemContextMenu', 'bus'],
+  props : ['itemContextMenu', 'bus', 'id'],
 
   methods : {
     show(e){
@@ -51,7 +51,8 @@ export default {
 
 
   mounted() {
-    this.bus.$on('showContextMenu', this.show);
+    if(this.id==undefined) this.bus.$on('showContextMenu', this.show);
+    else this.bus.$on('showContextMenu'+this.id, this.show);
     this.bus.$on('hideContextMenu', this.hide);
   },
 }

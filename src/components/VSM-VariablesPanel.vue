@@ -2,7 +2,7 @@
   <v-dialog
       v-model="dialog"
       persistent
-      max-width="500px"
+      max-width="700px"
       max-height="700px"
   >
     <v-card>
@@ -112,13 +112,13 @@ export default {
       this.dialog = false;
     },
     edit(){
-
+      console.log("edit")
     },
     newV(){
-
+      console.log("emit")
     },
     deleteV(){
-
+      console.log("delete")
     },
   },
 
