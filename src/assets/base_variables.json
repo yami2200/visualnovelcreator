@@ -1,0 +1,10 @@
+{
+  "type" : {
+    "name" : "Integer",
+    "icon" : "mdi-numeric",
+    "color" : "#22c74e",
+    "defaultValue" : 0
+  },
+  "name" : "",
+  "initialValue" : 0
+}

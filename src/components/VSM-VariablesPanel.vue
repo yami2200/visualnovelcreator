@@ -5,6 +5,8 @@
       max-width="700px"
       max-height="700px"
   >
+    <vsm-editpanelvariables :bus="bus" :list-variables="variables"></vsm-editpanelvariables>
+
     <v-card>
       <v-card-title>
         <span class="headline" v-text="'Global Variables :'"></span>
@@ -80,9 +82,12 @@
 </template>
 
 <script>
+import VSMEditVariablePanel from "@/components/VSM-EditVariablePanel";
+
 export default {
   name: "VSM-VariablesPanel",
-
+  components: {
+    "vsm-editpanelvariables" : VSMEditVariablePanel},
   props:["bus", "variables"],
 
   data () {
@@ -112,10 +117,10 @@ export default {
       this.dialog = false;
     },
     edit(){
-      console.log("edit")
+      this.bus.$emit("showEditVariable", {type: true, index: this.selectedItem})
     },
     newV(){
-      console.log("emit")
+      this.bus.$emit("showEditVariable", {type: false, index: -1})
     },
     deleteV(){
       console.log("delete")
