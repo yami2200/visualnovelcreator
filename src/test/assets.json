@@ -16,5 +16,30 @@
   {
     "type" : "Sounds",
     "content" : [ {"name" : "OpenDoor" , "path":  "OpenDoor.wav", "volume" : 40}, {"name" : "OpenChest", "path":  "OpenChest.wav", "volume" : 50 }, {"name" : "Punch", "path":  "Punch.wav", "volume" : 100 }]
+  },
+  {
+    "type": "Variables",
+    "content": [
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "NbPommes",
+        "initialValue": 3
+      },
+      {
+        "type": {
+          "name": "String",
+          "icon": "mdi-format-letter-case",
+          "color": "#e34dd7",
+          "defaultValue": ""
+        },
+        "name": "Nom du joueur",
+        "initialValue": "Tabarnak !"
+      }
+    ]
   }
 ]

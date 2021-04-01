@@ -18,5 +18,9 @@
   {
     "type" : "Sounds",
     "content" : []
+  },
+  {
+    "type" : "Variables",
+    "content" : []
   }
 ]
