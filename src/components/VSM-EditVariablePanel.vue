@@ -33,7 +33,7 @@
           </v-row>
           <v-row>
             <p class="mr-2 text-h6"> Initial Value : </p>
-            <vsm-setter :variable="variable" :listvar="listVariables" :initialval="true"></vsm-setter>
+            <vsm-setter :variable="variable" :listvar="listVariables" :initialval="false"></vsm-setter>
           </v-row>
 
         </v-container>

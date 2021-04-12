@@ -30,9 +30,7 @@ export const mix_settervariable = {
             if(this.variable.value.type === "value") {
                 this.choice = "1";
                 this.value = this.variable.value.value;
-                return;
-            }
-            if(this.variable.value.type === "variable" && this.refEnabled) {
+            } else if(this.variable.value.type === "variable" && this.refEnabled) {
                 let val = this.listCompatibleVariables.filter((v) => v.name === this.variable.value.value);
                 if(val.length === 0){
                     this.choice = "1";
@@ -40,15 +38,13 @@ export const mix_settervariable = {
                 } else {
                     this.choice = "2";
                     this.select = val[0].name;
-
                 }
-                this.$forceUpdate();
-                return;
             } else {
                 this.choice = "1";
                 this.value = this.variable.type.defaultValue;
-                return;
             }
+            this.bus.$emit("setVarSetterInitial", {choice: this.choice, select: this.select});
+            this.$forceUpdate();
         },
         hide() {
             this.dialog = false;
@@ -69,6 +65,12 @@ export const mix_settervariable = {
         },
         cancel(){
             this.hide();
+        },
+        changeChoice(c){
+            this.choice = c;
+        },
+        changeVarSelecting(s){
+          this.select = s;
         },
     },
 
