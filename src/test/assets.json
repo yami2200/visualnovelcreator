@@ -48,28 +48,15 @@
       },
       {
         "type": {
-          "name": "Integer",
-          "icon": "mdi-numeric",
-          "color": "#22c74e",
-          "defaultValue": 0
+          "name" : "Float",
+          "icon" : "mdi-decimal",
+          "color" : "#4de396",
+          "defaultValue" : 1.0
         },
-        "name": "NbPommes 2",
-        "value": {
-          "type": "variable",
-          "value": "NbPommes 3"
-        }
-      },
-      {
-        "type": {
-          "name": "Integer",
-          "icon": "mdi-numeric",
-          "color": "#22c74e",
-          "defaultValue": 0
-        },
-        "name": "NbPommes 3",
+        "name": "Random Float",
         "value": {
           "type": "value",
-          "value": 3
+          "value": 2.55
         }
       }
     ]

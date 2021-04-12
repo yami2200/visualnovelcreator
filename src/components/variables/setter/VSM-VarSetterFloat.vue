@@ -4,11 +4,11 @@
     <v-text-field
         v-model.number="value"
         :disabled="disabledInputSpecific"
-        label="Number"
-        @keydown="changeInt($event)"
+        label="Float Number"
         append-outer-icon="mdi-plus-circle"
         @click:append-outer="increment"
         prepend-icon="mdi-minus-circle"
+        @keydown="changeFloat($event)"
         type="number"
         @click:prepend="decrement">
     </v-text-field>
@@ -30,8 +30,8 @@ export default {
   },
 
   data: () => ({
-    type: "Integer",
-    value: 0,
+    type: "Float",
+    value: 0.0,
   }),
 
   methods: {
@@ -41,9 +41,12 @@ export default {
     decrement() {
       this.value--;
     },
-    changeInt(e){
+    changeFloat(e){
       if(e.key === "Backspace") return;
       if(!["0","1","2","3","4","5","6","7","8","9"].includes(e.key)){
+        if(e.key === "," || e.key === "."){
+          if(!this.value.toString().includes(".")) return;
+        }
         e.preventDefault();
       }
     },

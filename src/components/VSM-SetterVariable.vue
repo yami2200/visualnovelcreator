@@ -3,6 +3,7 @@
 
     <vsm-setter-integer @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-integer>
     <vsm-setter-string @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-string>
+    <vsm-setter-float @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-float>
 
     <v-card-text>
       <v-row justify="center" align="center">
@@ -20,6 +21,8 @@
 <script>
 import SetterInteger from "./variables/setter/VSM-VarSetterInteger";
 import SetterString from "./variables/setter/VSM-VarSetterString";
+import SetterFloat from "./variables/setter/VSM-VarSetterFloat";
+
 import Vue from "vue";
 
 export default {
@@ -38,6 +41,7 @@ export default {
   components:{
     "vsm-setter-integer" : SetterInteger,
     "vsm-setter-string" : SetterString,
+    "vsm-setter-float" : SetterFloat,
   },
 
   props:["variable", "listvar", "initialval"],
