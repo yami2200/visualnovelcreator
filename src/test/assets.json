@@ -58,6 +58,19 @@
           "type": "value",
           "value": 2.55
         }
+      },
+      {
+        "type": {
+          "name" : "Boolean",
+          "icon" : "mdi-order-bool-descending-variant",
+          "color" : "#94000a",
+          "defaultValue" : false
+        },
+        "name": "Random Boolean",
+        "value": {
+          "type": "value",
+          "value": true
+        }
       }
     ]
   }

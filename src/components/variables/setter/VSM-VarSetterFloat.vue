@@ -21,7 +21,7 @@ import {mix_settervariable} from "@/mixins/MIX_SetterVariable";
 import VarSetterDefault from "./VSM-VarSetterDefault";
 
 export default {
-  name: "VSM-VarSetterInteger",
+  name: "VSM-VarSetterFloat",
 
   mixins: [mix_settervariable],
 
