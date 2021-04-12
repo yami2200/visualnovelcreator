@@ -27,8 +27,8 @@
           </v-radio-group>
 
           <v-text-field
-              v-model.number="valueInt"
-              :disabled="disabledInputInteger"
+              v-model.number="value"
+              :disabled="disabledInputSpecific"
               label="Number"
               append-outer-icon="mdi-plus-circle"
               @click:append-outer="increment"
@@ -36,6 +36,18 @@
               type="number"
               @click:prepend="decrement">
           </v-text-field>
+
+          <v-select
+              class="mt-5 ml-3"
+              :disabled="!disabledInputSpecific"
+              :items="listCompatibleVariables"
+              item-text="name"
+              item-value="name"
+              v-model="select"
+              return-object
+              label="Choose a variable"
+              solo
+          ></v-select>
 
         </v-container>
       </v-card-text>
@@ -52,6 +64,7 @@
         <v-btn
             color="blue darken-1"
             text
+            :disabled="disableSaveButton"
             @click="save"
         >
           Save
@@ -69,26 +82,22 @@ export default {
 
   mixins: [mix_settervariable],
 
-  computed:{
-    disabledInputInteger(){
-      return this.choice!=1;
-    },
-  },
-
   data: () => ({
     type: "Integer",
-    valueInt: 0,
-    choice: "1",
+    value: 0,
   }),
 
   methods: {
     increment() {
-      this.valueInt++;
+      this.value++;
     },
     decrement() {
-      this.valueInt--;
+      this.value--;
     },
-
+    resetDefault(){
+      this.value = 0;
+      this.select = null;
+    }
   }
 
 }

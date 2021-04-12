@@ -3,23 +3,69 @@ export const mix_settervariable = {
     data: () => ({
         dialog: false,
         type: "",
+        choice: "1",
+        value: null,
+        select: null,
     }),
 
     computed:{
         refEnabled(){
-            return this.refEnable!=undefined && this.refEnable;
+            return this.refEnable!=undefined && this.refEnable && this.listCompatibleVariables.length > 0;
         },
+        listCompatibleVariables(){
+            return this.listvariables.filter((v) => v.type.name === this.type && v.name !== this.variable.name);
+        },
+        disabledInputSpecific(){
+            return this.choice!=="1" && this.listCompatibleVariables.length > 0;
+        },
+        disableSaveButton(){
+            return (this.choice === "1" && this.value==null) || (this.choice === "2" && this.select==null);
+        }
     },
 
     methods: {
         show() {
             this.dialog = true;
+            this.resetDefault();
+            if(this.variable.value.type === "value") {
+                this.choice = "1";
+                this.value = this.variable.value.value;
+                return;
+            }
+            if(this.variable.value.type === "variable" && this.refEnabled) {
+                let val = this.listCompatibleVariables.filter((v) => v.name === this.variable.value.value);
+                if(val.length === 0){
+                    this.choice = "1";
+                    this.value = this.variable.type.defaultValue;
+                } else {
+                    this.choice = "2";
+                    this.select = val[0].name;
+
+                }
+                this.$forceUpdate();
+                return;
+            } else {
+                this.choice = "1";
+                this.value = this.variable.type.defaultValue;
+                return;
+            }
         },
         hide() {
             this.dialog = false;
         },
+        resetDefault(){
+          console.log("reset Default not implemented !")  ;
+        },
         save(){
-
+            if(this.disableSaveButton) return;
+            if(this.choice === "1") {
+                this.$emit("newval", {type: "value", value: this.value});
+            } else {
+                if(this.select == null) return;
+                if(this.select.name == undefined) this.$emit("newval", {type: "variable", value: this.select});
+                else this.$emit("newval", {type: "variable", value: this.select.name});
+            }
+            this.hide();
         },
         cancel(){
             this.hide();
@@ -31,5 +77,5 @@ export const mix_settervariable = {
         this.bus.$on('hideSetter' + this.type, this.hide);
     },
 
-    props: ["bus", "variable", "refEnable"],
+    props: ["bus", "variable", "refEnable", "listvariables"],
 }

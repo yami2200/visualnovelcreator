@@ -28,7 +28,10 @@
           "defaultValue": 0
         },
         "name": "NbPommes",
-        "initialValue": 3
+        "value": {
+          "type": "value",
+          "value": 3
+        }
       },
       {
         "type": {
@@ -38,7 +41,36 @@
           "defaultValue": ""
         },
         "name": "Nom du joueur",
-        "initialValue": "Tabarnak !"
+        "value": {
+          "type": "value",
+          "value": "Tabarnak !"
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "NbPommes 2",
+        "value": {
+          "type": "variable",
+          "value": "NbPommes 3"
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "NbPommes 3",
+        "value": {
+          "type": "value",
+          "value": 3
+        }
       }
     ]
   }

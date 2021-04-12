@@ -1,9 +1,9 @@
 <template>
-  <v-card width="150px" height="40px">
-    <vsm-setter-integer :bus="bus1" :variable="variable"> </vsm-setter-integer>
+  <v-card height="40px">
+    <vsm-setter-integer @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-integer>
     <v-card-text>
       <v-row justify="center" align="center">
-        <p class="ml-5" style="float: left" v-if="variable!=undefined"> <strong> {{ variable.initialValue }} </strong> </p>
+        <p class="ml-5" style="float: left" v-if="variable!=undefined"> <strong> {{ valueShow }} </strong> </p>
         <v-spacer></v-spacer>
         <v-btn icon class="mb-3" @click="editVar">
           <v-icon>mdi-pencil-outline</v-icon>
@@ -25,16 +25,27 @@ export default {
     bus1: new Vue(),
   }),
 
+  computed:{
+    valueShow(){
+      return this.variable.value.value;
+    }
+  },
+
   components:{
     "vsm-setter-integer" : SetterInteger,
   },
 
-  props:["variable"],
+  props:["variable", "listvar", "initialval"],
 
   methods:{
     editVar(){
       this.bus1.$emit("showSetter"+this.variable.type.name);
     },
+    setNewValue(data){
+      if(data==null) return;
+      console.log(data);
+      this.variable.value = data;
+    }
   },
 
 }
