@@ -1,10 +1,12 @@
 [
   {
     "type" : "Characters",
-    "content" : [ { "name" : "Yami", "img" : "Yami_Normal.jpg", "sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}]},{"name" : "Pixselve", "img" : "Pixselve_Normal.png" ,"sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}] },{"name" : "Wild2Me", "img" : "Wild2Me_Normal.jpg" ,"sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}] },{"name" : "Cody", "img" : "Cody_Normal.jpg", "sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}] } ]},
+    "content" : [ { "name" : "Yami", "img" : "Yami_Normal.jpg", "sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}]},{"name" : "Pixselve", "img" : "Pixselve_Normal.png" ,"sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}] },{"name" : "Wild2Me", "img" : "Wild2Me_Normal.jpg" ,"sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}] },{"name" : "Cody", "img" : "Cody_Normal.jpg", "sizex" : "10", "sizey" : "10", "imgOthers" : [{"name" : "sad" , "img" :  "Yami_sad.png"}] } ]
+  },
   {
     "type" : "Scenes",
-    "content" : [ {"name" : "Forest", "img" : "Forest.JPG" },{"name" : "Mountain", "img" : "Mountain.jpg" },{"name" : "School", "img" : "School.jpg" },{"name" : "Paris", "img" : "Paris.jpg" }, {"name" : "Library", "img" : "Library.jpg" } ]},
+    "content" : [ {"name" : "Forest", "img" : "Forest.JPG" },{"name" : "Mountain", "img" : "Mountain.jpg" },{"name" : "School", "img" : "School.jpg" },{"name" : "Paris", "img" : "Paris.jpg" }, {"name" : "Library", "img" : "Library.jpg" } ]
+  },
   {
     "type" : "Objects",
     "content" : [ {"name" : "Fork", "img" : "Fork.jpg" }]
@@ -70,6 +72,71 @@
         "value": {
           "type": "value",
           "value": true
+        }
+      },
+      {
+        "type": {
+          "name" : "Character",
+          "icon" : "mdi-account-multiple",
+          "color" : "#1f18b5",
+          "defaultValue" : null
+        },
+        "name": "Main Character",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      },
+      {
+        "type": {
+          "name" : "Scene",
+          "icon" : "mdi-home-city",
+          "color" : "#9c4321",
+          "defaultValue" : null
+        },
+        "name": "Main Scene",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      },
+      {
+        "type": {
+          "name" : "Object",
+          "icon" : "mdi-sword",
+          "color" : "#ded82a",
+          "defaultValue" : null
+        },
+        "name": "Main Object",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      },
+      {
+        "type": {
+          "name" : "Music",
+          "icon" : "mdi-music-circle-outline",
+          "color" : "#7129e6",
+          "defaultValue" : null
+        },
+        "name": "Main Music",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      },
+      {
+        "type": {
+          "name" : "Sound",
+          "icon" : "mdi-music-note-outline",
+          "color" : "#ad29e6",
+          "defaultValue" : null
+        },
+        "name": "Main Sound",
+        "value": {
+          "type": "value",
+          "value": "null"
         }
       }
     ]

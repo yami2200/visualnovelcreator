@@ -33,7 +33,7 @@
           </v-row>
           <v-row>
             <p class="mr-2 text-h6"> Initial Value : </p>
-            <vsm-setter :variable="variable" :listvar="listVariables" :initialval="false"></vsm-setter>
+            <vsm-setter :assets="assets" :variable="variable" :listvar="listVariables" :initialval="false"></vsm-setter>
           </v-row>
 
         </v-container>
@@ -69,7 +69,7 @@ import Setter from "@/components/VSM-SetterVariable";
 export default {
   name: "VSM-EditVariablePanel",
 
-  props:["bus", "listVariables"],
+  props:["bus", "listVariables", "assets"],
 
   components:{
     "vsm-setter" : Setter,

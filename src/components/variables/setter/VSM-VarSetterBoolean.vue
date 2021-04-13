@@ -7,6 +7,7 @@
       <v-checkbox
           v-model="value"
           :label="`Value Boolean : ${value.toString()}`"
+          :disabled="disabledInputSpecific"
       ></v-checkbox>
     </v-container>
   </vsm-setterdefault>

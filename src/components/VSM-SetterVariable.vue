@@ -5,6 +5,7 @@
     <vsm-setter-string @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-string>
     <vsm-setter-float @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-float>
     <vsm-setter-boolean @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-boolean>
+    <vsm-setter-asset @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :assets="assets"> </vsm-setter-asset>
 
     <v-card-text>
       <v-row justify="center" align="center">
@@ -24,6 +25,7 @@ import SetterInteger from "./variables/setter/VSM-VarSetterInteger";
 import SetterString from "./variables/setter/VSM-VarSetterString";
 import SetterFloat from "./variables/setter/VSM-VarSetterFloat";
 import SetterBoolean from "./variables/setter/VSM-VarSetterBoolean";
+import SetterAsset from "./variables/setter/VSM-VarSetterAsset";
 
 import Vue from "vue";
 
@@ -45,9 +47,10 @@ export default {
     "vsm-setter-string" : SetterString,
     "vsm-setter-float" : SetterFloat,
     "vsm-setter-boolean" :SetterBoolean,
+    "vsm-setter-asset" : SetterAsset,
   },
 
-  props:["variable", "listvar", "initialval"],
+  props:["variable", "listvar", "initialval", "assets"],
 
   methods:{
     editVar(){

@@ -5,7 +5,7 @@
       max-width="700px"
       max-height="700px"
   >
-    <vsm-editpanelvariables :bus="bus" :list-variables="variables"></vsm-editpanelvariables>
+    <vsm-editpanelvariables :assets="assets" :bus="bus" :list-variables="variables"></vsm-editpanelvariables>
 
     <v-card>
       <v-card-title>
@@ -88,7 +88,7 @@ export default {
   name: "VSM-VariablesPanel",
   components: {
     "vsm-editpanelvariables" : VSMEditVariablePanel},
-  props:["bus", "variables"],
+  props:["bus", "variables", "assets"],
 
   data () {
     return {
