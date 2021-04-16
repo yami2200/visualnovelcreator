@@ -6,5 +6,8 @@
     "defaultValue" : 0
   },
   "name" : "",
-  "initialValue" : 0
+  "value": {
+    "type": "value",
+    "value": 0
+  }
 }

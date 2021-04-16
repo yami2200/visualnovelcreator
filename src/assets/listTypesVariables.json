@@ -27,30 +27,30 @@
     "name" : "Character",
     "icon" : "mdi-account-multiple",
     "color" : "#1f18b5",
-    "defaultValue" : null
+    "defaultValue" : "null"
   },
   {
     "name" : "Scene",
     "icon" : "mdi-home-city",
     "color" : "#9c4321",
-    "defaultValue" : null
+    "defaultValue" : "null"
   },
   {
     "name" : "Object",
     "icon" : "mdi-sword",
     "color" : "#ded82a",
-    "defaultValue" : null
+    "defaultValue" : "null"
   },
   {
     "name" : "Music",
     "icon" : "mdi-music-circle-outline",
     "color" : "#7129e6",
-    "defaultValue" : null
+    "defaultValue" : "null"
   },
   {
     "name" : "Sound",
     "icon" : "mdi-music-note-outline",
     "color" : "#ad29e6",
-    "defaultValue" : null
+    "defaultValue" : "null"
   }
 ]

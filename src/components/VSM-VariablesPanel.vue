@@ -3,11 +3,12 @@
       v-model="dialog"
       persistent
       max-width="700px"
-      max-height="700px"
+      max-height="800px"
   >
-    <vsm-editpanelvariables :assets="assets" :bus="bus" :list-variables="variables"></vsm-editpanelvariables>
+    <vsm-editpanelvariables @accept="save" :assets="assets" :bus="bus" :list-variables="variables"></vsm-editpanelvariables>
 
-    <v-card>
+    <v-card
+      max-height="60vh">
       <v-card-title>
         <span class="headline" v-text="'Global Variables :'"></span>
       </v-card-title>
@@ -15,7 +16,7 @@
         <v-card>
         <v-container>
 
-          <v-list height="200px" class="mt-2 overflow-y-auto">
+          <v-list max-height="39vh" class="mt-1 overflow-y-auto">
             <v-list-item-group v-model="selectedItem">
             <v-list-item
                 v-for="(varia, index) in variables"
@@ -39,6 +40,7 @@
         </v-container>
         <v-app-bar
             dense
+            bottom
             width="100%"
             height="50px"
         >
@@ -65,17 +67,11 @@
         <v-btn
             color="blue darken-1"
             text
-            @click="cancel"
+            @click="close"
         >
-          Cancel
+          Close
         </v-btn>
-        <v-btn
-            color="blue darken-1"
-            text
-            @click="save"
-        >
-          Save
-        </v-btn>
+        <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -104,11 +100,11 @@ export default {
   },
 
   methods:{
-    cancel(){
+    close(){
       this.hide();
     },
     save(){
-
+      this.$forceUpdate();
     },
     show(){
       this.dialog = true;

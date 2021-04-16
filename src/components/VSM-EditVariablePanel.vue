@@ -28,6 +28,7 @@
                 v-model="select"
                 return-object
                 label="Solo field"
+                @change="changeType"
                 solo
             ></v-select>
           </v-row>
@@ -52,6 +53,7 @@
         <v-btn
             color="blue darken-1"
             text
+            :disabled="!canSave"
             @click="save"
         >
           Save
@@ -78,7 +80,11 @@ export default {
   computed:{
     title(){
       return (this.editionMode ? "Edit " : "New ") + "Variable" ;
-    }
+    },
+    canSave(){
+      if(this.variable == null || this.variable.name === "" || (this.listVariables.filter(e => e.name === this.variable.name).length >= 1 && this.previousName !== this.variable.name)) return false;
+      return true;
+    },
   },
 
   data () {
@@ -103,7 +109,15 @@ export default {
       this.hide();
     },
     save(){
-
+      if(this.canSave){
+        if(this.editionMode){
+          this.assets[5].content[this.indexEdition] = this.variable;
+        } else {
+          this.assets[5].content.push(this.variable);
+        }
+        this.hide();
+        this.$emit("accept");
+      }
     },
     show(){
       if(this.editionMode){
@@ -117,6 +131,13 @@ export default {
     },
     hide(){
       this.dialog = false;
+    },
+    changeType(){
+      this.variable.type = this.select;
+      this.variable.value = {
+        type: "value",
+        value: this.select.defaultValue
+      };
     },
   },
 
