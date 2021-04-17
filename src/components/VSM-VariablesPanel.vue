@@ -6,6 +6,7 @@
       max-height="800px"
   >
     <vsm-editpanelvariables @accept="save" :assets="assets" :bus="bus" :list-variables="variables"></vsm-editpanelvariables>
+    <vsm-confirmation-request-modal @accept="deleteSelected" :bus="bus1" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
     <v-card
       max-height="60vh">
@@ -78,18 +79,25 @@
 </template>
 
 <script>
+import Vue from "vue";
 import VSMEditVariablePanel from "@/components/VSM-EditVariablePanel";
+import ConfirmationModal from "@/components/modalrequest/VSM-ConfirmationRequestModal"
 
 export default {
   name: "VSM-VariablesPanel",
   components: {
-    "vsm-editpanelvariables" : VSMEditVariablePanel},
+    "vsm-editpanelvariables" : VSMEditVariablePanel,
+    "vsm-confirmation-request-modal" : ConfirmationModal
+  },
   props:["bus", "variables", "assets"],
 
   data () {
     return {
       dialog: false,
       selectedItem : null,
+      headlineCRM: "",
+      textCRM: "",
+      bus1: new Vue(),
     };
   },
 
@@ -119,7 +127,13 @@ export default {
       this.bus.$emit("showEditVariable", {type: false, index: -1})
     },
     deleteV(){
-      console.log("delete")
+      if(this.disableEditButton) return;
+      this.headlineCRM = "Do you really want to delete this variable ?";
+      this.textCRM = "You are trying to delete the variable : "+ this.variables[this.selectedItem].name +", are you sure you want to continue ? ";
+      this.bus1.$emit('showConfirmationRequestModal');
+    },
+    deleteSelected(){
+      this.variables.splice(this.selectedItem, 1);
     },
   },
 
