@@ -77,7 +77,7 @@
 
 <script>
 import jsonBaseObject from '../../../assets/base_object.json';
-import {deleteFile, getDate, readFileSync, renameFile, writeFile} from "@/lib";
+import {deleteFile, getDate, readFileSync, removeDependencyVariableAsset, renameFile, writeFile} from "@/lib";
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseObject = jsonBaseObject;
@@ -134,6 +134,8 @@ export default {
               filename = this.currentObject.name + getDate() + "." + this.currentObject.img.split('.').pop();
               renameFile(this.projectProp.directory + "Assets\\Objects\\" + this.currentObject.img, this.projectProp.directory + "Assets\\Objects\\" + filename);
             }
+
+            removeDependencyVariableAsset("Object", this.previousName, this.currentObject.name, this.assets);
           }
 
           if(this.baseImage.name != this.currentObject.img){

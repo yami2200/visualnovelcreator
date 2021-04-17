@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import {deleteFile, getDate, readFileSync, renameFile, writeFile} from "@/lib";
+import {deleteFile, getDate, readFileSync, removeDependencyVariableAsset, renameFile, writeFile} from "@/lib";
 import AudioPlayer from '../../VSM-Audio-Player';
 import jsonBaseSound from "@/assets/base_sound.json";
 import Vue from "vue";
@@ -146,6 +146,8 @@ export default {
               filename = this.currentSound.name + getDate() + "." + this.currentSound.path.split('.').pop();
               renameFile(this.projectProp.directory + "Assets\\Sounds\\" + this.currentSound.path, this.projectProp.directory + "Assets\\Sounds\\" + filename);
             }
+
+            removeDependencyVariableAsset("Sound", this.previousName, this.currentSound.name, this.assets);
           }
 
           if(this.soundInputFile.name != this.currentSound.path){

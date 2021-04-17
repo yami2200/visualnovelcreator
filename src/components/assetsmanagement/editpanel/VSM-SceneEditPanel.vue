@@ -76,7 +76,7 @@
 
 <script>
 import jsonBaseCharacter from '../../../assets/base_characters.json';
-import {readFileSync, writeFile, renameFile, deleteFile, getDate} from '../../../lib.js';
+import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '../../../lib.js';
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseScene = jsonBaseCharacter;
@@ -140,6 +140,8 @@ export default {
               filename = this.currentScene.name + getDate() + "." + this.currentScene.img.split('.').pop();
               renameFile(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img, this.projectProp.directory + "Assets\\Scenes\\" + filename);
             }
+
+            removeDependencyVariableAsset("Scene", this.previousName, this.currentScene.name, this.assets);
           }
 
           if(this.baseImage.name != this.currentScene.img){

@@ -31,10 +31,10 @@ export default {
 
   computed:{
     listAssetType(){
+      this.refreshComputed;
       let array = this.assets.filter((a) => a.type === this.type+"s");
       if(array.length === 0) return [];
       return [{name : "null"}].concat(JSON.parse(JSON.stringify(array[0])).content);
-      //return JSON.parse(JSON.stringify(array[0])).content.unshift({name : "null"});
     },
   },
 

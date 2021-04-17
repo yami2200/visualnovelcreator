@@ -16,7 +16,7 @@
         </v-col>
         <v-col>
           <v-select
-              :disabled="choice === '2'"
+              :disabled="choice === '2' || !refEnabled"
               class="ml-3"
               :items="listOperation"
               v-model="operationSelected"

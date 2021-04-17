@@ -6,6 +6,7 @@ export const mix_settervariable = {
         choice: "1",
         value: null,
         select: null,
+        refreshComputed: true,
     }),
 
     computed:{
@@ -27,6 +28,7 @@ export const mix_settervariable = {
         show() {
             this.dialog = true;
             this.resetDefault();
+            this.refreshComputed = !this.refreshComputed;
             if(this.variable.value.type === "value") {
                 this.choice = "1";
                 this.value = this.variable.value.value;

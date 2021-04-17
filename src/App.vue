@@ -31,7 +31,7 @@ import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
 import PagesPanel from './components/pages/VSM-PagesPanel';
 import jsonAssets from './test/assets.json';
 import jsonVariables from './test/listVar.json';
-import jsonProjectProperties from './test/project_properties.json';
+import jsonProjectProperties from './test/project_properties2.json';
 import jsonBasePage from './assets/base_page.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import newProject from "@/components/VSM-NewProjectModal";

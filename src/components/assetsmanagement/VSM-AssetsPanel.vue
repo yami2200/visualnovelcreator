@@ -114,7 +114,7 @@ import SceneEditPanel from './editpanel/VSM-SceneEditPanel';
 import ObjectEditPanel from './editpanel/VSM-ObjetEditPanel';
 import SoundEditPanel from './editpanel/VSM-Sound-Edit-Panel';
 import MusicEditPanel from './editpanel/VSM-Music-Edit-Panel';
-import {deleteFile} from '../../lib.js';
+import {deleteFile, removeDependencyVariableAsset} from '../../lib.js';
 import contextMenu from "@/components/VSM-ContextMenu";
 
 export default {
@@ -207,18 +207,23 @@ export default {
       for(var i = 0; i<character.imgOthers.length; i++){
         deleteFile(dir + character.imgOthers[i].img);
       }
+      removeDependencyVariableAsset("Character", character.name, "null", this.assets);
     },
     deleteSceneDependency(scene){
       deleteFile(this.project_prop.directory + "Assets\\Scenes\\" + scene.img);
+      removeDependencyVariableAsset("Scene", scene.name, "null", this.assets);
     },
     deleteSoundDependency(sound){
       deleteFile(this.project_prop.directory + "Assets\\Sounds\\" + sound.path);
+      removeDependencyVariableAsset("Sound", sound.name, "null", this.assets);
     },
     deleteMusicDependency(music){
       deleteFile(this.project_prop.directory + "Assets\\Musics\\" + music.path);
+      removeDependencyVariableAsset("Music", music.name, "null", this.assets);
     },
     deleteObjectDependency(object){
       deleteFile(this.project_prop.directory + "Assets\\Objects\\" + object.img);
+      removeDependencyVariableAsset("Object", object.name, "null", this.assets);
     },
     editAssetRequest(){
       if(!this.disableEditionButtons){

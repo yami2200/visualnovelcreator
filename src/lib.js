@@ -82,4 +82,29 @@ function saveAssets(properties, assets){
     writeFile(properties.directory+"Assets.json", JSON.stringify(assets));
 }
 
-export {readFileSync, writeFile, renameFile, deleteFile, existFile, getDate, removePreviousDialoguesFromOutput, squareIntoSelection, createFileProject, saveProperties, saveAssets};
+function removeDependencyVariableAsset(type, oldname, newname, assets){
+    assets[5].content.forEach((v) => {
+        if(v.type.name === type){
+            if(v.value.type === "value"){
+                if(v.value.value === oldname){
+                    v.value.value = newname;
+                }
+            }
+        }
+    });
+}
+
+export {
+    readFileSync,
+    writeFile,
+    renameFile,
+    deleteFile,
+    existFile,
+    getDate,
+    removePreviousDialoguesFromOutput,
+    squareIntoSelection,
+    createFileProject,
+    saveProperties,
+    saveAssets,
+    removeDependencyVariableAsset
+};

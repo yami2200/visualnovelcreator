@@ -84,8 +84,8 @@
                       v-for="(imgo, index) in currentCharacter.imgOthers"
                       :key="index"
                   >
-                    <v-list-item-avatar v-if="imgo.img != '' || imageImportList[index].path != ''">
-                      <v-img v-if="imageImportList[index].path != ''" :src="imageImportList[index].path"></v-img>
+                    <v-list-item-avatar v-if="imgo.img !== '' || imageImportList[index].path !== ''">
+                      <v-img v-if="imageImportList[index].path !== ''" :src="imageImportList[index].path"></v-img>
                       <v-img v-else :src="projectProp.directory + 'Assets\\Characters\\' +imgo.img" @click="print(projectProp.directory + 'Assets\\Characters\\' +imgo.img)"></v-img>
                     </v-list-item-avatar>
 
@@ -153,7 +153,7 @@
 
 <script>
 import jsonBaseCharacter from '../../../assets/base_characters.json';
-import {readFileSync, writeFile, renameFile, deleteFile, getDate} from '../../../lib.js';
+import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '../../../lib.js';
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 
 const baseCharacter = jsonBaseCharacter;
@@ -248,6 +248,8 @@ export default {
                 }
               }
             }
+
+            removeDependencyVariableAsset("Character", char.name, this.currentCharacter.name, this.assets);
           }
 
             // Case change the image
