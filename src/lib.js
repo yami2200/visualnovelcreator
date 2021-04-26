@@ -82,7 +82,7 @@ function saveAssets(properties, assets){
     writeFile(properties.directory+"Assets.json", JSON.stringify(assets));
 }
 
-function removeDependencyVariableAsset(type, oldname, newname, assets){
+function removeDependencyVariableAsset(type, oldname, newname, assets, listPages = []){
     assets[5].content.forEach((v) => {
         if(v.type.name === type){
             if(v.value.type === "value"){
@@ -92,6 +92,80 @@ function removeDependencyVariableAsset(type, oldname, newname, assets){
             }
         }
     });
+
+    listPages.forEach((p) => {
+        p.listDialogues.forEach((d) => {
+
+            // ########################## CASE CHARACTER IN DIALOGUE NODE
+            if(type === "Character" && d.speaker !== undefined && d.speaker.value.type === "value"){
+                if(d.speaker.value.value !== "null" && d.speaker.value.value === oldname){
+                    d.speaker.value.value = newname;
+                }
+            }
+
+            // ########################## CASE ASSET FOR CONDITIONNAL DIALOGUE
+            if(d.condition !== undefined){
+                if(d.condition.value.type === "value") {
+                    if(d.condition.value.operation !== undefined & d.condition.value.operation !== "value"){
+                        if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "value" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
+                        if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "value" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
+                        d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
+                    }
+                }
+            }
+
+        });
+    });
+}
+
+function removeDependencyVariable(type, oldname, newname, listPages) {
+    listPages.forEach((p) => {
+        p.listDialogues.forEach((d) => {
+
+            // ######################### CASE CONDITIONNAL DIALOGUE
+            if (d.condition !== undefined) {
+                if(d.condition.value.type === "value") {
+                    if(d.condition.value.operation !== undefined & d.condition.value.operation !== "value"){
+                        if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "variable" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
+                        if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "variable" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
+                        d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
+                    }
+                } else if(type === "Boolean") {
+                    if(d.condition.value.value === oldname) {
+                        if(newname === "null"){
+                            d.condition.value.type = "value";
+                            d.condition.value.value = d.condition.type.defaultValue;
+                        } else {
+                            d.condition.value.value = newname;
+                        }
+                    }
+                }
+            }
+
+            // ######################### CASE DIALOGUE
+            if(type === "Character" && d.speaker !== undefined && d.speaker.value.type === "variable"){
+                if(d.speaker.value.value === oldname){
+                    if(newname==="null"){
+                        d.speaker.value.type = "value";
+                        d.speaker.value.value = d.speaker.type.defaultValue;
+                    } else {
+                        d.speaker.value.value = newname;
+                    }
+                }
+            }
+        });
+    });
+}
+
+function dependencyBooleanInputs(newname, input){
+    if(input!==null){
+        if(newname === "null"){
+            input.value.type = "value";
+            input.value.value = input.type.defaultValue;
+        } else {
+            input.value.value = newname;
+        }
+    }
 }
 
 export {
@@ -106,5 +180,6 @@ export {
     createFileProject,
     saveProperties,
     saveAssets,
-    removeDependencyVariableAsset
+    removeDependencyVariableAsset,
+    removeDependencyVariable
 };

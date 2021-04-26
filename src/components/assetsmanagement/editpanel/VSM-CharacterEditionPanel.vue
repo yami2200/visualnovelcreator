@@ -249,7 +249,7 @@ export default {
               }
             }
 
-            removeDependencyVariableAsset("Character", char.name, this.currentCharacter.name, this.assets);
+            removeDependencyVariableAsset("Character", char.name, this.currentCharacter.name, this.assets, this.listPages);
           }
 
             // Case change the image

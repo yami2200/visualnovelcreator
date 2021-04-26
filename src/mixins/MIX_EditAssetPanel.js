@@ -4,6 +4,7 @@ export const mix_editassetpanel = {
         bus: {required: true},
         assets: {required: true},
         projectProp : {required: true},
+        listPages:{required: true},
     },
 
     methods:{

@@ -147,7 +147,7 @@ export default {
               renameFile(this.projectProp.directory + "Assets\\Musics\\" + this.currentMusic.path, this.projectProp.directory + "Assets\\Musics\\" + filename);
             }
 
-            removeDependencyVariableAsset("Music", this.previousName, this.currentMusic.name, this.assets);
+            removeDependencyVariableAsset("Music", this.previousName, this.currentMusic.name, this.assets, this.listPages);
           }
 
           if(this.soundInputFile.name != this.currentMusic.path){

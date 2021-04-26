@@ -67,11 +67,12 @@
 import listVariables from '../../assets/listTypesVariables.json'
 import baseVariable from '../../assets/base_variables.json'
 import Setter from "@/components/variables/VSM-SetterVariable";
+import {removeDependencyVariable} from "@/lib";
 
 export default {
   name: "VSM-EditVariablePanel",
 
-  props:["bus", "listVariables", "assets"],
+  props:["bus", "listVariables", "assets", "listPages"],
 
   components:{
     "vsm-setter" : Setter,
@@ -99,7 +100,7 @@ export default {
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
-        existCharName: value => (this.listVariables.filter(e => e.name === value).length < 1 || this.previousName == value) || 'Already Exist',
+        existCharName: value => (this.listVariables.filter(e => e.name === value).length < 1 || this.previousName === value) || 'Already Exist',
       },
     };
   },
@@ -112,6 +113,7 @@ export default {
       if(this.canSave){
         if(this.editionMode){
           this.assets[5].content[this.indexEdition] = this.variable;
+          if(this.previousName !== this.variable.name) removeDependencyVariable(this.variable.type.name, this.previousName, this.variable.name, this.listPages);
         } else {
           this.assets[5].content.push(this.variable);
         }

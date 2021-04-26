@@ -5,6 +5,22 @@
   "type" : "input",
   "input" : "text",
   "variable" : "",
+
+  "speaker" : {
+    "type" : {
+      "name" : "Character",
+      "icon" : "mdi-account-multiple",
+      "color" : "#1f18b5",
+      "defaultValue" : "null"
+    },
+    "name" : "",
+    "value": {
+      "type": "value",
+      "value": "null"
+    }
+  },
+  "speakernull" : "",
+
   "tabs" : ["Dialogue", "Script", "Input"],
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [

@@ -141,7 +141,7 @@ export default {
               renameFile(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img, this.projectProp.directory + "Assets\\Scenes\\" + filename);
             }
 
-            removeDependencyVariableAsset("Scene", this.previousName, this.currentScene.name, this.assets);
+            removeDependencyVariableAsset("Scene", this.previousName, this.currentScene.name, this.assets, this.listPages);
           }
 
           if(this.baseImage.name != this.currentScene.img){

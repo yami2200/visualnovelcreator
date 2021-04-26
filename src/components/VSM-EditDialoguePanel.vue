@@ -18,6 +18,7 @@
                 :key="index"
             >
               <vsm-tabdialogue v-if="tab === 'Dialogue'" :current="current" :assets="assets"></vsm-tabdialogue>
+              <vsm-tabcondition v-if="tab === 'Condition'" :current="current" :assets="assets"></vsm-tabcondition>
 
             </v-tab-item>
           </v-tabs-items>
@@ -47,6 +48,7 @@
 
 <script>
 import TabDialogue from "@/components/dialogues/VSM-DialogueTabBasic"
+import TabDialogueCondition from "@/components/dialogues/VSM-DialogueTabCondition"
 
 export default {
   name: "VSM-EditDialoguePanel",
@@ -55,6 +57,7 @@ export default {
 
   components:{
     "vsm-tabdialogue" : TabDialogue,
+    "vsm-tabcondition" : TabDialogueCondition,
   },
 
   computed:{

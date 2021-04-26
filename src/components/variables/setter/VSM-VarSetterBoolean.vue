@@ -12,11 +12,11 @@
               :label="`Value Boolean : ${value.toString()}`"
               :disabled="disabledInputSpecific"
           ></v-checkbox>
-          <vsm-settervariable v-else :assets="assets" :variable="input1" :listvar="listvariables" :initialval="!refEnabled"></vsm-settervariable>
+          <vsm-settervariable v-else :assets="assets" :variable="input1" :listvar="listvariables" :initialval="!refEnabledInput1"></vsm-settervariable>
         </v-col>
         <v-col>
           <v-select
-              :disabled="choice === '2' || !refEnabled"
+              :disabled="choice === '2' || disableOperation"
               class="ml-3"
               :items="listOperation"
               v-model="operationSelected"
@@ -38,7 +38,7 @@
             ></v-select>
         </v-col>
         <v-col v-if="operationSelected != 'value'">
-          <vsm-settervariable :assets="assets" :variable="input2" :listvar="listvariables" :initialval="!refEnabled"></vsm-settervariable>
+          <vsm-settervariable :assets="assets" :variable="input2" :listvar="listvariables" :initialval="!refEnabledInput2"></vsm-settervariable>
         </v-col>
       </v-row>
 
@@ -58,6 +58,18 @@ export default {
   mixins: [mix_settervariable],
 
   props:["assets"],
+
+  computed:{
+    disableOperation(){
+      return !(this.refEnable!=undefined && this.refEnable);
+    },
+    refEnabledInput1() {
+      return this.refEnable!=undefined && this.refEnable && this.listvariables.filter((v) => v.type.name === this.input1.type.name).length > 0;
+    },
+    refEnabledInput2() {
+      return this.refEnable!=undefined && this.refEnable && this.listvariables.filter((v) => v.type.name === this.input2.type.name).length > 0;
+    }
+  },
 
   components: {
     "vsm-setterdefault" : VarSetterDefault,

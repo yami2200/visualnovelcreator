@@ -2,11 +2,11 @@
   <v-card height="67vh">
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
-    <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" ></vsm-character-edition-modal>
-    <vsm-scene-edit-modal @accept="saveEditScene" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus">  </vsm-scene-edit-modal>
-    <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-object-edit-modal>
-    <vsm-sound-edit-modal @accept="saveEditSound" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-sound-edit-modal>
-    <vsm-music-edit-modal @accept="saveEditMusic" :project-prop="project_prop" :assets="assets" :bus="bus"></vsm-music-edit-modal>
+    <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-character-edition-modal>
+    <vsm-scene-edit-modal @accept="saveEditScene" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages">  </vsm-scene-edit-modal>
+    <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-object-edit-modal>
+    <vsm-sound-edit-modal @accept="saveEditSound" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-sound-edit-modal>
+    <vsm-music-edit-modal @accept="saveEditMusic" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-music-edit-modal>
 
     <vsm-contextmenu
         id="5"
@@ -125,6 +125,7 @@ export default {
     assets : {required: true},
     project_prop: {required: true},
     bus : {required: true},
+    listPages : {required: true}
   },
 
   components: {
@@ -207,23 +208,23 @@ export default {
       for(var i = 0; i<character.imgOthers.length; i++){
         deleteFile(dir + character.imgOthers[i].img);
       }
-      removeDependencyVariableAsset("Character", character.name, "null", this.assets);
+      removeDependencyVariableAsset("Character", character.name, "null", this.assets, this.listPages);
     },
     deleteSceneDependency(scene){
       deleteFile(this.project_prop.directory + "Assets\\Scenes\\" + scene.img);
-      removeDependencyVariableAsset("Scene", scene.name, "null", this.assets);
+      removeDependencyVariableAsset("Scene", scene.name, "null", this.assets, this.listPages);
     },
     deleteSoundDependency(sound){
       deleteFile(this.project_prop.directory + "Assets\\Sounds\\" + sound.path);
-      removeDependencyVariableAsset("Sound", sound.name, "null", this.assets);
+      removeDependencyVariableAsset("Sound", sound.name, "null", this.assets, this.listPages);
     },
     deleteMusicDependency(music){
       deleteFile(this.project_prop.directory + "Assets\\Musics\\" + music.path);
-      removeDependencyVariableAsset("Music", music.name, "null", this.assets);
+      removeDependencyVariableAsset("Music", music.name, "null", this.assets, this.listPages);
     },
     deleteObjectDependency(object){
       deleteFile(this.project_prop.directory + "Assets\\Objects\\" + object.img);
-      removeDependencyVariableAsset("Object", object.name, "null", this.assets);
+      removeDependencyVariableAsset("Object", object.name, "null", this.assets, this.listPages);
     },
     editAssetRequest(){
       if(!this.disableEditionButtons){

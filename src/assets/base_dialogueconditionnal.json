@@ -4,7 +4,21 @@
   "y" : 0,
   "text" : "",
   "type" : "condition",
-  "condition" : "",
+
+  "condition" : {
+    "type" : {
+      "name" : "Boolean",
+      "icon" : "mdi-order-bool-descending-variant",
+      "color" : "#94000a",
+      "defaultValue" : true
+    },
+    "name" : "",
+    "value": {
+      "type": "value",
+      "value": true
+    }
+  },
+
   "tabs" : ["Condition"],
   "offsetLoc" : {"x" :  -10, "y" :  -7.5},
   "previousDialogue" : [

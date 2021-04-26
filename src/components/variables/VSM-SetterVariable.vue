@@ -9,7 +9,7 @@
 
     <v-card-text>
       <v-row justify="center" align="center">
-        <p class="ml-5" style="float: left" v-if="variable!=undefined"> <strong> {{ valueShow }} </strong> </p>
+        <p class="ml-5" style="float: left" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
         <v-spacer></v-spacer>
         <v-btn icon class="mb-3" @click="editVar">
           <v-icon>mdi-pencil-outline</v-icon>
@@ -58,7 +58,6 @@ export default {
     },
     setNewValue(data){
       if(data==null) return;
-      console.log(data);
       this.variable.value = data;
     }
   },

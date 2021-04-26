@@ -5,7 +5,7 @@
       max-width="700px"
       max-height="800px"
   >
-    <vsm-editpanelvariables @accept="save" :assets="assets" :bus="bus" :list-variables="variables"></vsm-editpanelvariables>
+    <vsm-editpanelvariables @accept="save" :assets="assets" :bus="bus" :list-variables="variables" :listPages="listPages"></vsm-editpanelvariables>
     <vsm-confirmation-request-modal @accept="deleteSelected" :bus="bus1" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
     <v-card
@@ -82,6 +82,7 @@
 import Vue from "vue";
 import VSMEditVariablePanel from "@/components/variables/VSM-EditVariablePanel";
 import ConfirmationModal from "@/components/modalrequest/VSM-ConfirmationRequestModal"
+import {removeDependencyVariable} from "@/lib";
 
 export default {
   name: "VSM-VariablesPanel",
@@ -89,7 +90,7 @@ export default {
     "vsm-editpanelvariables" : VSMEditVariablePanel,
     "vsm-confirmation-request-modal" : ConfirmationModal
   },
-  props:["bus", "variables", "assets"],
+  props:["bus", "variables", "assets", "listPages"],
 
   data () {
     return {
@@ -133,7 +134,9 @@ export default {
       this.bus1.$emit('showConfirmationRequestModal');
     },
     deleteSelected(){
+      removeDependencyVariable(this.variables[this.selectedItem].type.name, this.variables[this.selectedItem].name, "null", this.listPages);
       this.variables.splice(this.selectedItem, 1);
+
     },
   },
 
