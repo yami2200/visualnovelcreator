@@ -7,7 +7,7 @@
       <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets"></vsm-variables-panel>
         <v-row no-gutters>
           <v-col cols="8">
-            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listPage[selectedDialoguePage].listDialogues">  </vsm-dialogue-manager>
+            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listPage[selectedDialoguePage].listDialogues">  </vsm-dialogue-manager>
           </v-col>
           <v-col cols="4">
             <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
@@ -31,11 +31,11 @@ import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
 import PagesPanel from './components/pages/VSM-PagesPanel';
 import jsonAssets from './test/assets.json';
 import jsonVariables from './test/listVar.json';
-import jsonProjectProperties from './test/project_properties2.json';
+import jsonProjectProperties from './test/project_properties.json';
 import jsonBasePage from './assets/base_page.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import newProject from "@/components/VSM-NewProjectModal";
-import VarPanel from "@/components/VSM-VariablesPanel";
+import VarPanel from "@/components/variables/VSM-VariablesPanel";
 import jsonBaseAsset from './assets/base_assets.json';
 
 import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";

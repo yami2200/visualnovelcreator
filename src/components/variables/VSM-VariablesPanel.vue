@@ -80,7 +80,7 @@
 
 <script>
 import Vue from "vue";
-import VSMEditVariablePanel from "@/components/VSM-EditVariablePanel";
+import VSMEditVariablePanel from "@/components/variables/VSM-EditVariablePanel";
 import ConfirmationModal from "@/components/modalrequest/VSM-ConfirmationRequestModal"
 
 export default {

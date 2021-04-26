@@ -1,9 +1,28 @@
 {
   "title" : "Untitled Dialogue",
+
   "x" : 0,
   "y" : 0,
+
   "text" : "",
   "type" : "dialogue",
+  "tabs" : ["Dialogue", "Script"],
+
+  "speaker" : {
+    "type" : {
+      "name" : "Character",
+      "icon" : "mdi-account-multiple",
+      "color" : "#1f18b5",
+      "defaultValue" : "null"
+    },
+    "name" : "",
+    "value": {
+      "type": "value",
+      "value": "null"
+    }
+  },
+  "speakernull" : "",
+
   "action" : [],
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [

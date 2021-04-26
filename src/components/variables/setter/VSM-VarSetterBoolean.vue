@@ -61,7 +61,7 @@ export default {
 
   components: {
     "vsm-setterdefault" : VarSetterDefault,
-    "vsm-settervariable" : () => import("../../VSM-SetterVariable"),
+    "vsm-settervariable" : () => import("../VSM-SetterVariable"),
   },
 
   data: () => ({

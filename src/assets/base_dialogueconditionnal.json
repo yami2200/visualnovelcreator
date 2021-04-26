@@ -5,6 +5,7 @@
   "text" : "",
   "type" : "condition",
   "condition" : "",
+  "tabs" : ["Condition"],
   "offsetLoc" : {"x" :  -10, "y" :  -7.5},
   "previousDialogue" : [
     [{

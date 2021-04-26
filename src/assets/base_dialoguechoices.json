@@ -5,6 +5,7 @@
   "text" : "",
   "type" : "choices",
   "action" : [],
+  "tabs" : ["Dialogue", "Script", "Choice"],
   "choices" : ["Choice 1" , "Choice 2"],
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [

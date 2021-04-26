@@ -4,6 +4,7 @@
   "y" : 0,
   "type" : "function",
   "action" : [],
+  "tabs" : ["Script"],
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [
     [{

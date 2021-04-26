@@ -56,7 +56,7 @@ export const mix_dialogueblock = {
             }
         },
         clickOnDialogue(){
-            console.log("clicked dialogue !")
+            this.$emit("clickDialogue", this.index);
         },
         linkEnd(e, ii, plugType){
             var indexI = ii;

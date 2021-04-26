@@ -5,6 +5,7 @@
   "type" : "input",
   "input" : "text",
   "variable" : "",
+  "tabs" : ["Dialogue", "Script", "Input"],
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [
     [{

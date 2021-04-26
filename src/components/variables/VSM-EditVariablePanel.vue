@@ -64,9 +64,9 @@
 </template>
 
 <script>
-import listVariables from './../assets/listTypesVariables.json'
-import baseVariable from './../assets/base_variables.json'
-import Setter from "@/components/VSM-SetterVariable";
+import listVariables from '../../assets/listTypesVariables.json'
+import baseVariable from '../../assets/base_variables.json'
+import Setter from "@/components/variables/VSM-SetterVariable";
 
 export default {
   name: "VSM-EditVariablePanel",

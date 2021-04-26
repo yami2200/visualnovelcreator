@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import SetterInteger from "./variables/setter/VSM-VarSetterInteger";
-import SetterString from "./variables/setter/VSM-VarSetterString";
-import SetterFloat from "./variables/setter/VSM-VarSetterFloat";
-import SetterBoolean from "./variables/setter/VSM-VarSetterBoolean";
-import SetterAsset from "./variables/setter/VSM-VarSetterAsset";
+import SetterInteger from "./setter/VSM-VarSetterInteger";
+import SetterString from "./setter/VSM-VarSetterString";
+import SetterFloat from "./setter/VSM-VarSetterFloat";
+import SetterBoolean from "./setter/VSM-VarSetterBoolean";
+import SetterAsset from "./setter/VSM-VarSetterAsset";
 
 import Vue from "vue";
 
