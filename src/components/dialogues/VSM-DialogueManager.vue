@@ -207,7 +207,7 @@ export default {
       this.justClick = true;
       var index = this.selectionDialogue.findIndex(v => v.index === data.index);
       if(index === -1) {
-        if(this.selectionDialogue.length > 0 && (!data.shift || data.e.button ==2)) this.stopSelecting(this.selectionDialogue, [data.index]);
+        if(this.selectionDialogue.length > 0 && (!data.shift || data.e.button ===2)) this.stopSelecting(this.selectionDialogue, [data.index]);
         this.selectionDialogue.push({
           index: data.index,
           offsetX: data.e.offsetX - this.listDialogues[data.index].x,
@@ -308,7 +308,7 @@ export default {
       this.justClick = true;
       this.stopSelecting(this.selectionDialogue);
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMoveLink);
-      if(data.previous != -1) {
+      if(data.previous !== -1) {
         if(this.listDialogues[data.previous].previousDialogue[data.previousI].length>1){
           this.listDialogues[data.previous].previousDialogue[data.previousI].splice(this.listDialogues[data.previous].previousDialogue[data.previousI].findIndex(v => v.id === data.indexD && v.ii === data.indexO), 1);
         } else {
@@ -331,11 +331,11 @@ export default {
       this.yMouse = data.e.offsetY;
     },
     linkEnd(data){
-      if(this.linkingBlock == -1 || this.linkingBlock==data.indexD) return;
+      if(this.linkingBlock === -1 || this.linkingBlock===data.indexD) return;
       this.bus.$emit('unselect'+data.indexD);
-      if(this.linkingOutput!=-1){
+      if(this.linkingOutput!==-1){
         this.listDialogues[this.linkingBlock].nextDialogue[this.linkingOutput] = {id : data.indexD, ii: data.indexIO};
-        if(this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].id != -1){
+        if(this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].id !== -1){
           if(data.onePerInput){
             this.listDialogues[this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].id].nextDialogue[this.listDialogues[data.indexD].previousDialogue[data.indexIO][0].ii] = {id: -1, ii:0}
             this.listDialogues[data.indexD].previousDialogue[data.indexIO] = [{id : this.linkingBlock, ii: this.linkingOutput}];
@@ -369,7 +369,7 @@ export default {
     stopLinking(){
       this.linkingBlock = -1;
       this.$refs.svgBox.removeEventListener('mousemove', this.mouseMoveLink);
-      if(this.scrollDirLinking[0] != 0 || this.scrollDirLinking[1] != 0){
+      if(this.scrollDirLinking[0] !== 0 || this.scrollDirLinking[1] !== 0){
         clearInterval(this.updateScroll);
       }
     },
@@ -378,27 +378,27 @@ export default {
       this.yMouse = e.offsetY;
 
       if(e.x < 50) {
-        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [1, this.scrollDirLinking[1]];
       } else if(e.x > this.width-50) {
-        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [-1, this.scrollDirLinking[1]];
-      } else if(this.scrollDirLinking[0] != 0){
+      } else if(this.scrollDirLinking[0] !== 0){
         this.scrollDirLinking = [0, this.scrollDirLinking[1]];
-        if(this.scrollDirLinking[1] == 0) {
+        if(this.scrollDirLinking[1] === 0) {
           clearInterval(this.updateScroll);
         }
       }
 
       if(e.y < 100) {
-        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [this.scrollDirLinking[0], 1];
       } else if(e.y > this.height-50) {
-        if(this.scrollDirLinking[0] == 0 && this.scrollDirLinking[1] == 0) this.addScrollInterval();
+        if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [this.scrollDirLinking[0], -1];
-      } else if(this.scrollDirLinking[1] != 0){
+      } else if(this.scrollDirLinking[1] !== 0){
         this.scrollDirLinking = [this.scrollDirLinking[0], 0];
-        if(this.scrollDirLinking[0] == 0) {
+        if(this.scrollDirLinking[0] === 0) {
           clearInterval(this.updateScroll);
         }
       }
@@ -407,12 +407,12 @@ export default {
     addScrollInterval(){
       this.updateScroll = setInterval(() => {
         this.panzoom.moveTo(this.panzoom.getTransform().x + this.scrollDirLinking[0]*10, this.panzoom.getTransform().y + this.scrollDirLinking[1]*10);
-        if(this.panzoom.getTransform().x != 0 && this.panzoom.getTransform().x > (-1)*this.width*(this.panzoom.getTransform().scale-1) + 10) this.xMouse -= this.scrollDirLinking[0] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
-        if(this.panzoom.getTransform().y != 0 && this.panzoom.getTransform().y > (-1)*this.height*(this.panzoom.getTransform().scale-1) + 10) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+        if(this.panzoom.getTransform().x !== 0 && this.panzoom.getTransform().x > (-1)*this.width*(this.panzoom.getTransform().scale-1) + 10) this.xMouse -= this.scrollDirLinking[0] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+        if(this.panzoom.getTransform().y !== 0 && this.panzoom.getTransform().y > (-1)*this.height*(this.panzoom.getTransform().scale-1) + 10) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
       }, 20)
     },
     leaveDialogueManager(e){
-      if(this.linkingBlock != -1) {
+      if(this.linkingBlock !== -1) {
         this.stopLinking();
       }
       if(this.selectingBox){
@@ -574,8 +574,8 @@ export default {
     // ########################### LINKS BETWEEN DIALOGUES EDITING
     breakLinks(){
       if(this.contextMenuSelection==null) return;
-      if(this.contextMenuSelection.type == "input") this.breakInputLinks();
-      else if(this.contextMenuSelection.type == "output") this.breakOutputLinks();
+      if(this.contextMenuSelection.type === "input") this.breakInputLinks();
+      else if(this.contextMenuSelection.type === "output") this.breakOutputLinks();
     },
     breakInputLinks(removeCMD){
       if(this.contextMenuSelection==null) return;
@@ -626,15 +626,15 @@ export default {
 
     // ################################# RENAME DIALOGUE
     renameDialogueRequest(){
-      if(this.selectionDialogue.length==0) return;
+      if(this.selectionDialogue.length===0) return;
       this.bus.$emit("showInputText", this.listDialogues[this.selectionDialogue[0].index].title);
     },
     renameDialogues(newname){
-      if(this.selectionDialogue.length==0) return;
+      if(this.selectionDialogue.length===0) return;
       var index = 1;
       var ref = this;
       this.selectionDialogue.forEach((element) => {
-        ref.listDialogues[element.index].title = newname+(index==1 ? '' : '_'+index);
+        ref.listDialogues[element.index].title = newname+(index===1 ? '' : '_'+index);
         index++;
       });
     },

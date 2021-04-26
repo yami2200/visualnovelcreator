@@ -101,7 +101,7 @@ export default {
     },
     // ######################## PAGES MANAGEMENT
     onSwitchPage(selectedPage){
-      if(selectedPage==null || selectedPage == undefined){
+      if(selectedPage===null || selectedPage === undefined){
         this.selectedDialoguePage = null;
       } else {
         this.selectedDialoguePage = selectedPage;
@@ -111,7 +111,7 @@ export default {
       if(data.type === "new"){
         this.listPage.push(JSON.parse(JSON.stringify(basePage)));
       }
-      if(data.index == null || data.index == undefined) return;
+      if(data.index === null || data.index === undefined) return;
       if(data.type === "rename"){
         this.bus.$emit("showInputText", this.listPage[data.index].title);
       }
@@ -152,7 +152,7 @@ export default {
           { name : 'Visual Novel Maker Project', extensions: ['vsm'] }
           ],
       });
-      if(path == null || path == undefined) return;
+      if(path === null || path === undefined) return;
       var file_properties = null;
       if(path.length>0) file_properties = JSON.parse(readFileSync(path[0]));
       if(file_properties!=null){
@@ -177,7 +177,7 @@ export default {
       var path = dialog.showOpenDialogSync({
         properties: ["openDirectory"],
       });
-      if(path == null || path == undefined || path.length==0) return;
+      if(path === null || path === undefined || path.length===0) return;
 
       this.processing = true;
 
@@ -226,12 +226,6 @@ export default {
   },
 
   computed: {
-    sizePreviewPannel: function () {
-      return (this.height * 0.3)+"px";
-    },
-    sizeTabsPannel: function () {
-      return (this.height * 0.67)+"px";
-    },
     sizeDialogPanel: function(){
       return (this.height * 0.97);
     },
