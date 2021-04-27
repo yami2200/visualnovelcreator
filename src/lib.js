@@ -153,6 +153,15 @@ function removeDependencyVariable(type, oldname, newname, listPages) {
                     }
                 }
             }
+
+            // ############################## CASE INPUT DIALOGUE
+            if(d.input !== undefined && d.input.type.name === type && d.input.value.value === oldname){
+                if(newname === "null"){
+                    d.input.value.value = "";
+                } else {
+                    d.input.value.value = newname;
+                }
+            }
         });
     });
 }

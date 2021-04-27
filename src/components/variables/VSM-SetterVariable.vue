@@ -1,11 +1,11 @@
 <template>
   <v-card height="40px">
 
-    <vsm-setter-integer @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-integer>
-    <vsm-setter-string @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-string>
-    <vsm-setter-float @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-float>
-    <vsm-setter-boolean @newval="setNewValue" :assets="assets" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval"> </vsm-setter-boolean>
-    <vsm-setter-asset @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :assets="assets"> </vsm-setter-asset>
+    <vsm-setter-integer @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-integer>
+    <vsm-setter-string @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-string>
+    <vsm-setter-float @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-float>
+    <vsm-setter-boolean @newval="setNewValue" :assets="assets" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-boolean>
+    <vsm-setter-asset @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :assets="assets" :onlyVariable="onlyVariable"> </vsm-setter-asset>
 
     <v-card-text>
       <v-row justify="center" align="center">
@@ -50,7 +50,7 @@ export default {
     "vsm-setter-asset" : SetterAsset,
   },
 
-  props:["variable", "listvar", "initialval", "assets"],
+  props:["variable", "listvar", "initialval", "assets", "onlyVariable"],
 
   methods:{
     editVar(){

@@ -17,6 +17,7 @@
               @change="changeChoice"
           >
             <v-radio
+                :disabled="onlyVariable!== undefined && onlyVariable"
                 label="Specific Value"
                 value="1"
             ></v-radio>
@@ -77,7 +78,7 @@ export default {
     value: 0,
   }),
 
-  props:["dialog", "disableSaveButton", "disabledInputSpecific", "listCompatibleVariables", "refEnabled", "bus"],
+  props:["dialog", "disableSaveButton", "disabledInputSpecific", "listCompatibleVariables", "refEnabled", "bus", "onlyVariable"],
 
   methods:{
     changeSelectingVar(){

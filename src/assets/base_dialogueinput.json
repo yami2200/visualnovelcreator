@@ -3,7 +3,19 @@
   "x" : 0,
   "y" : 0,
   "type" : "input",
-  "input" : "text",
+  "input" : {
+    "type": {
+      "name": "String",
+      "icon": "mdi-format-letter-case",
+      "color": "#e34dd7",
+      "defaultValue": ""
+    },
+    "name": "",
+    "value": {
+      "type": "variable",
+      "value": ""
+    }
+  },
   "variable" : "",
 
   "speaker" : {

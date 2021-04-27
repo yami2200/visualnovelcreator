@@ -29,7 +29,15 @@ export const mix_settervariable = {
             this.dialog = true;
             this.resetDefault();
             this.refreshComputed = !this.refreshComputed;
-            if(this.variable.value.type === "value") {
+            if(this.onlyVariable){
+                this.choice = "2";
+                let val = this.listCompatibleVariables.filter((v) => v.name === this.variable.value.value);
+                if(val.length === 0){
+                    this.select = null;
+                } else {
+                    this.select = val[0].name;
+                }
+            } else if(this.variable.value.type === "value") {
                 this.choice = "1";
                 this.value = this.variable.value.value;
             } else if(this.variable.value.type === "variable" && this.refEnabled) {
@@ -81,5 +89,5 @@ export const mix_settervariable = {
         this.bus.$on('hideSetter' + this.type, this.hide);
     },
 
-    props: ["bus", "variable", "refEnable", "listvariables"],
+    props: ["bus", "variable", "refEnable", "listvariables", "onlyVariable"],
 }

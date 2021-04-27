@@ -14,7 +14,7 @@
           <v-text-field
               v-if="variable!=null"
               label="Name"
-              :rules="[rules.required, rules.counter, rules.existCharName]"
+              :rules="[rules.required, rules.counter, rules.existCharName, rules.notNull]"
               v-model="variable.name"
               :value="variable.name"
           ></v-text-field>
@@ -83,7 +83,7 @@ export default {
       return (this.editionMode ? "Edit " : "New ") + "Variable" ;
     },
     canSave(){
-      if(this.variable == null || this.variable.name === "" || (this.listVariables.filter(e => e.name === this.variable.name).length >= 1 && this.previousName !== this.variable.name)) return false;
+      if(this.variable == null || this.variable.name === "" || this.variable.name === "null" || this.variable.name.length>20 || (this.listVariables.filter(e => e.name === this.variable.name).length >= 1 && this.previousName !== this.variable.name)) return false;
       return true;
     },
   },
@@ -101,6 +101,7 @@ export default {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
         existCharName: value => (this.listVariables.filter(e => e.name === value).length < 1 || this.previousName === value) || 'Already Exist',
+        notNull : value => value !== "null" || 'Not Null Name'
       },
     };
   },
