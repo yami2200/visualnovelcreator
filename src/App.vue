@@ -3,11 +3,11 @@
     <v-main>
       <vsm-menu-bar :loading="processing" :bus="bus" :height="height"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
-      <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage"></vsm-inputtext>
+      <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
       <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
         <v-row no-gutters>
           <v-col cols="8">
-            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listPage[selectedDialoguePage].listDialogues">  </vsm-dialogue-manager>
+            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :busEntry="bus" :listPages="listPage" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
           </v-col>
           <v-col cols="4">
             <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
@@ -109,10 +109,22 @@ export default {
     },
     requestPage(data){
       if(data.type === "new"){
-        this.listPage.push(JSON.parse(JSON.stringify(basePage)));
+        var newPage = JSON.parse(JSON.stringify(basePage));
+        if(this.listPage.filter((p) => p.title === newPage.title).length > 0){
+          var index = 1;
+          var searchingIndex = true;
+          while(searchingIndex){
+            index++;
+            if(this.listPage.filter((p) => p.title === newPage.title + " " + index).length === 0) searchingIndex = false;
+          }
+          newPage.title = newPage.title + " " + index;
+        }
+        this.listPage.push(newPage);
       }
       if(data.index === null || data.index === undefined) return;
       if(data.type === "rename"){
+        this.listNamePages = ["null"].concat(this.listPage.filter((p) => p.title !== this.listPage[data.index].title).map(v => v.title));
+        console.log(this.listNamePages);
         this.bus.$emit("showInputText", this.listPage[data.index].title);
       }
       if(data.type === "delete"){
@@ -122,13 +134,46 @@ export default {
       }
     },
     renamePage(newname){
+      var oldname = this.listPage[this.selectedDialoguePage].title;
       this.listPage[this.selectedDialoguePage].title = newname;
+      this.listPage.forEach((p) => {
+        p.listDialogues.forEach((d) => {
+          if(d.transitionpage !== undefined && d.transitionpage === oldname){
+            d.transitionpage = newname;
+          }
+        })
+      })
     },
     deleteCurentPage(){
       var index = this.selectedDialoguePage;
-      this.bus.$emit("changeSelectedPage", index-1)
+      this.bus.$emit("changeSelectedPage", index-1);
+      var listIDArrival = [];
+      this.listPage.forEach((p) => {
+        if(p === this.listPage[index]){
+          console.log("this page");
+          p.listDialogues.forEach((d) => {
+            if(d.transitionpage !== undefined && d.transitionpage !== this.listPage[index].title){
+              listIDArrival.push({id : d.id, page : d.transitionpage});
+            }
+          });
+        } else {
+          p.listDialogues.forEach((d) => {
+            if(d.transitionpage !== undefined && d.transitionpage === this.listPage[index].title){
+              d.transitionpage = "";
+            }
+          });
+        }
+      });
       this.selectedDialoguePage = Math.max(0, index-1);
       this.listPage.splice(index, 1);
+      this.listPage.forEach((p) => {
+        listIDArrival.forEach((data) => {
+          if(p.title === data.page){
+            data.dialogues = p.listDialogues;
+          }
+        })
+      });
+      this.bus.$emit("deleteAllTransitionId", listIDArrival);
     },
 
     // ######################### FILE MENU
@@ -231,7 +276,11 @@ export default {
     },
     widthDialogPanel: function(){
       return this.width*2/3;
-    }
+    },
+    listDialogues: function(){
+      this.refresh;
+      return this.listPage[this.selectedDialoguePage].listDialogues;
+    },
   },
 
   data: () => ({
@@ -244,6 +293,8 @@ export default {
     variables: JSON.parse(JSON.stringify(jsonVariables)),
     minimized: false,
     selectedDialoguePage: 0,
+    listNamePages: [],
+    refresh : true,
     listPage: [
       {
         title : "First Page",

@@ -13,7 +13,7 @@
       <v-text-field
           class="mr-4 ml-4"
           v-model="textinput"
-          :rules="[rules.required, rules.counter]"
+          :rules="[rules.required, rules.counter, rules.duplicate]"
       ></v-text-field>
 
       <v-card-actions>
@@ -47,6 +47,7 @@ export default {
     headline : {required: true},
     text : {required: true},
     maxLetters : {},
+    duplicateNames : {},
   },
 
   data () {
@@ -56,13 +57,14 @@ export default {
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= this.maxLetters || 'Max '+this.maxLetters+' characters',
+        duplicate : value => (this.duplicateNames === undefined || !this.duplicateNames.includes(value)) || "Duplicate Name"
       },
     }
   },
 
   computed: {
     disableAccept(){
-      return (this.textinput.length === 0 || this.textinput.length > this.maxLetters);
+      return (this.textinput.length === 0 || this.textinput.length > this.maxLetters || (this.duplicateNames !== undefined && this.duplicateNames.includes(this.textinput)));
     },
   },
 

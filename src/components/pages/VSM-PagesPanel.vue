@@ -96,6 +96,7 @@ export default {
     changeSelectedPage(newIndex){
       if(newIndex<0) this.selectedItem = 0;
       else this.selectedItem = newIndex;
+      this.$forceUpdate();
     },
 
     contextMenuClick(e, index){

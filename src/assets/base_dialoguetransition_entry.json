@@ -4,6 +4,8 @@
   "y" : 0,
   "type" : "transition",
   "transition_index" : 0,
+  "id" : 0,
+  "transitionpage" : "",
   "tabs" : ["Transition"],
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [

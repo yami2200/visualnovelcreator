@@ -43,7 +43,7 @@
 
       > </vsm-contextmenu>
 
-    <vsm-editdialoguepanel :bus="bus" :listDialogues="listDialogues" @refresh="refresh" :assets="assets"></vsm-editdialoguepanel>
+    <vsm-editdialoguepanel :bus="bus" :listDialogues="listDialogues" @refresh="refresh" :assets="assets" :listPages="listPages" @DeleteTransition="deleteTransitionDialogue"></vsm-editdialoguepanel>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
@@ -127,7 +127,7 @@ export default {
     'vsm-editdialoguepanel' : EditDialogue,
   },
 
-  props: ['height', 'width', 'listDialogues', "assets"],
+  props: ['height', 'width', 'listDialogues', "assets", "listPages", "busEntry"],
 
   data : () => ({
     xTest: 500,
@@ -498,6 +498,7 @@ export default {
           break;
         case 'transition':
           dialogue = JSON.parse(JSON.stringify(baseDialogueTransition));
+          dialogue.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
           break;
         case 'input':
           dialogue = JSON.parse(JSON.stringify(baseDialogueInput));
@@ -515,7 +516,7 @@ export default {
       if(this.selectionDialogue.length === 0) return
       this.bus.$emit("showEditDialoguePanel", {index : this.selectionDialogue[0].index });
     },
-    deleteDialogue(){
+    deleteDialogue(manual = true, dialogues = this.listDialogues){
       if(this.contextMenuSelection==null) return;
 
       var list = this.contextMenuSelection.index;
@@ -526,34 +527,40 @@ export default {
       if(list[0].index === undefined) list[0] = {index: list[0]};
       this.contextMenuSelection.indexIO = -1;
 
+      var listTransitionArrivalsToDelete = [];
+
       var ref = this;
       list.forEach(function(element){
-        if(element.index !== -1) {
+        if(element.index !== -1 && !(dialogues[element.index].id !== undefined && dialogues[element.index].tabs.length===0 && manual)) {
 
           ref.contextMenuSelection.index = element.index;
-          ref.breakInputLinks(false);
-          ref.breakOutputLinks(false);
+          ref.breakInputLinks(false, dialogues);
+          ref.breakOutputLinks(false, dialogues);
 
-          ref.listDialogues.splice(element.index, 1);
+          if(dialogues[element.index].id !== undefined && dialogues[element.index].tabs.length>0 && dialogues[element.index].transitionpage !== ""){
+            listTransitionArrivalsToDelete.push({id : dialogues[element.index].id, page: dialogues[element.index].transitionpage});
+          }
+
+          dialogues.splice(element.index, 1);
 
           var deleteIndex = element.index;
 
-          for(var i = 0; i<ref.listDialogues.length; i++){
+          for(var i = 0; i<dialogues.length; i++){
 
             var j = 0;
-            ref.listDialogues[i].nextDialogue.forEach(function(nD){
+            dialogues[i].nextDialogue.forEach(function(nD){
               if(nD.id > deleteIndex) {
-                ref.listDialogues[i].nextDialogue[j] = {id : nD.id -1, ii: nD.ii}; // this.listDialogues[i].nextDialogue[j]
+                dialogues[i].nextDialogue[j] = {id : nD.id -1, ii: nD.ii}; // this.listDialogues[i].nextDialogue[j]
               }
               j++;
             });
 
             j = 0;
             var k = 0;
-            ref.listDialogues[i].previousDialogue.forEach(function(pD){
+            dialogues[i].previousDialogue.forEach(function(pD){
               pD.forEach(function(prev){
                 if(prev.id > deleteIndex) {
-                  ref.listDialogues[i].previousDialogue[j][k] = {id : prev.id -1, ii: prev.ii}; //this.listDialogues[i].previousDialogue[j][k]
+                  dialogues[i].previousDialogue[j][k] = {id : prev.id -1, ii: prev.ii}; //this.listDialogues[i].previousDialogue[j][k]
                 }
                 k++;
               });
@@ -569,6 +576,35 @@ export default {
         }
       })
       this.contextMenuSelection=null;
+
+      process.nextTick(() => {
+        listTransitionArrivalsToDelete.forEach((d) => {
+          this.deleteTransitionDialogue(d);
+        });
+      });
+    },
+    deleteTransitionDialogue(data){
+      this.listPages.forEach((p) => {
+        if(p.title === data.page){
+          return this.deleteDialogueID({id : data.id, dialogues : p.listDialogues});
+        }
+      });
+    },
+    deleteDialogueID(data){
+      var l = data.dialogues.findIndex((d) => d.id === data.id && d.tabs.length === 0);
+      if(l !== -1){
+        this.contextMenuSelection = {
+          index : [l],
+          indexIO : -1,
+          type : "global"
+        };
+        this.deleteDialogue(false, data.dialogues);
+      }
+    },
+    deleteAllDialogueID(list){
+      list.forEach((data) => {
+        this.deleteDialogueID(data);
+      })
     },
 
     // ########################### LINKS BETWEEN DIALOGUES EDITING
@@ -577,39 +613,39 @@ export default {
       if(this.contextMenuSelection.type === "input") this.breakInputLinks();
       else if(this.contextMenuSelection.type === "output") this.breakOutputLinks();
     },
-    breakInputLinks(removeCMD){
+    breakInputLinks(removeCMD, dialogues = this.listDialogues){
       if(this.contextMenuSelection==null) return;
       var j = 0;
       var i = 0;
       if(this.contextMenuSelection.indexIO === -1){
-        for(j = 0; j<this.listDialogues[this.contextMenuSelection.index].previousDialogue.length ;j++){
-          for(i = 0; i<this.listDialogues[this.contextMenuSelection.index].previousDialogue[j].length; i++){
-            if(this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id !== -1) this.listDialogues[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id].nextDialogue[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].ii] = {id: -1, i:0};
-            this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i] = {id: -1, ii:0 };
+        for(j = 0; j<dialogues[this.contextMenuSelection.index].previousDialogue.length ;j++){
+          for(i = 0; i<dialogues[this.contextMenuSelection.index].previousDialogue[j].length; i++){
+            if(dialogues[this.contextMenuSelection.index].previousDialogue[j][i].id !== -1) dialogues[dialogues[this.contextMenuSelection.index].previousDialogue[j][i].id].nextDialogue[dialogues[this.contextMenuSelection.index].previousDialogue[j][i].ii] = {id: -1, i:0};
+            dialogues[this.contextMenuSelection.index].previousDialogue[j][i] = {id: -1, ii:0 };
           }
         }
       } else {
         j = this.contextMenuSelection.indexIO;
-        for(i = 0; i<this.listDialogues[this.contextMenuSelection.index].previousDialogue[j].length; i++){
-          if(this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id !== -1) this.listDialogues[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].id].nextDialogue[this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i].ii] = {id: -1, i:0};
-          this.listDialogues[this.contextMenuSelection.index].previousDialogue[j][i] = {id: -1, ii:0 };
+        for(i = 0; i<dialogues[this.contextMenuSelection.index].previousDialogue[j].length; i++){
+          if(dialogues[this.contextMenuSelection.index].previousDialogue[j][i].id !== -1) dialogues[dialogues[this.contextMenuSelection.index].previousDialogue[j][i].id].nextDialogue[dialogues[this.contextMenuSelection.index].previousDialogue[j][i].ii] = {id: -1, i:0};
+          dialogues[this.contextMenuSelection.index].previousDialogue[j][i] = {id: -1, ii:0 };
         }
       }
       this.$forceUpdate();
       if(removeCMD) this.contextMenuSelection=null;
     },
-    breakOutputLinks(removeCMD){
+    breakOutputLinks(removeCMD, dialogues = this.listDialogues){
       if(this.contextMenuSelection==null) return;
       var i = 0;
       if(this.contextMenuSelection.indexIO === -1){
-        for(i = 0; i<this.listDialogues[this.contextMenuSelection.index].nextDialogue.length ;i++){
-          removePreviousDialoguesFromOutput(this.listDialogues, this.contextMenuSelection.index, i);
-          this.listDialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
+        for(i = 0; i<dialogues[this.contextMenuSelection.index].nextDialogue.length ;i++){
+          removePreviousDialoguesFromOutput(dialogues, this.contextMenuSelection.index, i);
+          dialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
         }
       } else {
         i = this.contextMenuSelection.indexIO;
-        removePreviousDialoguesFromOutput(this.listDialogues, this.contextMenuSelection.index, i);
-        this.listDialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
+        removePreviousDialoguesFromOutput(dialogues, this.contextMenuSelection.index, i);
+        dialogues[this.contextMenuSelection.index].nextDialogue[i] = {id: -1, ii:0};
       }
       this.$forceUpdate();
       if(removeCMD) this.contextMenuSelection=null;
@@ -627,6 +663,7 @@ export default {
     // ################################# RENAME DIALOGUE
     renameDialogueRequest(){
       if(this.selectionDialogue.length===0) return;
+      if(this.listDialogues[this.selectionDialogue[0].index].frompage === "") return;
       this.bus.$emit("showInputText", this.listDialogues[this.selectionDialogue[0].index].title);
     },
     renameDialogues(newname){
@@ -634,8 +671,18 @@ export default {
       var index = 1;
       var ref = this;
       this.selectionDialogue.forEach((element) => {
-        ref.listDialogues[element.index].title = newname+(index===1 ? '' : '_'+index);
-        index++;
+        if(ref.listDialogues[element.index].frompage === undefined) ref.listDialogues[element.index].title = newname+(index===1 ? '' : '_'+index);
+        if(ref.listDialogues[element.index].transitionpage !== undefined && ref.listDialogues[element.index].id !== ""){
+          var p = this.listPages.filter((p) => p.title === ref.listDialogues[element.index].transitionpage);
+          if(p.length>0){
+            p[0].listDialogues.forEach((d) => {
+              if(d.id === ref.listDialogues[element.index].id){
+                d.title = newname+(index===1 ? '' : '_'+index);
+              }
+            });
+          }
+        }
+        if(ref.listDialogues[element.index].frompage === undefined) index++;
       });
     },
 
@@ -645,6 +692,11 @@ export default {
     },
 
   },
+
+  mounted() {
+    this.busEntry.$on("deleteTransitionId", this.deleteDialogueID);
+    this.busEntry.$on("deleteAllTransitionId", this.deleteAllDialogueID);
+  }
 
 }
 </script>
