@@ -130,8 +130,6 @@ export default {
   props: ['height', 'width', 'listDialogues', "assets", "listPages", "busEntry"],
 
   data : () => ({
-    xTest: 500,
-    yTest: 500,
     color: "red",
 
     itemsMenu: [{title : "yes", action : "test1"}, {title : "no", action : "test2"}],
@@ -687,8 +685,13 @@ export default {
     },
 
     // ##################################### REFRESH
-    refresh(){
+    refresh(data){
       this.$forceUpdate();
+      process.nextTick(() => {
+        data.forEach((e) => {
+          this.bus.$emit('moving'+e);
+        })
+      });
     },
 
   },

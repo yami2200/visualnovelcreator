@@ -14,13 +14,14 @@
         <v-container>
           <v-tabs-items v-if="current != null" v-model="tab">
             <v-tab-item
-                v-for="(tab,index) in current.tabs"
-                :key="index"
+                v-for="(tab,indexT) in current.tabs"
+                :key="indexT"
             >
               <vsm-tabdialogue v-if="tab === 'Dialogue'" :current="current" :assets="assets"></vsm-tabdialogue>
               <vsm-tabcondition v-if="tab === 'Condition'" :current="current" :assets="assets"></vsm-tabcondition>
               <vsm-tabinput v-if="tab === 'Input'" :current="current" :assets="assets"></vsm-tabinput>
               <vsm-tabtransition v-if="tab === 'Transition'" :current="current" :assets="assets" :listPages="listPages"></vsm-tabtransition>
+              <vsm-tabchoice v-if="tab === 'Choice'" :current="current" :assets="assets" :list-dialogues="listDialoguesTempo" :index-choice="index"></vsm-tabchoice>
 
             </v-tab-item>
           </v-tabs-items>
@@ -54,7 +55,7 @@ import TabDialogue from "@/components/dialogues/VSM-DialogueTabBasic"
 import TabDialogueCondition from "@/components/dialogues/VSM-DialogueTabCondition"
 import TabDialogueInput from "@/components/dialogues/VSM-DialogueTabInput"
 import TabDialogueTransition from "@/components/dialogues/VSM-DialogueTabTransition"
-
+import TabDialogueChoice from "@/components/dialogues/VSM-DialogueTabChoice"
 
 export default {
   name: "VSM-EditDialoguePanel",
@@ -66,6 +67,7 @@ export default {
     "vsm-tabcondition" : TabDialogueCondition,
     "vsm-tabinput" : TabDialogueInput,
     "vsm-tabtransition" : TabDialogueTransition,
+    "vsm-tabchoice" : TabDialogueChoice
   },
 
   computed:{
@@ -77,6 +79,7 @@ export default {
   data: () => ({
     dialog: false,
     current: null,
+    listDialoguesTempo : null,
     tab: "",
     index: -1
   }),
@@ -115,9 +118,15 @@ export default {
         }
       }
 
+      if(this.current.type === "choices"){
+        for(var i = 0;i<this.listDialogues.length ; i++){
+          this.listDialogues[i] = this.listDialoguesTempo[i];
+        }
+      }
+
       this.listDialogues[this.index] = this.current;
-      this.$emit("refresh");
       this.hide();
+      this.$emit("refresh", [this.index]);
     },
     cancel(){
       this.hide();
@@ -126,6 +135,7 @@ export default {
       if(this.listDialogues[data.index] === undefined || this.listDialogues[data.index] === null || this.listDialogues[data.index].tabs.length === 0) return;
 
       this.current = null;
+      this.listDialoguesTempo = JSON.parse(JSON.stringify(this.listDialogues));
 
       process.nextTick(() => {
         this.index = data.index;

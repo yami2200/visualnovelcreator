@@ -21,8 +21,60 @@
   },
   "speakernull" : "",
 
-  "tabs" : ["Dialogue", "Script", "Choice"],
-  "choices" : ["Choice 1" , "Choice 2"],
+  "tabs" : ["Dialogue", "Choice", "Script"],
+  "choices" : [
+    {
+    "text" : "Choice 1",
+    "type" : "choice",
+      "condition" : {
+        "type" : {
+          "name" : "Boolean",
+          "icon" : "mdi-order-bool-descending-variant",
+          "color" : "#94000a",
+          "defaultValue" : true
+        },
+        "name" : "",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      }
+  },
+    {
+    "text" : "Choice 2",
+    "type" : "choice",
+      "condition" : {
+        "type" : {
+          "name" : "Boolean",
+          "icon" : "mdi-order-bool-descending-variant",
+          "color" : "#94000a",
+          "defaultValue" : true
+        },
+        "name" : "",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      }
+  },
+    {
+      "text" : "Object 1",
+      "type" : "object",
+      "object" : {
+        "type" : {
+          "name" : "Object",
+          "icon" : "mdi-sword",
+          "color" : "#ded82a",
+          "defaultValue" : "null"
+        },
+        "name" : "",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    }
+  ],
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [
     [{
@@ -37,11 +89,19 @@
     {
       "id": -1,
       "ii": 0
+    },
+    {
+      "id": -1,
+      "ii": 0
     }],
   "outputsLoc" : [{
     "x": 0,
     "y": 0
   },
+    {
+      "x": 0,
+      "y": 0
+    },
     {
       "x": 0,
       "y": 0

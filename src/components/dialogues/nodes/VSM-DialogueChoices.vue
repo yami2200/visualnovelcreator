@@ -35,13 +35,14 @@
 
     <rect
         v-for="(choice, index) in dialogue.choices"
-        :key="choice"
+        :key="choice.text"
         @mouseenter="mouseEnterOutput($event, index)"
         @mouseleave="mouseLeaveOutput"
         @mouseup="linkEnd($event, index, 'output')"
         @mousedown="startLinkingFromOutput($event, index)"
         @contextmenu="showContextMenu($event, 'output', index)"
-        class="button_diag clickable"
+        class="clickable"
+        :class="dialogue.choices[index].type === 'choice' ? 'button_diag' : 'button_diag_obj'"
         stroke="#000000"
         stroke-width="0.3"
         :x="xChildM(index)"
@@ -89,6 +90,7 @@ export default {
 
   methods :{
     xChildM(index){
+      if(this.dialogue.choices.length === 1) return this.dialogue.x + 7.5;
       return this.dialogue.x + (this.sizeBlock / this.dialogue.choices.length) * (index+0.5/this.dialogue.choices.length)
     },
     updatePlugsLocations(){
@@ -99,13 +101,20 @@ export default {
       this.$emit("updatePlugsLoc", {index: this.index, outputsLoc: output, inputsLoc: [{x : this.xChild + 3, y : this.dialogue.y}]});
     },
     mouseEnterOutput(e, io){
-      this.$emit("choiceHover", {text: this.dialogue.choices[io], e:e});
+      this.$emit("choiceHover", {text: this.dialogue.choices[io].text, e:e});
       this.mouseEnter();
     },
     mouseLeaveOutput(){
       this.$emit("choiceStopHover");
       this.mouseLeave();
-    },
+    }
+  },
+
+  mounted() {
+    this.bus.$on('unselect'+this.index, this.unselect);
+    this.bus.$on('select'+this.index, this.selecting);
+    this.bus.$on('moving'+this.index, this.updatePlugsLocations);
+    this.updatePlugsLocations();
   },
 
 }
@@ -120,6 +129,10 @@ export default {
     fill: #2669b1;
     cursor: pointer;
     transition: fill 0.3s;
+  }
+
+  .button_diag_obj {
+    fill: #1436ad;
   }
 
   .text {

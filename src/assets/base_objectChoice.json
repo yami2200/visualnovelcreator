@@ -1,0 +1,17 @@
+{
+  "text" : "Object Usage",
+  "type" : "object",
+  "object" : {
+    "type" : {
+      "name" : "Object",
+      "icon" : "mdi-sword",
+      "color" : "#ded82a",
+      "defaultValue" : "null"
+    },
+    "name" : "",
+    "value": {
+      "type": "value",
+      "value": "null"
+    }
+  }
+}

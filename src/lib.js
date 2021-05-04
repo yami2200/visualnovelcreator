@@ -106,16 +106,34 @@ function removeDependencyVariableAsset(type, oldname, newname, assets, listPages
             // ########################## CASE ASSET FOR CONDITIONNAL DIALOGUE
             if(d.condition !== undefined){
                 if(d.condition.value.type === "value") {
-                    if(d.condition.value.operation !== undefined & d.condition.value.operation !== "value"){
-                        if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "value" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
-                        if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "value" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
-                        d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
-                    }
+                    checkConditionForAssetDependency(d, oldname, newname);
                 }
+            }
+
+            // ########################### CASE ASSET FOR CHOICE DIALOGUE
+            if(d.choices !== undefined){
+                d.choices.forEach((c) => {
+                    if(c.condition !== undefined && c.condition.value.type === "value"){
+                        checkConditionForAssetDependency(c, oldname, newname);
+                    }
+                    if(c.object !== undefined && type === "Object" && c.object.value.type === "value"){
+                        if(c.object.value.value !== "null" && c.object.value.value === oldname){
+                            c.object.value.value = newname;
+                        }
+                    }
+                });
             }
 
         });
     });
+}
+
+function checkConditionForAssetDependency(d, oldname, newname){
+    if(d.condition.value.operation !== undefined && d.condition.value.operation !== "value"){
+        if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "value" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
+        if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "value" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
+        d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
+    }
 }
 
 function removeDependencyVariable(type, oldname, newname, listPages) {
@@ -124,22 +142,7 @@ function removeDependencyVariable(type, oldname, newname, listPages) {
 
             // ######################### CASE CONDITIONNAL DIALOGUE
             if (d.condition !== undefined) {
-                if(d.condition.value.type === "value") {
-                    if(d.condition.value.operation !== undefined & d.condition.value.operation !== "value"){
-                        if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "variable" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
-                        if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "variable" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
-                        d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
-                    }
-                } else if(type === "Boolean") {
-                    if(d.condition.value.value === oldname) {
-                        if(newname === "null"){
-                            d.condition.value.type = "value";
-                            d.condition.value.value = d.condition.type.defaultValue;
-                        } else {
-                            d.condition.value.value = newname;
-                        }
-                    }
-                }
+                checkConditionForVariableDependency(d, oldname, newname, type);
             }
 
             // ######################### CASE DIALOGUE
@@ -162,8 +165,47 @@ function removeDependencyVariable(type, oldname, newname, listPages) {
                     d.input.value.value = newname;
                 }
             }
+
+            // ############################# CASE CHOICES DIALOGUE
+            if(d.choices !== undefined){
+                d.choices.forEach((c) => {
+                    if(c.condition !== undefined){
+                        checkConditionForVariableDependency(c, oldname, newname, type);
+                    }
+                    if(c.object !== undefined && type === "Object" && c.object.value.type === "variable"){
+                        if(c.object.value.value === oldname){
+                            if(newname === "null"){
+                                c.object.value.type = "value";
+                                c.object.value.value = "null";
+                            } else {
+                                c.object.value.value = newname;
+                            }
+                        }
+                    }
+                });
+            }
+
         });
     });
+}
+
+function checkConditionForVariableDependency(d, oldname, newname, type){
+    if(d.condition.value.type === "value") {
+        if(d.condition.value.operation !== undefined & d.condition.value.operation !== "value"){
+            if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "variable" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
+            if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "variable" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
+            d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
+        }
+    } else if(type === "Boolean") {
+        if(d.condition.value.value === oldname) {
+            if(newname === "null"){
+                d.condition.value.type = "value";
+                d.condition.value.value = d.condition.type.defaultValue;
+            } else {
+                d.condition.value.value = newname;
+            }
+        }
+    }
 }
 
 function dependencyBooleanInputs(newname, input){
