@@ -509,10 +509,12 @@ export default {
     },
     clickDialogue(data){
       this.bus.$emit("showEditDialoguePanel", {index : data });
+      this.stopSelecting(this.selectionDialogue);
     },
     editDialogue(){
       if(this.selectionDialogue.length === 0) return
       this.bus.$emit("showEditDialoguePanel", {index : this.selectionDialogue[0].index });
+      this.stopSelecting(this.selectionDialogue);
     },
     deleteDialogue(manual = true, dialogues = this.listDialogues){
       if(this.contextMenuSelection==null) return;

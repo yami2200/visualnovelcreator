@@ -22,6 +22,7 @@
               <vsm-tabinput v-if="tab === 'Input'" :current="current" :assets="assets"></vsm-tabinput>
               <vsm-tabtransition v-if="tab === 'Transition'" :current="current" :assets="assets" :listPages="listPages"></vsm-tabtransition>
               <vsm-tabchoice v-if="tab === 'Choice'" :current="current" :assets="assets" :list-dialogues="listDialoguesTempo" :index-choice="index"></vsm-tabchoice>
+              <vsm-tabscript v-if="tab === 'Script'" :current="current" :assets="assets"></vsm-tabscript>
 
             </v-tab-item>
           </v-tabs-items>
@@ -56,6 +57,7 @@ import TabDialogueCondition from "@/components/dialogues/VSM-DialogueTabConditio
 import TabDialogueInput from "@/components/dialogues/VSM-DialogueTabInput"
 import TabDialogueTransition from "@/components/dialogues/VSM-DialogueTabTransition"
 import TabDialogueChoice from "@/components/dialogues/VSM-DialogueTabChoice"
+import TabDialogueScript from "@/components/dialogues/VSM-DialogueTabScript"
 
 export default {
   name: "VSM-EditDialoguePanel",
@@ -67,7 +69,8 @@ export default {
     "vsm-tabcondition" : TabDialogueCondition,
     "vsm-tabinput" : TabDialogueInput,
     "vsm-tabtransition" : TabDialogueTransition,
-    "vsm-tabchoice" : TabDialogueChoice
+    "vsm-tabchoice" : TabDialogueChoice,
+    "vsm-tabscript" : TabDialogueScript
   },
 
   computed:{

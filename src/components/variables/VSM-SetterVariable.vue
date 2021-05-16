@@ -1,6 +1,12 @@
 <template>
   <v-card height="40px">
 
+    <vsm-tooltip
+        :bus="bus1"
+        :text="variable.name"
+    >
+    </vsm-tooltip>
+
     <vsm-setter-integer @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-integer>
     <vsm-setter-string @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-string>
     <vsm-setter-float @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-float>
@@ -11,7 +17,7 @@
       <v-row justify="center" align="center">
         <p class="ml-5" style="float: left" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
         <v-spacer></v-spacer>
-        <v-btn icon class="mb-3" @click="editVar">
+        <v-btn icon class="mb-3" @click="editVar" @mouseenter="hoverButton" @mouseleave="leaveButton">
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
       </v-row>
@@ -28,6 +34,7 @@ import SetterBoolean from "./setter/VSM-VarSetterBoolean";
 import SetterAsset from "./setter/VSM-VarSetterAsset";
 
 import Vue from "vue";
+import tooltip from "@/components/VSM-Tooltip";
 
 export default {
   name: "VSM-SetterInteger",
@@ -48,11 +55,22 @@ export default {
     "vsm-setter-float" : SetterFloat,
     "vsm-setter-boolean" :SetterBoolean,
     "vsm-setter-asset" : SetterAsset,
+    'vsm-tooltip' : tooltip,
   },
 
-  props:["variable", "listvar", "initialval", "assets", "onlyVariable"],
+  props:["variable", "listvar", "initialval", "assets", "onlyVariable", "showName"],
 
   methods:{
+    hoverButton(e){
+      if(this.showName !== undefined && this.showName){
+        this.bus1.$emit("showTooltip", e);
+      }
+    },
+    leaveButton(e){
+      if(this.showName !== undefined && this.showName){
+        this.bus1.$emit("hideTooltip", e);
+      }
+    },
     editVar(){
       this.bus1.$emit("showSetter"+this.variable.type.name);
     },

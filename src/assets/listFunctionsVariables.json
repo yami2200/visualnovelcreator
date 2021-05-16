@@ -1,0 +1,136 @@
+[
+  {
+    "name" : "Set",
+    "component" : "CompSet",
+    "lightColor" : "#b07838",
+    "darkColor" : "#9c601c",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type" : {
+          "name" : "variable",
+          "icon" : "mdi-sword",
+          "color" : "#ded82a",
+          "defaultValue" : ""
+        },
+        "onlyvar" : true,
+        "name" : "Variable",
+        "value": {
+          "type": "variable",
+          "value": ""
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "Value",
+        "value": {
+          "type": "value",
+          "value": 3
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Set Random Integer",
+    "component" : "Basic",
+    "lightColor" : "#39cc81",
+    "darkColor" : "#1bbf6b",
+    "indentation" : 0,
+    "inputs": [
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "onlyvar" : true,
+        "name": "Variable",
+        "value": {
+          "type": "variable",
+          "value": ""
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "Min",
+        "value": {
+          "type": "value",
+          "value": 0
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "Max",
+        "value": {
+          "type": "value",
+          "value": 100
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Set Random Float",
+    "component" : "Basic",
+    "lightColor" : "#39cc81",
+    "darkColor" : "#1bbf6b",
+    "indentation" : 0,
+    "inputs": [
+      {
+        "type": {
+          "name" : "Float",
+          "icon" : "mdi-decimal",
+          "color" : "#4de396",
+          "defaultValue" : 1.0
+        },
+        "onlyvar" : true,
+        "name": "Variable",
+        "value": {
+          "type": "variable",
+          "value": ""
+        }
+      },
+      {
+        "type": {
+          "name" : "Float",
+          "icon" : "mdi-decimal",
+          "color" : "#4de396",
+          "defaultValue" : 1.0
+        },
+        "name": "Min",
+        "value": {
+          "type": "value",
+          "value": 0.0
+        }
+      },
+      {
+        "type": {
+          "name" : "Float",
+          "icon" : "mdi-decimal",
+          "color" : "#4de396",
+          "defaultValue" : 1.0
+        },
+        "name": "Max",
+        "value": {
+          "type": "value",
+          "value": 1.0
+        }
+      }
+    ]
+  }
+]

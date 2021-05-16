@@ -1,0 +1,71 @@
+[
+  {
+    "name" : "If",
+    "component" : "ControlIf",
+    "lightColor" : "#eb3434",
+    "darkColor" : "#eb3434",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Boolean",
+          "icon" : "mdi-order-bool-descending-variant",
+          "color" : "#94000a",
+          "defaultValue" : true
+        },
+        "name": "Condition",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      }
+    ],
+    "action" : []
+  },
+  {
+    "name" : "If Else",
+    "component" : "ControlIfElse",
+    "lightColor" : "#eb3434",
+    "darkColor" : "#eb3434",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Boolean",
+          "icon" : "mdi-order-bool-descending-variant",
+          "color" : "#94000a",
+          "defaultValue" : true
+        },
+        "name": "Condition",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      }
+    ],
+    "actionif" : [],
+    "actionelse" : []
+  },
+  {
+    "name" : "Delay",
+    "component" : "Basic",
+    "lightColor" : "#6aebac",
+    "darkColor" : "#34e38e",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Float",
+          "icon" : "mdi-decimal",
+          "color" : "#4de396",
+          "defaultValue" : 1.0
+        },
+        "name": "Delay (s)",
+        "value": {
+          "type": "value",
+          "value": 1.0
+        }
+      }
+    ]
+  }
+]

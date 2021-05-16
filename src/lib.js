@@ -124,9 +124,34 @@ function removeDependencyVariableAsset(type, oldname, newname, assets, listPages
                 });
             }
 
+            // ########################### CASE ASSET FOR SCRIPT DIALOGUE
+            if(d.action !== undefined){
+                d.action.forEach((a) => {
+                    checkInputsAssetDependencyFromAction(a, oldname, newname, type);
+                });
+            }
+
         });
     });
 }
+
+function checkInputsAssetDependencyFromAction(action, oldname, newname, type){
+    if(action.action !== undefined) action.action.forEach((a) => {checkInputsAssetDependencyFromAction(a, oldname, newname, type)});
+    else {
+        if(action.actionif !== undefined) action.actionif.forEach((a) => {checkInputsAssetDependencyFromAction(a, oldname, newname, type)});
+        if(action.actionelse !== undefined) action.actionelse.forEach((a) => {checkInputsAssetDependencyFromAction(a, oldname, newname, type)});
+    }
+
+    action.inputs.forEach((i) => {
+        if(i.type.name === type && i.value.type === "value" && i.value.value !== "null" && i.value.value === oldname){
+            i.value.value = newname;
+        }
+        if(i.type.name === "Boolean" && i.value.type === "value"){
+            checkConditionForAssetDependency({condition : i}, oldname, newname);
+        }
+    });
+}
+
 
 function checkConditionForAssetDependency(d, oldname, newname){
     if(d.condition.value.operation !== undefined && d.condition.value.operation !== "value"){
@@ -185,9 +210,46 @@ function removeDependencyVariable(type, oldname, newname, listPages) {
                 });
             }
 
+            // ########################### CASE SCRIPT DIALOGUE
+            if(d.action !== undefined){
+                d.action.forEach((a) => {
+                    checkInputsVariableDependencyFromAction(a, oldname, newname, type);
+                });
+            }
+
         });
     });
 }
+
+function checkInputsVariableDependencyFromAction(action, oldname, newname, type){
+    if(action.action !== undefined) action.action.forEach((a) => {checkInputsVariableDependencyFromAction(a, oldname, newname, type)});
+    else {
+        if(action.actionif !== undefined) action.actionif.forEach((a) => {checkInputsVariableDependencyFromAction(a, oldname, newname, type)});
+        if(action.actionelse !== undefined) action.actionelse.forEach((a) => {checkInputsVariableDependencyFromAction(a, oldname, newname, type)});
+    }
+
+    action.inputs.forEach((i) => {
+        if((i.type.name === type || i.type.name === "variable") && i.value.type === "variable" && i.value.value === oldname){
+            if(newname === "null"){
+                if(i.onlyvar !== undefined && i.onlyvar){
+                    i.value.value = "";
+                } else {
+                    i.value.type = "value";
+                    i.value.value = i.type.defaultValue;
+                }
+            } else {
+                i.value.value = newname;
+            }
+        }
+
+        if(i.type.name === "Boolean" && i.value.type === "value"){
+            checkConditionForVariableDependency({condition : i}, oldname, newname, type);
+        }
+
+    });
+
+}
+
 
 function checkConditionForVariableDependency(d, oldname, newname, type){
     if(d.condition.value.type === "value") {

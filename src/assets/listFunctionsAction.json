@@ -1,0 +1,186 @@
+[
+  {
+    "name" : "Change Background",
+    "component" : "Basic",
+    "lightColor" : "#ff9870",
+    "darkColor" : "#ff7b47",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Scene",
+          "icon" : "mdi-home-city",
+          "color" : "#9c4321",
+          "defaultValue" : "null"
+        },
+        "name": "Scene",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Add Character",
+    "component" : "Basic",
+    "lightColor" : "#5d56fc",
+    "darkColor" : "#3c33ff",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Character",
+          "icon" : "mdi-account-multiple",
+          "color" : "#1f18b5",
+          "defaultValue" : "null"
+        },
+        "name": "Character",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Remove Character",
+    "component" : "Basic",
+    "lightColor" : "#5d56fc",
+    "darkColor" : "#3c33ff",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Character",
+          "icon" : "mdi-account-multiple",
+          "color" : "#1f18b5",
+          "defaultValue" : "null"
+        },
+        "name": "Character",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Play Music",
+    "component" : "Basic",
+    "lightColor" : "#a770ff",
+    "darkColor" : "#873dff",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Music",
+          "icon" : "mdi-music-circle-outline",
+          "color" : "#7129e6",
+          "defaultValue" : "null"
+        },
+        "name": "Music",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Stop Music",
+    "component" : "Basic",
+    "lightColor" : "#a770ff",
+    "darkColor" : "#873dff",
+    "indentation" : 0,
+    "inputs" : []
+  },
+  {
+    "name" : "Play Sound",
+    "component" : "Basic",
+    "lightColor" : "#d166ff",
+    "darkColor" : "#c338ff",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Sound",
+          "icon" : "mdi-music-note-outline",
+          "color" : "#ad29e6",
+          "defaultValue" : "null"
+        },
+        "name": "Sound",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Stop Sound",
+    "component" : "Basic",
+    "lightColor" : "#d166ff",
+    "darkColor" : "#c338ff",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Sound",
+          "icon" : "mdi-music-note-outline",
+          "color" : "#ad29e6",
+          "defaultValue" : "null"
+        },
+        "name": "Sound",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Give Object",
+    "component" : "Basic",
+    "lightColor" : "#fffa70",
+    "darkColor" : "#fff83b",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Object",
+          "icon" : "mdi-sword",
+          "color" : "#ded82a",
+          "defaultValue" : "null"
+        },
+        "name": "Object",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Remove Object",
+    "component" : "Basic",
+    "lightColor" : "#fffa70",
+    "darkColor" : "#fff83b",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Object",
+          "icon" : "mdi-sword",
+          "color" : "#ded82a",
+          "defaultValue" : "null"
+        },
+        "name": "Object",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      }
+    ]
+  }
+]
