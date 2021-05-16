@@ -16,6 +16,7 @@
 
       @keyup.f2="renameDialogueRequest"
   >
+
     <vsm-inputtext :bus="bus" :maxLetters="30" :text="'Write a new name for your dialogue'+(selectionDialogue.length>1 ? 's' : '')+' :'" :headline="'Rename dialogue'+(selectionDialogue.length>1 ? 's' : '')" @accept="renameDialogues"></vsm-inputtext>
 
     <vsm-tooltip
@@ -80,6 +81,35 @@
             </svg>
           </panZoom>
 
+    <v-card-actions style="height: 50px; position: relative; z-index: 10; bottom: 50px; pointer-events:none;">
+      <v-btn
+          style="pointer-events: auto;"
+          @mouseenter="leaveDialogueManager"
+          @click="playGame(false)"
+          color="primary"
+          absolute
+          top
+          left
+          fab
+      >
+        <v-icon>mdi-play</v-icon>
+      </v-btn>
+      <v-btn
+          style="pointer-events: auto; margin-left: 70px"
+          @mouseenter="leaveDialogueManager"
+          :disabled="disablePlayFromDialogueBtn"
+          @click="playGame(true)"
+          color="green"
+          small
+          absolute
+          top
+          left
+          fab
+      >
+        <v-icon>mdi-clipboard-play-outline</v-icon>
+      </v-btn>
+    </v-card-actions>
+
   </v-card>
 </template>
 
@@ -102,7 +132,9 @@ import jsonBaseDialogueTransitionEntry from '../../assets/base_dialoguetransitio
 import jsonBaseDialogueChoices from '../../assets/base_dialoguechoices.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import EditDialogue from "@/components/VSM-EditDialoguePanel"
-//import jsonBaseDialogueTransitionArrival from './../assets/base_dialoguetransition_entry.json';
+
+const electron = require('electron')
+const BrowserWindow = electron.remote.BrowserWindow
 
 const baseDialogue = jsonBaseDialogue;
 const baseDialogueCondition = jsonBaseDialogueCondition;
@@ -127,7 +159,7 @@ export default {
     'vsm-editdialoguepanel' : EditDialogue,
   },
 
-  props: ['height', 'width', 'listDialogues', "assets", "listPages", "busEntry"],
+  props: ['height', 'width', 'listDialogues', "assets", "listPages", "busEntry", "projectproperties", "currentpage"],
 
   data : () => ({
     color: "red",
@@ -138,6 +170,8 @@ export default {
     mouseEvent: null,
 
     textTooltip: "",
+
+    snackbar: true,
 
     updateScroll: null,
     scrollDirLinking: [0,0],
@@ -182,9 +216,34 @@ export default {
     getCursor(){
       return (this.panButtonPress ? 'grabbing' : (this.movingDialogue ? 'move' : 'default'));
     },
+    disablePlayFromDialogueBtn(){
+      return this.selectionDialogue.length !== 1;
+    }
   },
 
   methods:{
+    test(){
+      console.log("enter")
+    },
+    playGame(fromselection){
+      let textURL = "";
+      if(fromselection){
+        if(this.disablePlayFromDialogueBtn) return;
+        textURL = "?page=" + this.currentpage +"&dialogue="+this.selectionDialogue[0].index;
+      }
+
+      let win = new BrowserWindow({ show: false, autoHideMenuBar: true, })
+      win.on('close', function () { win = null })
+      if(process.env.NODE_ENV !== 'production'){
+        win.loadURL("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\game.html"+textURL);
+      } else {
+        win.loadURL("file://"+this.projectproperties.directory+"/engine/game.html"+textURL);
+      }
+      win.once('ready-to-show', () => {
+        win.show()
+      })
+    },
+
     // ########################### GETTER FOR PLUGS LINKS LOCATIONS
     linkXOut(id, ii){
       return this.listDialogues[id].outputsLoc[ii].x;
