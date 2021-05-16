@@ -11,6 +11,7 @@
       <v-card-text> {{ text }}</v-card-text>
 
       <v-text-field
+          @keydown="pressKey"
           class="mr-4 ml-4"
           v-model="textinput"
           :rules="[rules.required, rules.counter, rules.duplicate]"
@@ -84,7 +85,12 @@ export default {
       if(this.textinput.length === 0 || this.textinput.length > this.maxLetters) return ;
       this.hide();
       this.$emit("accept", this.textinput);
-    }
+    },
+    pressKey(e){
+      if(e.key === "Enter"){
+        this.accept();
+      }
+    },
   },
 
   mounted() {
