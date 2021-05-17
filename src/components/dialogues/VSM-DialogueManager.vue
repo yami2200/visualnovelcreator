@@ -171,7 +171,7 @@ export default {
 
     textTooltip: "",
 
-    snackbar: true,
+    clipboard: {frompage : "", content : []},
 
     updateScroll: null,
     scrollDirLinking: [0,0],
@@ -755,11 +755,76 @@ export default {
       });
     },
 
+    // ###################################### COPY PASTE DIALOGUES
+    copyDialogues(){
+      if(this.selectionDialogue.length === 0) return;
+      this.clipboard = {frompage : this.currentpage, content : [], deltaX : 0, deltaY : 0};
+      let minX = 1000000, minY = 1000000;
+      let maxX = -1000000, maxY = -1000000;
+      let listIndex = this.selectionDialogue.map((s) => s.index);
+      this.selectionDialogue.forEach((d) => {
+        if(this.listDialogues[d.index].type !== "transition"){
+
+          var copy = JSON.parse(JSON.stringify(this.listDialogues[d.index]));
+
+          copy.previousDialogue.forEach((p) => {
+            p.forEach((pp) => {
+                pp.id = listIndex.findIndex((i) => i === pp.id);
+            });
+          });
+
+          copy.nextDialogue.forEach((p) => {
+              p.id = listIndex.findIndex((i) => i === p.id);
+          });
+
+          if(copy.x > maxX) maxX = copy.x;
+          if(copy.y > maxY) maxY = copy.y;
+          if(copy.x < minX) minX = copy.x;
+          if(copy.y < minY) minY = copy.y;
+          this.clipboard.content.push(copy);
+        }
+      });
+      this.clipboard.deltaX = (maxX + minX) / 2;
+      this.clipboard.deltaY = (maxY + minY) / 2;
+    },
+    pasteDialogues(){
+      if(this.clipboard.content.length === 0) return;
+      var size = this.listDialogues.length;
+      this.clipboard.content.forEach((d) => {
+        var newdiag = JSON.parse(JSON.stringify(d));
+        newdiag.x = (newdiag.x - this.clipboard.deltaX) + this.mouseEvent.offsetX;
+        newdiag.y = (newdiag.y - this.clipboard.deltaY) + this.mouseEvent.offsetY;
+        newdiag.title += "_copy";
+
+        newdiag.previousDialogue.forEach((p) => {
+          p.forEach((pp) => {
+            if(pp.id !== -1){
+              pp.id += size;
+            }
+          });
+        });
+
+        newdiag.nextDialogue.forEach((p) => {
+          if(p.id !== -1){
+            p.id += size;
+          }
+        });
+
+        this.listDialogues.push(newdiag);
+      });
+    },
+    cutDialogues(){
+      this.copyDialogues();
+      this.deletePress();
+    },
   },
 
   mounted() {
     this.busEntry.$on("deleteTransitionId", this.deleteDialogueID);
     this.busEntry.$on("deleteAllTransitionId", this.deleteAllDialogueID);
+    this.busEntry.$on("copyDialogue", this.copyDialogues);
+    this.busEntry.$on("pasteDialogue", this.pasteDialogues);
+    this.busEntry.$on("cutDialogue", this.cutDialogues);
   }
 
 }

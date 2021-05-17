@@ -252,11 +252,26 @@ export default {
 
     // ############################# INPUTS
     shortcuts(event){
-      if(event.type === "keyUp"){
+      if(event.type === "keyDown"){
         switch (event.key){
           case "s":
             if(event.control) {
               this.saveProjectButton();
+            }
+            break;
+          case "c":
+            if(event.control) {
+              this.bus.$emit("copyDialogue");
+            }
+            break;
+          case "v":
+            if(event.control) {
+              this.bus.$emit("pasteDialogue");
+            }
+            break;
+          case "x":
+            if(event.control) {
+              this.bus.$emit("cutDialogue");
             }
             break;
         }
