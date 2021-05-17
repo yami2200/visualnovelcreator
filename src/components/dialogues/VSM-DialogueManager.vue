@@ -758,7 +758,7 @@ export default {
     // ###################################### COPY PASTE DIALOGUES
     copyDialogues(){
       if(this.selectionDialogue.length === 0) return;
-      this.clipboard = {frompage : this.currentpage, content : [], deltaX : 0, deltaY : 0};
+      this.clipboard = {frompage : this.currentpage, content : [], deltaX : 0, deltaY : 0, pasteCount : 0};
       let minX = 1000000, minY = 1000000;
       let maxX = -1000000, maxY = -1000000;
       let listIndex = this.selectionDialogue.map((s) => s.index);
@@ -777,10 +777,10 @@ export default {
               p.id = listIndex.findIndex((i) => i === p.id);
           });
 
-          if(copy.x > maxX) maxX = copy.x;
-          if(copy.y > maxY) maxY = copy.y;
-          if(copy.x < minX) minX = copy.x;
-          if(copy.y < minY) minY = copy.y;
+          if(copy.x - copy.offsetLoc.x > maxX) maxX = copy.x - copy.offsetLoc.x;
+          if(copy.y - copy.offsetLoc.y > maxY) maxY = copy.y - copy.offsetLoc.y;
+          if(copy.x - copy.offsetLoc.x < minX) minX = copy.x - copy.offsetLoc.x;
+          if(copy.y - copy.offsetLoc.y < minY) minY = copy.y - copy.offsetLoc.y;
           this.clipboard.content.push(copy);
         }
       });
@@ -794,7 +794,7 @@ export default {
         var newdiag = JSON.parse(JSON.stringify(d));
         newdiag.x = (newdiag.x - this.clipboard.deltaX) + this.mouseEvent.offsetX;
         newdiag.y = (newdiag.y - this.clipboard.deltaY) + this.mouseEvent.offsetY;
-        newdiag.title += "_copy";
+        newdiag.title += "_copy"+(this.clipboard.pasteCount===0 ? "" : "_"+this.clipboard.pasteCount);
 
         newdiag.previousDialogue.forEach((p) => {
           p.forEach((pp) => {
@@ -812,6 +812,7 @@ export default {
 
         this.listDialogues.push(newdiag);
       });
+      this.clipboard.pasteCount += 1;
     },
     cutDialogues(){
       this.copyDialogues();
