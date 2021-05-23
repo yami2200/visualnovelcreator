@@ -244,7 +244,7 @@ export default {
                 if (this.imageImportList[i].name != this.currentCharacter.imgOthers[i].img) {
                   deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
                 } else {
-                  renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img, this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + new Date() + "." + this.this.currentCharacter.imgOthers[i].img.split('.').pop());
+                  renameFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img, this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + new Date() + "." + this.currentCharacter.imgOthers[i].img.split('.').pop());
                 }
               }
             }
@@ -253,7 +253,7 @@ export default {
           }
 
             // Case change the image
-            if (this.baseImage.name != this.currentCharacter.img) {
+            if (this.baseImage.name !== this.currentCharacter.img) {
               deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.img);
               filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.baseImage.name.split('.').pop();
               filedata = readFileSync(this.baseImage.path);
@@ -265,8 +265,8 @@ export default {
 
             // add new others images files and replace old images
             for (i = 0; i < this.currentCharacter.imgOthers.length; i++) {
-              if (this.imageImportList[i].name != this.currentCharacter.imgOthers[i].img) {
-                if (this.currentCharacter.imgOthers[i].img != "") {
+              if (this.imageImportList[i].name !== this.currentCharacter.imgOthers[i].img) {
+                if (this.currentCharacter.imgOthers[i].img !== "") {
                   deleteFile(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
                 }
                 imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.imageImportList[i].name.split('.').pop();

@@ -140,5 +140,15 @@
         }
       }
     ]
+  },
+  {
+    "type" : "Pages",
+    "content" : [
+      {
+        "title" : "Initial Page",
+        "unkillable" : true,
+        "listDialogues": []
+      }
+    ]
   }
 ]

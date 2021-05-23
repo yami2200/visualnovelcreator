@@ -11,7 +11,7 @@
           </v-col>
           <v-col cols="4">
             <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
-            <vsm-assets-panel :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
+            <vsm-assets-panel @saveAssets="saveProjectButton" :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
           </v-col>
         </v-row>
     </v-main>
@@ -71,7 +71,10 @@ export default {
 
   created() {
     remote.getCurrentWindow().addListener("resize", this.resizeWindow);
-    document.documentElement.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden';
+    process.nextTick(() => {
+      this.loadProjectFromProjectProperties(this.project_properties, [this.project_properties.directory+"\\azz"]);
+    });
   },
 
   destroyed() {
@@ -200,6 +203,9 @@ export default {
       if(path === null || path === undefined) return;
       var file_properties = null;
       if(path.length>0) file_properties = JSON.parse(readFileSync(path[0]));
+      this.loadProjectFromProjectProperties(file_properties, path);
+    },
+    loadProjectFromProjectProperties(file_properties, path){
       if(file_properties!=null){
         var realpath = path[0].substring(0, path[0].lastIndexOf("\\"));
         file_properties.directory = realpath+"\\";
@@ -211,6 +217,7 @@ export default {
       }
     },
     saveProjectButton(){
+      console.log("saving App");
       this.processing = true;
 
       saveProperties(this.project_properties)
@@ -296,6 +303,9 @@ export default {
       this.refresh;
       return this.listPage[this.selectedDialoguePage].listDialogues;
     },
+    listPage: function(){
+      return this.assets[6].content;
+    }
   },
 
   data: () => ({
@@ -310,7 +320,7 @@ export default {
     selectedDialoguePage: 0,
     listNamePages: [],
     refresh : true,
-    listPage: [
+    /*listPage: [
       {
         title : "First Page",
         unkillable : true,
@@ -321,7 +331,7 @@ export default {
         unkillable : false,
         listDialogues: [],
       },
-    ]
+    ]*/
   }),
 
 

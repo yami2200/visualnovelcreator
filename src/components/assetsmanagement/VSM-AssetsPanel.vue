@@ -2,11 +2,11 @@
   <v-card height="67vh">
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
-    <vsm-character-edition-modal @accept="saveEditCharacter" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-character-edition-modal>
-    <vsm-scene-edit-modal @accept="saveEditScene" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages">  </vsm-scene-edit-modal>
-    <vsm-object-edit-modal @accept="saveEditObject" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-object-edit-modal>
-    <vsm-sound-edit-modal @accept="saveEditSound" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-sound-edit-modal>
-    <vsm-music-edit-modal @accept="saveEditMusic" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-music-edit-modal>
+    <vsm-character-edition-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-character-edition-modal>
+    <vsm-scene-edit-modal @accept="saveEdit" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages">  </vsm-scene-edit-modal>
+    <vsm-object-edit-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-object-edit-modal>
+    <vsm-sound-edit-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-sound-edit-modal>
+    <vsm-music-edit-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-music-edit-modal>
 
     <vsm-contextmenu
         id="5"
@@ -199,6 +199,7 @@ export default {
           }
           this.assets[indextab].content.splice(index,1);
           this.selectedItem[indextab] = undefined;
+          this.$emit("saveAssets");
         }
       }
     },
@@ -246,20 +247,9 @@ export default {
       var index = this.selectedItem[indexTab];
       this.bus.$emit('show'+this.assets[indexTab].type.slice(0, -1)+'EditPanel', {type: editMode, index: index});
     },
-    saveEditCharacter(){
+    saveEdit(){
       this.$forceUpdate();
-    },
-    saveEditScene(){
-      this.$forceUpdate();
-    },
-    saveEditObject(){
-      this.$forceUpdate();
-    },
-    saveEditSound(){
-      this.$forceUpdate();
-    },
-    saveEditMusic(){
-      this.$forceUpdate();
+      this.$emit("saveAssets");
     },
 
     contextMenuClick(e, index){

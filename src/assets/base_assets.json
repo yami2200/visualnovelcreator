@@ -22,5 +22,15 @@
   {
     "type" : "Variables",
     "content" : []
+  },
+  {
+    "type" : "Pages",
+    "content" : [
+      {
+      "title" : "Initial Page",
+      "unkillable" : true,
+      "listDialogues": []
+      }
+    ]
   }
 ]
