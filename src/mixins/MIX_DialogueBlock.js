@@ -34,7 +34,10 @@ export const mix_dialogueblock = {
         textValue:function () {
             if(this.dialogue.title.length < 25) return this.dialogue.title;
             return this.dialogue.title.substring(0,25) + " ...";
-        }
+        },
+        pointsTriangle(){
+            return (this.dialogue.x + 2) + ' ' + (this.dialogue.y) + ' ' + (this.dialogue.x - 1) + ' ' + (this.dialogue.y + 2) + ' ' + (this.dialogue.x - 1) + ' ' + (this.dialogue.y - 2);
+        },
     },
 
     methods: {
@@ -43,6 +46,7 @@ export const mix_dialogueblock = {
         },
         selecting(e){
             this.selected = true;
+            if(e === null || e === undefined) return;
             this.$emit("selectD", {e:e, index: this.index, shift: e.shiftKey});
         },
         unselect(){
@@ -50,7 +54,7 @@ export const mix_dialogueblock = {
         },
         showContextMenu(e, type, indexIO){
             if(type === "global"){
-                this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Input Links", action:"breakinputs"}, {title : "Break Output Links", action:"breakoutputs"}, {title : "Edit Dialogue", action:"editdialogue"}, {title : "Delete Dialogue", action:"deletedialogue"}]});
+                this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Input Links", action:"breakinputs"}, {title : "Break Output Links", action:"breakoutputs"}, {title : "Edit Dialogue", action:"editdialogue"}, {title : "Delete Dialogue", action:"deletedialogue"}, {title : "Set Initial Dialogue", action:"initialdialogue"}]});
             } else{
                 this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Links", action:"breaklinks"}]});
             }

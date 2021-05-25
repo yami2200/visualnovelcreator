@@ -1,0 +1,41 @@
+body{
+    background-repeat: no-repeat;
+}
+
+#bloc-text{
+    border-radius: 20px;
+    background-color: black;
+    opacity:0.75;
+    width:97%;
+    position: fixed;
+    margin-bottom: 5px;
+    margin-right: 2%;
+    margin-left: 1%;
+    bottom:0;
+    height: 20vh;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#personnage{
+    color:red;
+    text-indent: 75px;
+    margin-bottom:-8px;
+    font-size:22px;
+}
+
+#text {
+    text-indent: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    color: white;
+    text-align: justify;
+    font-size:18px;
+}

@@ -34,6 +34,7 @@
           @breakoutputs="breakOutputLinks(true)"
           @breaklinks="breakLinks"
           @deletedialogue="deleteDialogue"
+          @initialdialogue="setInitialDialogue"
 
           @adddialogue="addDialogue('dialogue')"
           @addcondition="addDialogue('condition')"
@@ -86,6 +87,7 @@
           style="pointer-events: auto;"
           @mouseenter="leaveDialogueManager"
           @click="playGame(false)"
+          :disabled="disablePlayBtn"
           color="primary"
           absolute
           top
@@ -123,7 +125,7 @@ import transitionDia from './nodes/VSM-DialogueTransitionPage';
 import choicesDia from './nodes/VSM-DialogueChoices';
 import contextMenu from '../VSM-ContextMenu';
 import tooltip from '../VSM-Tooltip';
-import { getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
+import {writeFile, readFileSync, getDate, removePreviousDialoguesFromOutput, squareIntoSelection} from "@/lib";
 import jsonBaseDialogue from '../../assets/base_dialogue.json';
 import jsonBaseDialogueCondition from '../../assets/base_dialogueconditionnal.json';
 import jsonBaseDialogueFunction from '../../assets/base_dialoguefunction.json';
@@ -195,6 +197,8 @@ export default {
     dragOffsetY: 0,
     selectedDialogue: -1,
 
+    initialDialogue : {page : null, index: -1},
+
     selectionDialogue: [],
   }),
 
@@ -218,7 +222,10 @@ export default {
     },
     disablePlayFromDialogueBtn(){
       return this.selectionDialogue.length !== 1;
-    }
+    },
+    disablePlayBtn(){
+      return this.initialDialogue === null || this.initialDialogue.page === null || this.initialDialogue.index === -1;
+    },
   },
 
   methods:{
@@ -230,15 +237,25 @@ export default {
       if(fromselection){
         if(this.disablePlayFromDialogueBtn) return;
         textURL = "?page=" + this.currentpage +"&dialogue="+this.selectionDialogue[0].index;
+      } else {
+        textURL = "?page=" + this.initialDialogue.page +"&dialogue="+this.initialDialogue.index;
       }
 
-      let win = new BrowserWindow({ show: false, autoHideMenuBar: true, })
+      let win = new BrowserWindow({
+        show: false,
+        autoHideMenuBar: true,
+        width: 1280,
+        height: 720})
       win.on('close', function () { win = null })
       if(process.env.NODE_ENV !== 'production'){
-        win.loadURL("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\game.html"+textURL);
-      } else {
-        win.loadURL("file://"+this.projectproperties.directory+"/engine/game.html"+textURL);
+        var fileHTML = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\game.html");
+        var fileJS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\libEngine.js");
+        var fileCSS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\styleEngine.css");
+        writeFile(this.projectproperties.directory+"/game.html", fileHTML);
+        writeFile(this.projectproperties.directory+"/libEngine.js", fileJS);
+        writeFile(this.projectproperties.directory+"/styleEngine.css", fileCSS);
       }
+      win.loadURL("file://"+this.projectproperties.directory+"/game.html"+textURL);
       win.once('ready-to-show', () => {
         win.show()
       })
@@ -503,6 +520,27 @@ export default {
       this.contextMenuSelection = {index: [data.indexD], type: data.type, indexIO: data.indexIO}
       this.bus.$emit("showContextMenu", data.e);
     },
+    setInitialDialogue(){
+      if(this.contextMenuSelection.index === undefined || this.contextMenuSelection.index.length === 0) return;
+      if(this.initialDialogue.page !== undefined && this.initialDialogue.page !== null && this.initialDialogue.index !== -1){
+        this.listPages.filter(p => p.title === this.initialDialogue.page).forEach((p) => {
+          if(p.listDialogues[this.initialDialogue.index] !== undefined) {
+            p.listDialogues[this.initialDialogue.index].initial = false;
+            if(p.title === this.currentpage){
+              this.bus.$emit('select'+this.initialDialogue.index);
+              this.bus.$emit('unselect'+this.initialDialogue.index);
+            }
+          }
+        });
+      }
+      this.initialDialogue = {page : this.currentpage, index: this.contextMenuSelection.index[0]};
+      this.listPages.filter(p => p.title === this.initialDialogue.page).forEach((p) => {
+        if(p.listDialogues[this.initialDialogue.index] !== undefined) {
+          p.listDialogues[this.initialDialogue.index].initial = true;
+          if(p.title === this.currentpage) this.stopSelecting(this.selectionDialogue);
+        }
+      });
+    },
 
     // ############################ INPUT (KEYBOARD MOUSE) MANAGEMENT
     deletePress(){
@@ -598,6 +636,10 @@ export default {
 
           if(dialogues[element.index].id !== undefined && dialogues[element.index].tabs.length>0 && dialogues[element.index].transitionpage !== ""){
             listTransitionArrivalsToDelete.push({id : dialogues[element.index].id, page: dialogues[element.index].transitionpage});
+          }
+
+          if(dialogues[element.index].initial !== undefined && dialogues[element.index].initial){
+            ref.initialDialogue = {page : null, index: -1};
           }
 
           dialogues.splice(element.index, 1);
@@ -818,6 +860,20 @@ export default {
       this.copyDialogues();
       this.deletePress();
     },
+
+    // ####################################### LOADING AND SET INITIAL DIALOGUE
+    setInitialWhenLoading(listPage){
+      listPage.forEach((p) => {
+        var i = 0;
+        p.listDialogues.forEach((d) => {
+          if(d.initial !== undefined && d.initial){
+            this.initialDialogue = {page : p.title, index : i};
+            return;
+          }
+          i++;
+        });
+      });
+    },
   },
 
   mounted() {
@@ -826,6 +882,7 @@ export default {
     this.busEntry.$on("copyDialogue", this.copyDialogues);
     this.busEntry.$on("pasteDialogue", this.pasteDialogues);
     this.busEntry.$on("cutDialogue", this.cutDialogues);
+    this.busEntry.$on("reload", this.setInitialWhenLoading);
   }
 
 }

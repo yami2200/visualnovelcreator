@@ -7,7 +7,7 @@
       <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
         <v-row no-gutters>
           <v-col cols="8">
-            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="listPage" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
+            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
           </v-col>
           <v-col cols="4">
             <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
@@ -213,11 +213,13 @@ export default {
         if(assetsTempo!=null){
           this.project_properties = file_properties;
           this.assets = assetsTempo;
+          process.nextTick(() => {
+            this.bus.$emit("reload", this.assets[6].content);
+          });
         }
       }
     },
     saveProjectButton(){
-      console.log("saving App");
       this.processing = true;
 
       saveProperties(this.project_properties)

@@ -58,6 +58,12 @@
         :font-size="fontSizeText">
       {{ textValue }}
     </text>
+    <polygon
+        v-if="dialogue.initial"
+        fill="#0000ff"
+        stroke="#FFFFFF"
+        stroke-width="0.3"
+        :points="pointsTriangle"/>
   </g>
 </template>
 
@@ -68,7 +74,6 @@ export default {
   name: "vsm-dialogueblock",
 
   mixins: [mix_dialogueblock],
-
 }
 </script>
 

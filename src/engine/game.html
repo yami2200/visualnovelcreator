@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://unpkg.com/vue@next"></script>
+    <script src="libEngine.js"> </script>
+    <script type="text/javascript" src="assets.json"></script>
+    <link rel="stylesheet" href="styleEngine.css">
     <title> Game </title>
 </head>
 <body>
@@ -11,20 +14,70 @@
 </body>
 </html>
 
-<script type="module">
+<script>
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
     const app = Vue.createApp({
-       template: '<div> <h1> Page : {{ page }} - Dialogue : {{ currentDialogue }}</h1> </div>',
+       template:
+           '<div id="bloc-text" @click="clickText()">\n' +
+           '        <p id="personnage" class="unselectable"> <strong> {{ currentCharacter }} </strong> </p>\n' +
+           '        <p id="text" class="unselectable"> {{ currentText }} </p>\n' +
+           '</div>\n',
         data: () => ({
             page : "null",
-            currentDialogue : 0,
+            currentDialogueIndex : 0,
+            currentText : "",
+            currentCharacter : "test",
+            animationText : null,
+            assets : null,
         }),
 
         mounted() {
-           if(urlParams.get('page') !== null) this.page = urlParams.get('page');
-            if(urlParams.get('dialogue') !== null) this.dialogue = parseInt(urlParams.get('dialogue'));
+            if(urlParams.get('page') !== null) this.page = urlParams.get('page');
+            if(urlParams.get('dialogue') !== null) this.currentDialogueIndex = parseInt(urlParams.get('dialogue'));
+            this.showText("Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement", "Jean Michel");
+            this.loadAssets((text) => {
+                this.assets = JSON.parse(text);
+                if(this.assets !== null) this.playInitialDialogue();
+            });
+        },
+
+        methods:{
+           loadAssets(callback){
+               var xmlhttp = new XMLHttpRequest();
+               xmlhttp.onreadystatechange = function() {
+                   if (this.readyState === 4 && this.status === 200) {
+                       callback(xmlhttp.responseText);
+                   }
+               };
+               xmlhttp.open("GET", "assets.json", true);
+               xmlhttp.send();
+           },
+
+            playInitialDialogue(){
+               var dialogue = getDialogue(this.page, this.currentDialogueIndex, this.assets);
+               console.log(dialogue);
+            },
+
+           showText(text, character){
+               this.currentText = "";
+                this.currentCharacter = character;
+                var charList = text.split("");
+               this.animationText = setInterval(() => {
+                   if(charList.length>0) this.currentText += charList.shift();
+                   else this.stopAnimationText(text);
+               }, 10)
+           },
+            stopAnimationText(text){
+               clearInterval(this.animationText);
+               this.animationText = null;
+               this.currentText = text;
+            },
+            clickText(){
+               if(this.animationText === null) this.showText("Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement", "Jean Michel");
+               else this.stopAnimationText("Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement");
+            }
         }
     });
     app.mount("#app");
