@@ -158,6 +158,19 @@
           "type": "value",
           "value": "null"
         }
+      },
+      {
+        "type": {
+          "name" : "Integer",
+          "icon" : "mdi-numeric",
+          "color" : "#22c74e",
+          "defaultValue" : 0
+        },
+        "name": "Amount",
+        "value": {
+          "type": "value",
+          "value": 0
+        }
       }
     ]
   },
@@ -179,6 +192,19 @@
         "value": {
           "type": "value",
           "value": "null"
+        }
+      },
+      {
+        "type": {
+          "name" : "Integer",
+          "icon" : "mdi-numeric",
+          "color" : "#22c74e",
+          "defaultValue" : 0
+        },
+        "name": "Amount",
+        "value": {
+          "type": "value",
+          "value": 0
         }
       }
     ]

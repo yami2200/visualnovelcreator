@@ -16,7 +16,7 @@
         "onlyvar" : true,
         "name" : "Variable",
         "value": {
-          "type": "variable",
+          "type": "value",
           "value": ""
         }
       },
@@ -52,7 +52,7 @@
         "onlyvar" : true,
         "name": "Variable",
         "value": {
-          "type": "variable",
+          "type": "value",
           "value": ""
         }
       },
@@ -101,7 +101,7 @@
         "onlyvar" : true,
         "name": "Variable",
         "value": {
-          "type": "variable",
+          "type": "value",
           "value": ""
         }
       },

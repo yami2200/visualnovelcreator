@@ -1,18 +1,27 @@
 body{
     background-repeat: no-repeat;
+    background-size: cover;
+    background-color: white;
+    -webkit-transition: background-image 0.2s ease;
+    transition: background-image 0.2s ease;
 }
 
-#bloc-text{
-    border-radius: 20px;
-    background-color: black;
-    opacity:0.75;
-    width:97%;
-    position: fixed;
+#bottom {
     margin-bottom: 5px;
     margin-right: 2%;
     margin-left: 1%;
+    position: fixed;
     bottom:0;
+    width:97%;
+}
+
+#bloc-text{
+    padding-top: 5px;
+    border-radius: 20px;
+    background-color: black;
+    opacity:0.75;
     height: 20vh;
+    width:100%;
 }
 
 .unselectable {
@@ -27,8 +36,9 @@ body{
 #personnage{
     color:red;
     text-indent: 75px;
-    margin-bottom:-8px;
     font-size:22px;
+    margin-bottom:-16px;
+    margin-top: 2px;
 }
 
 #text {
@@ -38,4 +48,213 @@ body{
     color: white;
     text-align: justify;
     font-size:18px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+#inputLoc{
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+}
+
+#lineInput{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+#buttoninput{
+    grid-column: 4;
+    grid-row: 1;
+    height: 70%;
+    margin-top: 10%;
+}
+
+#input {
+    grid-column: 1/4;
+    grid-row: 1;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    outline: none;
+}
+
+#choicesLoc{
+    display: grid;
+    grid-gap: 10px;
+    margin: 20px 5%;
+}
+
+#grid2choices{
+    grid-template-columns: repeat(2, 1fr);
+}
+
+#grid3choices{
+    grid-template-columns: repeat(3, 1fr);
+}
+
+#grid4choices{
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#grid5choices{
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#grid6choices{
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#grid7choices{
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#grid8choices{
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#pagesinventorypanel{
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(10, 1fr);
+    margin: 20px 5%;
+}
+
+#leftpagebutton{
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+}
+
+#rightpagebutton{
+    grid-column: 10;
+    grid-row: 1;
+    width: 100%;
+}
+
+#inventorybutton{
+    grid-column: 2/10;
+    grid-row: 1;
+    width: 100%;
+}
+
+
+
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: table;
+}
+
+.modal-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.modal-container {
+    position: relative;
+    width: 70%;
+    height: 70vh;
+    margin: 0px auto;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.modal-header h3 {
+    margin-top: 0;
+    color: #42b983;
+}
+
+.modal-body {
+    height: 85%;
+    overflow: auto;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(8, 1fr);
+    grid-auto-rows: 30%;
+}
+
+.modal-footer {
+    bottom: 0;
+    margin-bottom: 20px;
+    position: absolute;
+    margin-left: -50px;
+    width: 100%;
+}
+
+.modal-default-button {
+    float: right;
+}
+
+.modal-fade-enter,
+.modal-fade-leave-to {
+    opacity: 0;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+    transition: opacity .5s ease;
+}
+
+.buttonitem{
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(5, 1fr);
+}
+
+.imgitem{
+    width: 100%;
+    height: 100%;
+    grid-row: 1/5;
+    pointer-events: none;
+}
+
+.textitem{
+    grid-row: 5;
+    pointer-events: none;
+}
+
+#characterDiv {
+    width: 100%;
+    height: 100%;
+}
+
+.list-characters{
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.characters-list-move {
+    transition: transform 1s;
+}
+
+.imgcharacter{
+    width: 100%;
+    height: 100%;
 }

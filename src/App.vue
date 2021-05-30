@@ -7,7 +7,7 @@
       <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
         <v-row no-gutters>
           <v-col cols="8">
-            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
+            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
           </v-col>
           <v-col cols="4">
             <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
@@ -127,7 +127,6 @@ export default {
       if(data.index === null || data.index === undefined) return;
       if(data.type === "rename"){
         this.listNamePages = ["null"].concat(this.listPage.filter((p) => p.title !== this.listPage[data.index].title).map(v => v.title));
-        console.log(this.listNamePages);
         this.bus.$emit("showInputText", this.listPage[data.index].title);
       }
       if(data.type === "delete"){
@@ -153,7 +152,6 @@ export default {
       var listIDArrival = [];
       this.listPage.forEach((p) => {
         if(p === this.listPage[index]){
-          console.log("this page");
           p.listDialogues.forEach((d) => {
             if(d.transitionpage !== undefined && d.transitionpage !== this.listPage[index].title){
               listIDArrival.push({id : d.id, page : d.transitionpage});
@@ -289,7 +287,6 @@ export default {
     endProcessing(){
       setTimeout(() => {
         this.processing = false;
-        console.log(this.processing);
       }, 300);
     },
   },

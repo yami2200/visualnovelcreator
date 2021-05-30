@@ -63,8 +63,9 @@ export default {
       var nextDialogue = { id: -1, ii: 0 };
       var output = { x: 0, y: 0 };
 
+
       while(searching){
-        var list = this.current.choices.filter((c) => (c.text === baseChoice.text && indexName === 0) || (c.text === baseObject.text + " "+ indexName));
+        var list = this.current.choices.filter((c) => (c.text === baseChoice.text && indexName === 0) || (c.text === baseChoice.text + " "+ indexName));
         if(list.length>0){
           indexName ++;
         } else {

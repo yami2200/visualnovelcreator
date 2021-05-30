@@ -3,6 +3,10 @@
   "x" : 0,
   "y" : 0,
   "type" : "input",
+  "text" : "",
+  "minInput" : 0,
+  "maxInput" : 100,
+  "action" : [],
   "input" : {
     "type": {
       "name": "String",

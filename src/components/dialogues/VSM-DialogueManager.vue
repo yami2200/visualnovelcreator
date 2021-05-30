@@ -241,6 +241,8 @@ export default {
         textURL = "?page=" + this.initialDialogue.page +"&dialogue="+this.initialDialogue.index;
       }
 
+      this.$emit("save");
+
       let win = new BrowserWindow({
         show: false,
         autoHideMenuBar: true,

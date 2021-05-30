@@ -6,6 +6,35 @@
     <script src="libEngine.js"> </script>
     <script type="text/javascript" src="assets.json"></script>
     <link rel="stylesheet" href="styleEngine.css">
+
+    <script type="text/x-template" id="modal-template">
+        <transition name="modal-fade">
+            <div class="modal-mask">
+                <div class="modal-wrapper">
+                    <div class="modal-container">
+
+                        <div class="modal-header">
+                            <h3> Inventory </h3>
+                        </div>
+
+                        <div class="modal-body">
+                            <button v-for="(item, index) in inventory" :key="index+item.name" class="buttonitem unselectable" @click="$emit('clickitem', index)">
+                                <img class="imgitem" :src="'Assets/Objects/'+item.img">
+                                <p class="textitem"> {{ item.name }} {{ amountItemInventoryText(item) }}</p>
+                            </button>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="modal-default-button" @click="$emit('close')">
+                                Return
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </script>
+
     <title> Game </title>
 </head>
 <body>
@@ -14,37 +43,109 @@
 </body>
 </html>
 
+
 <script>
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
     const app = Vue.createApp({
        template:
+           '<modal v-if="showModal" :inventory="inventory" @close="showModal = false" @clickitem="clickiteminventory"> </modal>' +
+           '<div id="characterDiv">' +
+           '<transition-group class="list-characters" name="characters-list" tag="ul">\n' +
+           '  <li class="list-group-list-character" v-for="(char,index) in listCharactersInScene" :key="char.name+index" :style="{gridColumn : index+1}">\n' +
+           '    <img class="imgcharacter" :src="\'Assets/Characters/\'+char.img">' +
+           '  </li>\n' +
+           '</transition-group>' +
+           '</div>' +
+           '<div id="bottom">' +
+           '<div id="lineInput">' +
+           '<transition name="fade">\n' +
+           '<div id="inputLoc" v-if="askinput">' +
+           '   <input :type="inputtype" id="input" v-model="input" required> \n' +
+           '   <button id="buttoninput" @click="submitInput" :disabled="!canSubmit" class="unselectable"> Submit </button>' +
+           '</div>' +
+           '</transition>\n' +
+           '</div>' +
            '<div id="bloc-text" @click="clickText()">\n' +
            '        <p id="personnage" class="unselectable"> <strong> {{ currentCharacter }} </strong> </p>\n' +
            '        <p id="text" class="unselectable"> {{ currentText }} </p>\n' +
-           '</div>\n',
+           '</div>\n' +
+           '<transition name="fade">\n' +
+           '<div v-if="inChoices">' +
+           '    <div id="choicesLoc" :class="{grid2choices : currentChoicePageList.length <= 2, grid3choices : currentChoicePageList.length === 3, grid4choices : currentChoicePageList.length === 4, grid5choices : currentChoicePageList.length === 5, grid6choices : currentChoicePageList.length === 6, grid7choices : currentChoicePageList.length === 7, grid8choices : currentChoicePageList.length === 8}">' +
+           '        <button v-for="(choice, index) in currentChoicePageList" id="buttonchoice" @click="clickChoice(choice.index)" class="unselectable" :style="{gridColumn: getColumnChoice(index), gridRow : getRowChoice(index)}"> {{ choice.text }} </button>' +
+           '    </div>' +
+           '    <div id="pagesinventorypanel">' +
+           '        <button id="leftpagebutton" :disabled="disableBackPageChoiceButtons" class="unselectable" @click="backPageChoice"> &lt </button>' +
+           '        <button id="inventorybutton" class="unselectable" @click="showInventory">  Inventory </button>' +
+           '        <button id="rightpagebutton" :disabled="disableNextPageChoiceButtons" class="unselectable" @click="nextPageChoice"> > </button>' +
+           '    </div>' +
+           '</div>' +
+           '</transition>\n' +
+           '</div>',
+
+
         data: () => ({
             page : "null",
             currentDialogueIndex : 0,
             currentText : "",
             currentCharacter : "test",
+            canPassDialogue : true,
             animationText : null,
             assets : null,
+            allText : "",
+            askinput : false,
+            input : "",
+            inputtype : "text",
+            minInput : 0,
+            maxInput : 100,
+            inChoices : false,
+            listChoice : [],
+            inventory : [],
+            listObjectChoice : [],
+            currentChoicePage : 0,
+            showModal: false,
+            listCharactersInScene : [],
         }),
 
         mounted() {
             if(urlParams.get('page') !== null) this.page = urlParams.get('page');
             if(urlParams.get('dialogue') !== null) this.currentDialogueIndex = parseInt(urlParams.get('dialogue'));
-            this.showText("Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement", "Jean Michel");
             this.loadAssets((text) => {
                 this.assets = JSON.parse(text);
                 if(this.assets !== null) this.playInitialDialogue();
             });
         },
 
+        computed:{
+            canSubmit(){
+                if(this.inputtype === "text"){
+                    return this.input !== "" && this.input.length >= this.minInput && this.input.length <= this.maxInput;
+                } else if (this.inputtype === "number"){
+                    try {
+                        let n = parseInt(this.input);
+                        return n>= this.minInput && n<= this.maxInput;
+                    } catch {
+                        return false;
+                    }
+                }
+                return false;
+           },
+            disableNextPageChoiceButtons(){
+               return this.listChoice.length <= this.currentChoicePage*8+8 ;
+            },
+            disableBackPageChoiceButtons(){
+                return this.currentChoicePage === 0;
+            },
+            currentChoicePageList(){
+                return this.listChoice.slice(this.currentChoicePage*8, Math.min(this.currentChoicePage*8+8, this.listChoice.length));
+            },
+        },
+
         methods:{
-           loadAssets(callback){
+           // #################### INITIAL LOADING
+            loadAssets(callback){
                var xmlhttp = new XMLHttpRequest();
                xmlhttp.onreadystatechange = function() {
                    if (this.readyState === 4 && this.status === 200) {
@@ -54,31 +155,372 @@
                xmlhttp.open("GET", "assets.json", true);
                xmlhttp.send();
            },
-
             playInitialDialogue(){
                var dialogue = getDialogue(this.page, this.currentDialogueIndex, this.assets);
-               console.log(dialogue);
+               this.playDialogue(dialogue, this.currentDialogueIndex);
             },
 
-           showText(text, character){
+            // #################### DIALOGUES MANAGEMENT
+            playDialogue(dialogue, index){
+                this.canPassDialogue = !(dialogue.type === "choices" || dialogue.type === "input");
+                this.currentDialogueIndex = index;
+
+                if(dialogue.action !== undefined){
+                    let actions = JSON.parse(JSON.stringify(dialogue.action));
+                    if(actions.length > 0) {
+                        let callbackAction = () => {
+                            if(actions.length > 0) this.executeActionScript(actions.shift(),callbackAction);
+                        };
+                        this.executeActionScript(actions.shift(),callbackAction);
+                    }
+                }
+
+                if(dialogue.type === "function"){
+                    this.playNextDialogue(0);
+                }
+
+                if(dialogue.tabs.includes("Dialogue")){
+                    var character = getVariableValue(dialogue.speaker, this.assets);
+                    if(character === null || character === "null") character = dialogue.speakernull;
+                    this.showText(dialogue.text, character);
+                }
+
+                if(dialogue.type === "choices"){
+                    this.inChoices = true;
+                    this.listChoice = [];
+                    this.listObjectChoice = [];
+                    this.currentChoicePage = 0;
+
+                    var i = 0;
+                    let ref = this;
+                    dialogue.choices.forEach((c) => {
+                        if(c.type === "choice"){
+                            let value = getVariableValue(c.condition, ref.assets);
+                            if(value === null || value === "null") value = false;
+                            if(value){
+                                ref.listChoice.push({ text : c.text, index : i});
+                            }
+                        } else if(c.type === "object"){
+                            let value = getVariableValue(c.object, ref.assets);
+                            if(!(value === null || value === "null")) {
+                                ref.listObjectChoice.push({ object : value, index : i});
+                            }
+                        }
+                        i++;
+                    });
+                }
+
+                if(dialogue.type === "input"){
+                    this.askinput = true;
+                    this.input = "";
+                    if(dialogue.input !== undefined){
+                        if(dialogue.input.type.name === "String"){
+                            this.inputtype = "text";
+                        }
+                        if(dialogue.input.type.name === "Integer"){
+                            this.inputtype = "number";
+                        }
+                        this.minInput = dialogue.minInput;
+                        this.maxInput = dialogue.maxInput;
+                    }
+                }
+
+                if(dialogue.type === "condition"){
+                    var value = getVariableValue(dialogue.condition, this.assets);
+                    if(value === null || value === "null") value = false;
+                    if(value){
+                        this.playNextDialogue(1);
+                    } else {
+                        this.playNextDialogue(0);
+                    }
+                }
+
+                if(dialogue.type === "transition"){
+                    if(dialogue.transitionpage !== undefined && dialogue.transitionpage !== ""){
+                        var arrival = getTransitionDialogue(dialogue.transitionpage, dialogue.id, this.assets);
+                        if(arrival !== null){
+                            this.page = dialogue.transitionpage;
+                            this.playDialogue(arrival.d, arrival.index);
+                        }
+                    }
+                    if(dialogue.nextDialogue.length>0){
+                        this.playNextDialogue(0);
+                    }
+                }
+
+            },
+            playNextDialogue(index, fromchoice = false){
+                var dialogue = getDialogue(this.page, this.currentDialogueIndex, this.assets);
+                if(dialogue.nextDialogue[index] !== undefined && dialogue.nextDialogue[index].id !== -1){
+                    if(fromchoice){
+                        this.inChoices = false;
+                        this.showModal = false;
+                    }
+                    this.playDialogue(getDialogue(this.page, dialogue.nextDialogue[index].id, this.assets), dialogue.nextDialogue[index].id);
+                }
+            },
+
+            // #################### TEXT MANAGEMENT
+            showText(text, character){
                this.currentText = "";
+                this.allText = text;
+               let regex = /\${((\w|\s)+)}/g;
+
+               const listMatch = [...text.matchAll(regex)];
+                listMatch.forEach((m) => {
+                    var value = getVariableValueByName(m[1], this.assets);
+                    if(value === "null" || value === null) this.allText = this.allText.replace(m[0], "");
+                    else this.allText = this.allText.replace(m[0], value);
+                });
+
                 this.currentCharacter = character;
-                var charList = text.split("");
+                var charList = this.allText.split("");
                this.animationText = setInterval(() => {
                    if(charList.length>0) this.currentText += charList.shift();
-                   else this.stopAnimationText(text);
+                   else this.stopAnimationText();
                }, 10)
            },
-            stopAnimationText(text){
+            stopAnimationText(){
                clearInterval(this.animationText);
                this.animationText = null;
-               this.currentText = text;
+               this.currentText = this.allText;
             },
             clickText(){
-               if(this.animationText === null) this.showText("Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement", "Jean Michel");
-               else this.stopAnimationText("Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement. Voila un petit texte qui devrait apparaitre tranquillement");
-            }
+               if(this.animationText === null) {
+                   if(this.canPassDialogue){
+                       this.playNextDialogue(0);
+                   }
+               } else {
+                   this.stopAnimationText();
+               }
+            },
+
+            // ##################### INPUT MANAGEMENT
+            submitInput() {
+                if(this.canSubmit){
+                    var dialogue = getDialogue(this.page, this.currentDialogueIndex, this.assets);
+                    let newvalue = this.input;
+                    if(this.inputtype === "number") newvalue = parseInt(newvalue);
+                    setValueVariableByName(dialogue.input.value.value, newvalue,  this.assets);
+                    this.askinput = false;
+                    this.playNextDialogue(0);
+                }
+            },
+
+            // #################### CHOICE & INVENTORY MANAGEMENT
+            clickChoice(index){
+                this.playNextDialogue(this.currentChoicePage*8 + index, true);
+            },
+            getColumnChoice(index){
+                if(this.currentChoicePageList.length < 4){
+                    if(this.currentChoicePageList.length === 1) return '1 / 3';
+                    return index+1;
+                } else if(this.currentChoicePageList.length === 4){
+                    return index%2 + 1;
+                } else if(this.currentChoicePageList.length === 5){
+                    switch(index){
+                        case 0:
+                            return '1 / 3';
+                        case 1:
+                            return '3 / 5';
+                        case 2:
+                            return '5 / 7';
+                        case 3:
+                            return '2 / 4';
+                        case 4:
+                            return '4 / 6';
+                    }
+                }else if(this.currentChoicePageList.length === 6){
+                    return index%3 + 1;
+                } else if(this.currentChoicePageList.length === 7){
+                    switch(index){
+                        case 0:
+                            return '1 / 3';
+                        case 1:
+                            return '3 / 5';
+                        case 2:
+                            return '5 / 7';
+                        case 3:
+                            return '7 / 9';
+                        case 4:
+                            return '2 / 4';
+                        case 5:
+                            return '4 / 6';
+                        case 6:
+                            return '6 / 8';
+                    }
+                }else if(this.currentChoicePageList.length === 8){
+                    return index%4 + 1;
+                }
+            },
+            getRowChoice(index){
+                if(this.currentChoicePageList.length < 4){
+                    return 1;
+                } else if(this.currentChoicePageList.length === 4){
+                    if(index<=1) return 1;
+                    return 2;
+                } else if(this.currentChoicePageList.length === 5){
+                    if(index<=2) return 1;
+                    return 2;
+                }else if(this.currentChoicePageList.length === 6){
+                    if(index<=2) return 1;
+                    return 2;
+                }else if(this.currentChoicePageList.length <=8 ){
+                    if(index<=3) return 1;
+                    return 2;
+                }
+            },
+            nextPageChoice(){
+                if(!(this.disableNextPageChoiceButtons)){
+                    this.currentChoicePage++;
+                }
+            },
+            backPageChoice(){
+                if(!(this.disableBackPageChoiceButtons)){
+                    this.currentChoicePage--;
+                }
+            },
+            showInventory(){
+              this.showModal = true;
+            },
+            clickiteminventory(index){
+                var list = this.listObjectChoice.filter((o) => o.object === this.inventory[index].name);
+                if(list.length > 0) {
+                    this.playNextDialogue(list[0].index, true);
+                }
+            },
+
+            // ################### CHARACTER MANGAMENT
+            resetCharactersLocation(){
+
+            },
+
+            // ################### SCRIPT MANAGEMENT
+            executeActionScript(action, callback){
+                let execCallback = true;
+                switch(action.name){
+                    case "Change Background":
+                        let scene = getVariableValue(action.inputs[0], this.assets);
+                        if(scene === "null" || scene === null) break;
+                        let sceneObject = getScene(scene, this.assets);
+                        if(sceneObject === null) break;
+                        document.body.style.backgroundImage = "url('Assets/Scenes/"+ sceneObject.img +"')";
+                        break;
+                    case "Give Object":
+                        let object = getVariableValue(action.inputs[0], this.assets);
+                        if(object === "null" || object === null) break;
+                        let amount = getVariableValue(action.inputs[1], this.assets);
+                        if(amount === "null" || amount === null || amount === 0) break;
+                        let objectAsset = getObject(object, this.assets);
+                        if(objectAsset === null) break;
+                        let sameItemInventory = this.inventory.filter((i) => i.name === object);
+                        if(sameItemInventory.length>0){
+                            sameItemInventory[0].amount += amount;
+                        } else {
+                            this.inventory.push({name : object, amount : amount, img: objectAsset.img});
+                        }
+                        break;
+                    case "Remove Object":
+                        let objectToRemove = getVariableValue(action.inputs[0], this.assets);
+                        if(objectToRemove === "null" || objectToRemove === null) break;
+                        let amountToRemove = getVariableValue(action.inputs[1], this.assets);
+                        if(amountToRemove === "null" || amountToRemove === null || amountToRemove === 0) break;
+                        let index = this.inventory.findIndex((i) => i.name === objectToRemove);
+                        if(index !== -1){
+                             this.inventory[index].amount -= amountToRemove;
+                             if(this.inventory[index].amount <= 0){
+                                this.inventory.splice(index, 1);
+                            }
+                        }
+                        break;
+                    case "If":
+                        let condition = getVariableValue(action.inputs[0], this.assets);
+                        if(condition === "null" || condition === null || !condition || action.action === undefined) break;
+
+                        let actions = JSON.parse(JSON.stringify(action.action));
+                        if(actions.length>0){
+                            execCallback = false;
+                            let callbackAction = () => {
+                                if(actions.length > 0) this.executeActionScript(actions.shift(),callbackAction);
+                                else callback();
+                            };
+                            this.executeActionScript(actions.shift(),callbackAction);
+                        }
+                        break;
+                    case "If Else":
+                        let conditionIf = getVariableValue(action.inputs[0], this.assets);
+                        if(conditionIf === "null" || conditionIf === null) break;
+
+                        let actionsIfElse = [];
+                        let callbackActionIfElse = () => {
+                            if(actionsIfElse.length > 0) this.executeActionScript(actionsIfElse.shift(),callbackActionIfElse);
+                            else callback();
+                        };
+
+                        if(conditionIf){
+                            if(action.actionif === undefined) break;
+                            actionsIfElse = JSON.parse(JSON.stringify(action.actionif));
+                        } else {
+                            if(action.actionelse === undefined) break;
+                            actionsIfElse = JSON.parse(JSON.stringify(action.actionelse));
+                        }
+                        if(actionsIfElse.length>0){
+                            execCallback = false;
+                            this.executeActionScript(actionsIfElse.shift(),callbackActionIfElse);
+                        }
+                        break;
+                    case "Delay":
+                        let delay = getVariableValue(action.inputs[0], this.assets);
+                        if(delay === "null" || delay === null || delay === 0.0) break;
+                        execCallback = false;
+                        setTimeout(() => {callback();}, delay*1000);
+                        break;
+                    case "Set":
+                        let variable = getVariableValue(action.inputs[0], this.assets);
+                        if(variable === "null" || variable === null) break;
+                        let value = getVariableValue(action.inputs[1], this.assets);
+                        if(value === null) break;
+                        setValueVariableByName(variable, value, this.assets);
+                        break;
+                    case "Set Random Integer":
+                    case "Set Random Float":
+                        let variableRI = action.inputs[0].value.value
+                        if(variableRI === "null" || variableRI === null || variableRI === "") break;
+                        let minInt = getVariableValue(action.inputs[1], this.assets);
+                        if(minInt === "null" || minInt === null) break
+                        let maxInt = getVariableValue(action.inputs[2], this.assets);
+                        if(maxInt === "null" || maxInt === null) break
+                        let newRandomInt = Math.random() * (maxInt - minInt) + minInt;
+                        if(action.name === "Set Random Integer") newRandomInt = Math.floor(newRandomInt);
+                        setValueVariableByName(variableRI, newRandomInt, this.assets);
+                        break;
+                    case "Add Character":
+                        let character = getVariableValue(action.inputs[0], this.assets);
+                        if(character === "null" || character === null) break;
+                        let characterAsset = getCharacter(character, this.assets);
+                        if(characterAsset === null) break;
+                        if(this.listCharactersInScene.filter((c) => c.name === characterAsset.name).length === 0){
+                            this.listCharactersInScene.push({name : characterAsset.name, img : characterAsset.img, style:{}});
+                            this.resetCharactersLocation();
+                            console.log(this.listCharactersInScene);
+                        }
+                        break;
+                }
+                if(execCallback) callback();
+            },
         }
     });
+
+    app.component("modal", {
+        template: "#modal-template",
+        props:["inventory"],
+        methods:{
+            amountItemInventoryText(item){
+                return  (item.amount > 1 ? 'x'+item.amount : '');
+            },
+        },
+    });
+
     app.mount("#app");
+
 </script>
