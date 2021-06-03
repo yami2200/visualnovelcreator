@@ -250,9 +250,12 @@ export default {
         height: 720})
       win.on('close', function () { win = null })
       if(process.env.NODE_ENV !== 'production'){
-        var fileHTML = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\game.html");
-        var fileJS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\libEngine.js");
-        var fileCSS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\styleEngine.css");
+        //var fileHTML = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\game.html");
+        //var fileJS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\libEngine.js");
+        //var fileCSS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\styleEngine.css");
+        var fileHTML = readFileSync("C:\\Users\\Romai\\OneDrive\\Bureau\\VIsual Novel Maker\\visualnovelmaker\\src\\engine\\game.html");
+        var fileJS = readFileSync("C:\\Users\\Romai\\OneDrive\\Bureau\\VIsual Novel Maker\\visualnovelmaker\\src\\engine\\libEngine.js");
+        var fileCSS = readFileSync("C:\\Users\\Romai\\OneDrive\\Bureau\\VIsual Novel Maker\\visualnovelmaker\\src\\engine\\styleEngine.css");
         writeFile(this.projectproperties.directory+"/game.html", fileHTML);
         writeFile(this.projectproperties.directory+"/libEngine.js", fileJS);
         writeFile(this.projectproperties.directory+"/styleEngine.css", fileCSS);

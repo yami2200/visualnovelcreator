@@ -4,6 +4,7 @@ body{
     background-color: white;
     -webkit-transition: background-image 0.2s ease;
     transition: background-image 0.2s ease;
+    overflow: hidden;
 }
 
 #bottom {
@@ -240,21 +241,21 @@ body{
 }
 
 #characterDiv {
-    width: 100%;
+    width: 95%;
     height: 100%;
-}
-
-.list-characters{
+    position: fixed;
+    bottom: 0;
     display: grid;
-    grid-gap: 10px;
-    grid-template-columns: repeat(3, 1fr);
-}
+    grid-gap: 1%;
+    justify-items: center;
 
-.characters-list-move {
-    transition: transform 1s;
 }
 
 .imgcharacter{
-    width: 100%;
     height: 100%;
+    pointer-events: none;
+    min-width: 0;
+    width: auto;
+    align-self: center;
+    justify-self: center;
 }

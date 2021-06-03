@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"></script>
     <script src="libEngine.js"> </script>
     <script type="text/javascript" src="assets.json"></script>
     <link rel="stylesheet" href="styleEngine.css">
@@ -51,12 +52,10 @@
     const app = Vue.createApp({
        template:
            '<modal v-if="showModal" :inventory="inventory" @close="showModal = false" @clickitem="clickiteminventory"> </modal>' +
-           '<div id="characterDiv">' +
-           '<transition-group class="list-characters" name="characters-list" tag="ul">\n' +
-           '  <li class="list-group-list-character" v-for="(char,index) in listCharactersInScene" :key="char.name+index" :style="{gridColumn : index+1}">\n' +
-           '    <img class="imgcharacter" :src="\'Assets/Characters/\'+char.img">' +
-           '  </li>\n' +
-           '</transition-group>' +
+           '<div id="characterDiv" class="list-characters" :style="{gridTemplateColumns : columnsCharacterDiv}">' +
+           '  <div class="list-group-list-character" v-for="(char,index) in listCharactersInScene" :key="char.name+index" :style="{gridColumn : char.gridColumn}">\n' +
+           '    <img class="imgcharacter unselectable" :src="\'Assets/Characters/\'+char.img" draggable="false" @mousedown="() => {return false}" @dragstart="() => {return false}">' +
+           '  </div>\n' +
            '</div>' +
            '<div id="bottom">' +
            '<div id="lineInput">' +
@@ -107,6 +106,8 @@
             currentChoicePage : 0,
             showModal: false,
             listCharactersInScene : [],
+            listMusics : [],
+            listSounds : [],
         }),
 
         mounted() {
@@ -141,6 +142,10 @@
             currentChoicePageList(){
                 return this.listChoice.slice(this.currentChoicePage*8, Math.min(this.currentChoicePage*8+8, this.listChoice.length));
             },
+            columnsCharacterDiv(){
+                if(this.listCharactersInScene.length<2) return 'repeat(3, minmax(0, 1fr))';
+                return 'repeat('+this.listCharactersInScene.length+', minmax(0, 1fr))';
+            }
         },
 
         methods:{
@@ -392,7 +397,26 @@
 
             // ################### CHARACTER MANGAMENT
             resetCharactersLocation(){
+                if(this.listCharactersInScene.length === 1){
+                    this.listCharactersInScene[0].gridColumn = 2;
+                } else if(this.listCharactersInScene.length === 2){
+                    this.listCharactersInScene[0].gridColumn = 1;
+                    this.listCharactersInScene[1].gridColumn = 3;
+                } else {
+                    for(var i = 0; i<this.listCharactersInScene.length;i++){
+                        this.listCharactersInScene[i].gridColumn = i+1;
+                    }
+                }
+            },
 
+            // ################### SOUND MANAGEMENT
+            removeEndSound(id){
+                var index = this.listSounds.findIndex((s) => s.id === id);
+                if(index !== -1){
+                    this.listSounds[index].howl.stop();
+                    this.listSounds[index].howl = null;
+                    this.listSounds.splice(index, 1);
+                }
             },
 
             // ################### SCRIPT MANAGEMENT
@@ -500,10 +524,83 @@
                         let characterAsset = getCharacter(character, this.assets);
                         if(characterAsset === null) break;
                         if(this.listCharactersInScene.filter((c) => c.name === characterAsset.name).length === 0){
-                            this.listCharactersInScene.push({name : characterAsset.name, img : characterAsset.img, style:{}});
+                            this.listCharactersInScene.push({name : characterAsset.name, img : characterAsset.img, gridColumn:{}});
                             this.resetCharactersLocation();
-                            console.log(this.listCharactersInScene);
                         }
+                        break;
+                    case "Remove Character":
+                        let characterTR = getVariableValue(action.inputs[0], this.assets);
+                        if(characterTR === "null" || characterTR === null) break;
+                        let characterAssetTR = getCharacter(characterTR, this.assets);
+                        if(characterAssetTR === null) break;
+                        var indexTR = this.listCharactersInScene.findIndex((c) => c.name === characterAssetTR.name);
+                        if(indexTR !== -1){
+                            this.listCharactersInScene.splice(indexTR, 1);
+                            this.resetCharactersLocation();
+                        }
+                        break;
+                    case "Play Music":
+                        let music = getVariableValue(action.inputs[0], this.assets);
+                        if(music === "null" || music === null) break;
+                        let musicAsset = getMusic(music, this.assets);
+                        if(musicAsset === null) break;
+                        var indexM = this.listMusics.findIndex((m) => m.name === music);
+                        if(indexM === -1){
+                            this.listMusics.push(
+                                {
+                                    name : music,
+                                    volume : musicAsset.volume,
+                                    howl : new Howl({
+                                        src: ["Assets/Musics/"+musicAsset.path],
+                                        autoplay: true,
+                                        loop: true,
+                                        volume: musicAsset.volume/100})
+                                });
+                        } else {
+                            this.listMusics[indexM].howl.stop();
+                            this.listMusics[indexM].howl.play();
+                        }
+                        break;
+                    case "Stop Music":
+                        let musicTR = getVariableValue(action.inputs[0], this.assets);
+                        if(musicTR === "null" || musicTR === null) break;
+                        var indexMTR = this.listMusics.findIndex((m) => m.name === musicTR);
+                        if(indexMTR !== -1){
+                            this.listMusics[indexMTR].howl.stop();
+                            this.listMusics[indexMTR].howl = null;
+                            this.listMusics.splice(indexMTR, 1);
+                        }
+                        break;
+                    case "Play Sound":
+                        let sound = getVariableValue(action.inputs[0], this.assets);
+                        if(sound === "null" || sound === null) break;
+                        let soundAsset = getSound(sound, this.assets);
+                        if(soundAsset === null) break;
+                            var ref = this;
+                            var id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+                            this.listSounds.push(
+                                {
+                                    name : sound,
+                                    volume : soundAsset.volume,
+                                    id :id,
+                                    howl : new Howl({
+                                        src: ["Assets/Sounds/"+soundAsset.path],
+                                        autoplay: true,
+                                        loop: false,
+                                        volume: soundAsset.volume/100,
+                                        onend: function() {
+                                            ref.removeEndSound(id);
+                                        }})
+                                });
+                        break;
+                    case "Stop Sound":
+                        let soundTR = getVariableValue(action.inputs[0], this.assets);
+                        if(soundTR === "null" || soundTR === null) break;
+                        this.listSounds.filter((s) => s.name === soundTR).forEach((s) => {
+                            s.howl.stop();
+                            s.howl = null;
+                        });
+                        this.listSounds = this.listSounds.filter((s) => s.name !== soundTR);
                         break;
                 }
                 if(execCallback) callback();

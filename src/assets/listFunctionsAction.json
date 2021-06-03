@@ -93,7 +93,19 @@
     "lightColor" : "#a770ff",
     "darkColor" : "#873dff",
     "indentation" : 0,
-    "inputs" : []
+    "inputs" : [{
+      "type": {
+        "name" : "Music",
+        "icon" : "mdi-music-circle-outline",
+        "color" : "#7129e6",
+        "defaultValue" : "null"
+      },
+      "name": "Music",
+      "value": {
+        "type": "value",
+        "value": "null"
+      }
+    }]
   },
   {
     "name" : "Play Sound",
