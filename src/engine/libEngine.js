@@ -63,10 +63,25 @@ function getVariableValue(variable, assets){
                     return getVariableValue(variable.value.input1, assets) <= getVariableValue(variable.value.input2, assets);
             }
             return false;
+        } else if((variable.type.name === "Integer" || variable.type.name === "Float") && (variable.value.operation !== undefined && variable.value.operation !== "value")){
+            let input1 = (variable.type.name === "Integer" ? Math.trunc(getVariableValue(variable.value.input1, assets)) : getVariableValue(variable.value.input1, assets));
+            let input2 = (variable.type.name === "Integer" ? Math.trunc(getVariableValue(variable.value.input2, assets)) : getVariableValue(variable.value.input2, assets));
+            switch (variable.value.operation) {
+                case "+":
+                    return input1 + input2;
+                case "-":
+                    return input1 - input2;
+                case "x":
+                    return input1 * input2;
+                case "÷":
+                    return (variable.type.name === "Integer" ? Math.trunc(input1 / input2) : input1 / input2);
+            }
+            return false;
         }
         return variable.value.value;
     }
     if(variable.value.type === "variable"){
+        if(variable.type.name === "Integer") return Math.trunc(getVariableValueByName(variable.value.value, assets));
         return getVariableValueByName(variable.value.value, assets);
     }
 }
