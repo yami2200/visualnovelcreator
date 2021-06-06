@@ -8,15 +8,15 @@
       <v-card-title>
         Chose a function :
       </v-card-title>
-      <v-card-text>
+      <v-card-text style="height: 85%">
         <v-row justify="center">
           <v-col cols="12" sm="6" md="6" xl="6">
-            <h2 class="mt-2 mb-2 mx-auto"> Variables : </h2>
-            <v-btn class="mt-1 mb-1" v-for="t in listVarFunction" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
             <h2 class="mt-2 mb-2 mx-auto"> Action : </h2>
             <v-btn class="mt-1 mb-1" v-for="t in listVarAction" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
           </v-col>
           <v-col cols="12" sm="6" md="6" xl="6">
+            <h2 class="mt-2 mb-2 mx-auto"> Variables : </h2>
+            <v-btn class="mt-1 mb-1" v-for="t in listVarFunction" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
             <h2 class="mt-2 mb-2 mx-auto"> Controls : </h2>
             <v-btn class="mt-1 mb-1" v-for="t in listVarControl" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
             <h2 class="mt-2 mb-2 mx-auto"> Custom : </h2>

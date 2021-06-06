@@ -528,6 +528,20 @@
                             this.resetCharactersLocation();
                         }
                         break;
+                    case "Set Character State":
+                        let characterS = getVariableValue(action.inputs[0], this.assets);
+                        if(characterS === "null" || characterS === null) break;
+                        let charList = this.listCharactersInScene.filter((c) => c.name === characterS);
+                        if(charList.length===0) return;
+                        let characterAssetS = getCharacter(characterS, this.assets);
+                        if(characterAssetS === null) break;
+                        let nameState = getVariableValue(action.inputs[1], this.assets);
+                        if(nameState === "null" || nameState === null || nameState === "") break;
+                        let listState = characterAssetS.imgOthers.filter((i) => i.name === nameState);
+                        if(listState.length>0){
+                            charList[0].img = listState[0].img;
+                        }
+                        break;
                     case "Remove Character":
                         let characterTR = getVariableValue(action.inputs[0], this.assets);
                         if(characterTR === "null" || characterTR === null) break;

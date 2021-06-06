@@ -44,6 +44,41 @@
     ]
   },
   {
+    "name" : "Set Character State",
+    "component" : "Basic",
+    "lightColor" : "#5d56fc",
+    "darkColor" : "#3c33ff",
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Character",
+          "icon" : "mdi-account-multiple",
+          "color" : "#1f18b5",
+          "defaultValue" : "null"
+        },
+        "name": "Character",
+        "value": {
+          "type": "value",
+          "value": "null"
+        }
+      },
+      {
+        "type": {
+          "name" : "String",
+          "icon" : "mdi-format-letter-case",
+          "color" : "#e34dd7",
+          "defaultValue" : ""
+        },
+        "name": "State",
+        "value": {
+          "type": "value",
+          "value": ""
+        }
+      }
+    ]
+  },
+  {
     "name" : "Remove Character",
     "component" : "Basic",
     "lightColor" : "#5d56fc",
