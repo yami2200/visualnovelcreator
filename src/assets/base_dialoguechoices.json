@@ -22,6 +22,7 @@
   "speakernull" : "",
 
   "tabs" : ["Dialogue", "Choice", "Script"],
+  "waitEndScript" : false,
   "choices" : [
     {
     "text" : "Choice 1",

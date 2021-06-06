@@ -38,6 +38,7 @@
   "speakernull" : "",
 
   "tabs" : ["Dialogue", "Script", "Input"],
+  "waitEndScript" : false,
   "offsetLoc" : {"x" :  -10, "y" :  -5},
   "previousDialogue" : [
     [{

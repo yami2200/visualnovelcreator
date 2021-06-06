@@ -108,6 +108,7 @@
             listCharactersInScene : [],
             listMusics : [],
             listSounds : [],
+            canGoNext : false,
         }),
 
         mounted() {
@@ -167,6 +168,7 @@
 
             // #################### DIALOGUES MANAGEMENT
             playDialogue(dialogue, index){
+                this.canGoNext = (dialogue.waitEndScript === undefined ? true : !dialogue.waitEndScript);
                 this.canPassDialogue = !(dialogue.type === "choices" || dialogue.type === "input");
                 this.currentDialogueIndex = index;
 
@@ -175,12 +177,16 @@
                     if(actions.length > 0) {
                         let callbackAction = () => {
                             if(actions.length > 0) this.executeActionScript(actions.shift(),callbackAction);
+                            else{
+                                this.canGoNext = true;
+                                if(dialogue.type === "function") this.playNextDialogue(0);
+                            }
                         };
                         this.executeActionScript(actions.shift(),callbackAction);
                     }
                 }
 
-                if(dialogue.type === "function"){
+                if(dialogue.type === "function" && this.canGoNext){
                     this.playNextDialogue(0);
                 }
 
@@ -248,7 +254,7 @@
                             this.playDialogue(arrival.d, arrival.index);
                         }
                     }
-                    if(dialogue.nextDialogue.length>0){
+                    if(dialogue.nextDialogue.length>0 && this.canGoNext){
                         this.playNextDialogue(0);
                     }
                 }
@@ -292,7 +298,7 @@
             },
             clickText(){
                if(this.animationText === null) {
-                   if(this.canPassDialogue){
+                   if(this.canPassDialogue && this.canGoNext){
                        this.playNextDialogue(0);
                    }
                } else {
