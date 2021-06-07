@@ -18,6 +18,7 @@
           name="Edit"
           sizeHeight=3
           @variablespanel="bus.$emit('variables')"
+          @enginecode="$emit('enginecode')"
           @projectproperties="properties"
           @apppreferences="preferences">
       </vsm-dropdown-menu>
@@ -90,6 +91,8 @@ export default {
         action: "variablespanel"},
       {title: "Custom Functions",
         action: "functionspanel"},
+      {title: "Engine Code",
+        action: "enginecode"},
       {title: "Project Properties",
       action: "projectproperties"},
       {title: "App Preferences",
