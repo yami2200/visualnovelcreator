@@ -12,7 +12,7 @@
           @click="addObject"
           color="warning"
           elevation="2"
-      > Add new object usage </v-btn>
+      > Add new object use </v-btn>
       <v-spacer></v-spacer>
     </v-row>
     <v-list class="mt-5 overflow-y-auto"  max-height="450">
