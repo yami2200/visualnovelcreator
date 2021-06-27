@@ -20,7 +20,7 @@
           @variablespanel="bus.$emit('variables')"
           @enginecode="$emit('enginecode')"
           @projectproperties="properties"
-          @apppreferences="preferences">
+          @apppreferences="$emit('preferences')">
       </vsm-dropdown-menu>
       <vsm-dropdown-menu
           :items="HelpItems"
@@ -125,9 +125,6 @@ export default {
     },
 
     // ########################### EDIT MENU ###############################
-    preferences(){
-      console.log("App Preferences");
-    },
     properties(){
       console.log("Project Properties");
     },

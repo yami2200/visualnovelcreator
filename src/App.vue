@@ -1,11 +1,12 @@
 <template>
   <v-app>
     <v-main>
-      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @enginecode="editEngineCodePanel"></vsm-menu-bar>
+      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
       <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
       <vsm-enginecode-panel :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
+      <vsm-editorpreferences :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
         <v-row no-gutters>
           <v-col cols="8">
             <vsm-dialogue-manager v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
@@ -26,6 +27,10 @@ const remote = require('electron').remote;
 const {dialog} = require('electron').remote;
 const render = require('electron').ipcRenderer;
 
+var pathPreferences = remote.app.getPath('appData');
+
+import {writeFile} from "./lib";
+
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
 import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
@@ -34,11 +39,13 @@ import jsonAssets from './test/assets.json';
 import jsonVariables from './test/listVar.json';
 import jsonProjectProperties from './test/project_properties.json';
 import jsonBasePage from './assets/base_page.json';
+import jsonBasePreferences from './assets/base_editorPreferences.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import newProject from "@/components/VSM-NewProjectModal";
 import VarPanel from "@/components/variables/VSM-VariablesPanel";
 import jsonBaseAsset from './assets/base_assets.json';
 import EngineCodeComp from '@/components/VSM-EngineCodeEditPanel';
+import EditorPreferencesComp from '@/components/VSM-EditorPreferencesPanel';
 
 import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";
 const fse = require('fs-extra');
@@ -57,6 +64,7 @@ export default {
     'vsm-newproject-modal' : newProject,
     'vsm-variables-panel' : VarPanel,
     'vsm-enginecode-panel' : EngineCodeComp,
+    'vsm-editorpreferences' : EditorPreferencesComp
   },
 
   mounted() {
@@ -78,6 +86,7 @@ export default {
     process.nextTick(() => {
       this.loadProjectFromProjectProperties(this.project_properties, [this.project_properties.directory+"\\azz"]);
     });
+    this.loadEditorPreferences();
   },
 
   destroyed() {
@@ -263,6 +272,47 @@ export default {
       this.bus.$emit("showEngineCodeEditPanel");
     },
 
+    loadEditorPreferences(first = true){
+      var preferences = null;
+      try{
+        preferences = JSON.parse(readFileSync(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json"));
+      }
+      catch {
+        console.log("An error occured when trying to read editor preferences ! \n The editor will load default preferences.");
+      }
+      if(preferences!=null){
+        this.editorPreferences = preferences;
+        this.updateEditorPreferences();
+        return;
+      } else if (first){
+        writeFile(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json", JSON.stringify(jsonBasePreferences));
+        this.loadEditorPreferences(false);
+      } else {
+        alert("An error occured when trying to read editor preferences ! \n The editor will load default preferences.");
+      }
+      this.editorPreferences = JSON.parse(JSON.stringify(jsonBasePreferences));
+      this.updateEditorPreferences();
+    },
+    updateEditorPreferences(){
+      if(this.editorPreferences === null) return;
+      switch (this.editorPreferences.theme){
+        case "light":
+          this.$vuetify.theme.dark = false;
+          break;
+        case "dark":
+          this.$vuetify.theme.dark = true;
+          break;
+      }
+    },
+    openEditorPreferencesPanel(){
+      this.bus.$emit("showEditorPreferencesPanel");
+    },
+    saveEditorPreferences(pref){
+      this.editorPreferences = pref;
+      writeFile(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json", JSON.stringify(this.editorPreferences));
+      this.updateEditorPreferences();
+    },
+
     // ############################# INPUTS
     shortcuts(event){
       if(event.type === "keyDown"){
@@ -325,6 +375,7 @@ export default {
     selectedDialoguePage: 0,
     listNamePages: [],
     refresh : true,
+    editorPreferences : null,
     /*listPage: [
       {
         title : "First Page",
