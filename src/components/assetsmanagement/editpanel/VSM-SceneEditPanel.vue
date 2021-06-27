@@ -30,17 +30,15 @@
 
             <v-spacer></v-spacer>
 
-            <img
+            <v-img
                 v-if="baseImage!=null && baseImage.path!=''"
-                contain
                 :height="maxHeightImage"
                 :src="baseImage.path"
                 alt="Default Image"
-            >
+            ></v-img>
 
             <img
                 v-else
-                contain
                 :height="maxHeightImage"
                 :src="require('../../../assets/logo.png')"
             >
