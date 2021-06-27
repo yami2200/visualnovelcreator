@@ -5,7 +5,7 @@
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
       <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
-      <vsm-enginecode-panel :assets="assets" :bus="bus"></vsm-enginecode-panel>
+      <vsm-enginecode-panel :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
         <v-row no-gutters>
           <v-col cols="8">
             <vsm-dialogue-manager v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>

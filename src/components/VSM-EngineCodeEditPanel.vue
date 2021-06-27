@@ -5,36 +5,55 @@
       max-width="90%"
       max-height="900px"
   >
+    <vsm-confirmation-request-modal @accept="deleteFile" :bus="bus1" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
+    <vsm-editfile @refresh="refreshTabs" :bus="bus" :current-files="currentFiles"></vsm-editfile>
     <v-card
         max-height="80vh"
         height="80vh">
       <v-card-title>
-        <span class="headline" v-text="'Engine Code Edition :'"></span>
+        <span class="headline" v-text="'Engine Code :'"></span>
       </v-card-title>
       <v-card-text height="100%">
-        <v-card height="100%">
-          <v-container v-if="assets[7] !== undefined">
+        <v-card height="100%" width="100%">
+          <v-container v-if="assets[7] !== undefined" class="ml-0 mr-0">
 
-            <v-tabs v-model="tab" vertical height="63vh">
-              <v-tab v-for="(file,index) in  assets[7].content" :key="index+file.title">
+            <v-tabs v-model="tab" vertical height="63vh" @change="changeTab">
+              <v-tab v-for="(file,index) in  currentFiles" :key="index+file.title">
                 <v-icon>{{ file.icon }}</v-icon>
                 {{ file.title }}
               </v-tab>
               <v-tabs-items v-model="tab">
                 <v-tab-item
-                    v-for="(tab,indexT) in assets[7].content"
+                    v-for="(tab,indexT) in currentFiles"
                     :key="indexT"
                 >
-                  <MonacoEditor
-                      theme="vs-dark"
-                      width="100%"
-                      height="60vh"
-                      language="javascript"
-                      @change="onChange"
-                      :options="options"
-                  ></MonacoEditor>
+
+                  <MonacoEditor style="width: 100%; height: 60vh" v-model="tab.value" :language="tab.language" theme="vs-dark"/>
+
                 </v-tab-item>
               </v-tabs-items>
+
+              <v-app-bar
+                  dense
+                  fixed
+                  bottom
+              >
+                <v-spacer></v-spacer>
+
+                <v-btn icon @click="deleteFileRequest" :disabled=disableEditButtons>
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+
+                <v-btn icon @click="editFileRequest" :disabled=disableEditButtons>
+                  <v-icon>mdi-pencil-outline</v-icon>
+                </v-btn>
+
+                <v-btn icon @click="newFileRequest">
+                  <v-icon>mdi-plus-circle</v-icon>
+                </v-btn>
+
+                <v-spacer></v-spacer>
+              </v-app-bar>
             </v-tabs>
 
           </v-container>
@@ -47,36 +66,58 @@
             text
             @click="hide"
         >
-          Close
+          Cancel
         </v-btn>
-        <v-spacer></v-spacer>
+        <v-btn
+            color="blue darken-1"
+            text
+            @click="save"
+        >
+          Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import MonacoEditor from 'monaco-editor-vue';
+import {writeFile} from "../lib";
+import MonacoEditor from 'vue-monaco';
+import ConfirmationRequest from "./modalrequest/VSM-ConfirmationRequestModal";
+import EditFileEngine from "./VSM-EditFileEngineCode";
+import Vue from "vue";
 
 export default {
   name: "VSM-EngineCodeEditPanel",
 
   components: {
-    MonacoEditor
+    MonacoEditor,
+    'vsm-confirmation-request-modal' : ConfirmationRequest,
+    'vsm-editfile' : EditFileEngine,
+  },
+
+  computed:{
+    disableEditButtons(){
+      return this.tab === null || this.tab === -1 || (this.currentFiles[this.tab].uneditable !== undefined && this.currentFiles[this.tab].uneditable);
+    },
   },
 
   data () {
     return {
       dialog: false,
+      headlineCRM: "Delete File",
+      textCRM: "Are you sure you want to delete this file : ",
       tab: null,
+      bus1: new Vue(),
       options: {
         value: "",
         language: "javascript",
       },
+      currentFiles : [],
     };
   },
 
-  props:["assets", "bus"],
+  props:["assets", "bus", "properties"],
 
   mounted() {
     this.bus.$on('showEngineCodeEditPanel', this.show);
@@ -84,15 +125,53 @@ export default {
   },
 
   methods:{
+    newFileRequest(){
+      this.bus.$emit("showEngineCodeEditFile", false, this.tab);
+    },
+    editFileRequest(){
+      this.bus.$emit("showEngineCodeEditFile", true, this.tab);
+    },
+    deleteFileRequest(){
+      this.textCRM = "Are you sure you want to delete this file : " + this.currentFiles[this.tab].title;
+      this.bus1.$emit('showConfirmationRequestModal');
+    },
+    deleteFile(){
+      this.currentFiles.splice(this.tab, 1);
+      this.tab--;
+    },
+    changeTab(value){
+        if(this.tab !== null && this.tab !== -1){
+          this.options.value = this.currentFiles[value].value;
+        }
+    },
+    save(){
+      this.assets[7].content = this.currentFiles;
+      this.currentFiles.forEach((f) => {
+        writeFile(this.properties.directory+f.title, f.value);
+      });
+      this.hide();
+    },
     show(){
+      this.currentFiles = JSON.parse(JSON.stringify(this.assets[7].content));
+      this.options = [];
+      this.currentFiles.forEach((f) => {
+        this.options.push({language : f.language, value : f.value});
+      });
+      this.tab = 0;
+      this.$forceUpdate();
       this.dialog = true;
     },
     hide(){
       this.dialog = false;
     },
     onChange(value){
-      console.log(value);
-    }
+      if(this.tab !== null && this.tab !== -1){
+        this.currentFiles[this.tab].value = value;
+      }
+    },
+    refreshTabs(){
+      this.$forceUpdate();
+    },
   },
 }
 </script>

@@ -1,0 +1,22 @@
+[
+  {
+    "language" : "html",
+    "icon" : "mdi-language-html5",
+    "extension" : "html"
+  },
+  {
+    "language" : "css",
+    "icon" : "mdi-language-css3",
+    "extension" : "css"
+  },
+  {
+    "language" : "javascript",
+    "icon" : "mdi-language-javascript",
+    "extension" : "js"
+  },
+  {
+    "language" : "json",
+    "icon" : "mdi-code-json",
+    "extension" : "json"
+  }
+]

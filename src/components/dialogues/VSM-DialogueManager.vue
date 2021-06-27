@@ -247,9 +247,10 @@ export default {
         show: false,
         autoHideMenuBar: true,
         width: 1280,
-        height: 720})
-      win.on('close', function () { win = null })
-      if(process.env.NODE_ENV !== 'production'){
+        height: 720});
+      win.on('close', function () { win = null });
+      let devEngine = false;
+      if(devEngine && process.env.NODE_ENV !== 'production'){
         var fileHTML = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\game.html");
         var fileJS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\libEngine.js");
         var fileCSS = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\styleEngine.css");
