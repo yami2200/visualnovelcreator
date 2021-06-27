@@ -134,10 +134,9 @@ import jsonBaseDialogueTransitionEntry from '../../assets/base_dialoguetransitio
 import jsonBaseDialogueChoices from '../../assets/base_dialoguechoices.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import EditDialogue from "@/components/VSM-EditDialoguePanel"
+import {remote} from "electron";
 
-const electron = require('electron')
-const BrowserWindow = electron.remote.BrowserWindow
-
+const BrowserWindow = remote.BrowserWindow
 const baseDialogue = jsonBaseDialogue;
 const baseDialogueCondition = jsonBaseDialogueCondition;
 const baseDialogueFunction = jsonBaseDialogueFunction;

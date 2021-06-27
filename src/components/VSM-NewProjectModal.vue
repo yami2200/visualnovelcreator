@@ -57,7 +57,8 @@
 
 <script>
 import baseProject from './../assets/base_projectproperties.json'
-const {dialog} = require('electron').remote;
+import {remote} from "electron";
+const dialog = remote.dialog;
 
 export default {
   name: "VSM-NewProjectModal",

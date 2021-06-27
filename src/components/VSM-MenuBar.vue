@@ -59,8 +59,7 @@
 </template>
 
 <script>
-const remote = require('electron').remote;
-const { shell } = require('electron');
+import {shell} from "electron";
 import Dropdown from "./VSM-Dropdown-Menu";
 
 export default {
@@ -73,7 +72,6 @@ export default {
   props : ['height', 'bus','loading'],
 
   data: () => ({
-    w: remote.getCurrentWindow(),
     FileItems: [
       { title: "New Project",
       action: "newproject"},
@@ -107,23 +105,6 @@ export default {
   }),
 
   methods: {
-    // ############################### FILE MENU ##############################
-    newProjectButton() {
-      console.log("Creating new project");
-    },
-    openProjectButton() {
-      console.log("Open project");
-    },
-    saveProjectButton(){
-      console.log("Save project");
-    },
-    saveAsProjectButton(){
-      console.log("Save as project");
-    },
-    exitButton(){
-      this.w.close()
-    },
-
     // ########################### EDIT MENU ###############################
     properties(){
       console.log("Project Properties");

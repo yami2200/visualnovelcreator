@@ -21,16 +21,13 @@
 </template>
 
 <script>
+//const remote = require('electron').remote;
+//const render = require('electron').ipcRenderer;
+//const fse = require("fs-extra");
+
 import Vue from "vue";
-
-const remote = require('electron').remote;
-const {dialog} = require('electron').remote;
-const render = require('electron').ipcRenderer;
-
-var pathPreferences = remote.app.getPath('appData');
-
+import {remote, ipcRenderer} from "electron";
 import {writeFile} from "./lib";
-
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
 import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
@@ -46,11 +43,12 @@ import VarPanel from "@/components/variables/VSM-VariablesPanel";
 import jsonBaseAsset from './assets/base_assets.json';
 import EngineCodeComp from '@/components/VSM-EngineCodeEditPanel';
 import EditorPreferencesComp from '@/components/VSM-EditorPreferencesPanel';
-
 import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";
-const fse = require('fs-extra');
+import fse from "fs-extra";
 
 const basePage = jsonBasePage;
+const {dialog} = remote;
+var pathPreferences = remote.app.getPath('appData');
 
 export default {
   name: 'App',
@@ -75,7 +73,7 @@ export default {
     this.bus.$on('saveas', this.saveAsProjectButton);
     this.bus.$on('exit', this.exitButton);
     this.bus.$on('variables', this.variablesPanel);
-    render.on('shortcut', (event, message) => {
+    ipcRenderer.on('shortcut', (event, message) => {
       if(event.senderId === 0) this.shortcuts(message);
     })
   },
@@ -260,7 +258,7 @@ export default {
       this.endProcessing();
     },
     exitButton(){
-      this.w.close()
+      this.w.close();
     },
 
     // ############################ EDIT MENU
@@ -376,6 +374,7 @@ export default {
     listNamePages: [],
     refresh : true,
     editorPreferences : null,
+    w: remote.getCurrentWindow(),
     /*listPage: [
       {
         title : "First Page",
