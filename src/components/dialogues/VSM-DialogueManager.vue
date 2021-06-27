@@ -49,7 +49,7 @@
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
 
-            <svg :height="height+'px'" :style="{cursor: getCursor}" width="100%" ref="svgBox" style="background-color: #dedede;" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
+            <svg :height="height+'px'" :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}" width="100%" ref="svgBox" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
 
               <line v-if="linkingBlock !== -1" pointer-events="none" :x1="linkingOutput===-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput===-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
@@ -225,6 +225,9 @@ export default {
     },
     disablePlayBtn(){
       return this.initialDialogue === null || this.initialDialogue.page === null || this.initialDialogue.index === -1;
+    },
+    backgroundColorSVG(){
+      return (this.$vuetify.theme.dark ? '#282936': '#dedede');
     },
   },
 
