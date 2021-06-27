@@ -34,6 +34,7 @@
                 v-if="baseImage!=null && baseImage.path!=''"
                 :height="maxHeightImage"
                 :src="baseImage.path"
+                contain
                 alt="Default Image"
             ></v-img>
 
