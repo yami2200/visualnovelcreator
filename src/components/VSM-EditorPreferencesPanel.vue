@@ -2,7 +2,7 @@
   <v-dialog
       v-model="dialog"
       persistent
-      max-width="90%"
+      max-width="50%"
       max-height="900px"
   >
     <v-card
@@ -22,7 +22,7 @@
 
           <v-tab-item >
             <v-card height="64vh" width="100%">
-              <v-col cols="12" sm="4" md="3" xl="3" class="ml-5">
+              <v-col cols="12" sm="12" md="12" xl="6" class="ml-5">
                 <v-row>
                   <span class="mt-3 mr-5"> Theme : </span>
                   <v-select
