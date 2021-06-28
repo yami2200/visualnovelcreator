@@ -28,7 +28,8 @@
           name="Help"
           sizeHeight=3
           @github="githublink"
-          @websiteauthor="authorwebsiteLink">
+          @websiteauthor="authorwebsiteLink"
+          @bugsuggestion="bugsuggestionlink">
       </vsm-dropdown-menu>
     </v-toolbar-items>
     <v-spacer></v-spacer>
@@ -101,6 +102,8 @@ export default {
         action: "github"},
       {title: "Author WebSite",
         action: "websiteauthor"},
+      {title: "Bugs & Suggestions",
+        action: "bugsuggestion"},
     ],
   }),
 
@@ -116,7 +119,10 @@ export default {
     },
     authorwebsiteLink(){
       shell.openExternal('https://romainbriend.com/');
-    }
+    },
+    bugsuggestionlink(){
+      shell.openExternal('https://github.com/yami2200/visualnovelmaker/issues');
+    },
 
   }
 
