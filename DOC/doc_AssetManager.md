@@ -6,7 +6,7 @@
 There is one tab for each type of asset : **Character, Scene, Object, Music & Sound**.
 # ![Asset Manager Panel](docimg_assetManagerPanel.jpg)
 > All types of asset have a specific purpose
-> - The **Character Asset** is an asset which can lead a dialogue & appear in screen.
+> - The **Character Asset** is an assset which can lead a dialogue & appear in screen.
 > - The **Scene Asset** is an asset which can be put as the background of your game.
 > - The **Object Asset** is an asset which can be add or remove from your inventory. The object can also be used to trigger a specific dialogue/event.
 > - The **Music Asset** is a music which can be playe and it will loop until you stop this specific music.
