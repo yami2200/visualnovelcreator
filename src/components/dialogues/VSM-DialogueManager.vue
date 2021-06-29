@@ -222,11 +222,11 @@ export default {
     disablePlayFromDialogueBtn(){
       return this.selectionDialogue.length !== 1;
     },
-    disablePlayBtn(){
-      return this.initialDialogue === null || this.initialDialogue.page === null || this.initialDialogue.index === -1;
-    },
     backgroundColorSVG(){
       return (this.$vuetify.theme.dark ? '#282936': '#dedede');
+    },
+    disablePlayBtn(){
+      return this.initialDialogue === null || this.initialDialogue.page === null || this.initialDialogue.index === -1;
     },
   },
 
@@ -245,11 +245,18 @@ export default {
 
       this.$emit("save");
 
+      let icon = "";
+      if(this.projectproperties.icon!=="") icon = this.projectproperties.directory+this.projectproperties.icon;
+
       let win = new BrowserWindow({
         show: false,
         autoHideMenuBar: true,
         width: 1280,
-        height: 720});
+        height: 720,
+        icon: icon,
+        webPreferences: {
+          webSecurity: false,
+        }});
       win.on('close', function () { win = null });
       let devEngine = false;
       if(devEngine && process.env.NODE_ENV !== 'production'){
@@ -871,6 +878,7 @@ export default {
 
     // ####################################### LOADING AND SET INITIAL DIALOGUE
     setInitialWhenLoading(listPage){
+      this.initialDialogue = {page : null, index : -1};
       listPage.forEach((p) => {
         var i = 0;
         p.listDialogues.forEach((d) => {

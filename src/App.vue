@@ -1,12 +1,13 @@
 <template>
   <v-app>
     <v-main>
-      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel"></vsm-menu-bar>
+      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
       <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
       <vsm-enginecode-panel :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
       <vsm-editorpreferences :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
+      <vsm-projectproperties :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
         <v-row no-gutters>
           <v-col cols="8">
             <vsm-dialogue-manager v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
@@ -43,6 +44,7 @@ import VarPanel from "@/components/variables/VSM-VariablesPanel";
 import jsonBaseAsset from './assets/base_assets.json';
 import EngineCodeComp from '@/components/VSM-EngineCodeEditPanel';
 import EditorPreferencesComp from '@/components/VSM-EditorPreferencesPanel';
+import ProjectPropertiesComp from '@/components/VSM-ProjectPropertiesPanel';
 import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";
 import fse from "fs-extra";
 
@@ -62,7 +64,8 @@ export default {
     'vsm-newproject-modal' : newProject,
     'vsm-variables-panel' : VarPanel,
     'vsm-enginecode-panel' : EngineCodeComp,
-    'vsm-editorpreferences' : EditorPreferencesComp
+    'vsm-editorpreferences' : EditorPreferencesComp,
+    'vsm-projectproperties' : ProjectPropertiesComp
   },
 
   mounted() {
@@ -198,6 +201,10 @@ export default {
       createFileProject(data.directory, data, this.assets)
       this.project_properties = data;
       this.project_properties.directory = data.directory+"\\"+data.name+"\\";
+      this.assets[8].content = this.project_properties;
+      this.assets[7].content.forEach((f) => {
+        writeFile(this.project_properties.directory+f.title, f.value);
+      });
 
       this.endProcessing();
     },
@@ -254,7 +261,6 @@ export default {
       fse.copySync(srcDir, destDir,{ overwrite: true });
 
       this.project_properties = tempoProperties;
-
       this.endProcessing();
     },
     exitButton(){
@@ -309,6 +315,15 @@ export default {
       this.editorPreferences = pref;
       writeFile(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json", JSON.stringify(this.editorPreferences));
       this.updateEditorPreferences();
+    },
+
+    openProjectPropertiesPanel(){
+      this.bus.$emit("showProjectPropertiesPanel");
+    },
+    saveProjectProperties(prop){
+      this.project_properties = prop;
+      this.assets[8].content = this.project_properties;
+      this.saveProjectButton();
     },
 
     // ############################# INPUTS
@@ -367,7 +382,7 @@ export default {
     processing : false,
     assets : jsonAssets,
     bus: new Vue(),
-    project_properties: jsonProjectProperties,
+    project_properties: JSON.parse(JSON.stringify(jsonProjectProperties)),
     variables: JSON.parse(JSON.stringify(jsonVariables)),
     minimized: false,
     selectedDialoguePage: 0,

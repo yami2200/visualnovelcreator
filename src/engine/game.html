@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="title" content="Game Title">
+    <meta name="description" content="Game description">
+    <meta name="keywords" content="Visual Novel, Video Game">
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"></script>
     <script src="libEngine.js"> </script>
@@ -36,7 +39,7 @@
         </transition>
     </script>
 
-    <title> Game </title>
+    <title id="titleGame"> Game </title>
 </head>
 <body>
 <div id="app">
@@ -114,8 +117,10 @@
         mounted() {
             if(urlParams.get('page') !== null) this.page = urlParams.get('page');
             if(urlParams.get('dialogue') !== null) this.currentDialogueIndex = parseInt(urlParams.get('dialogue'));
+
             this.loadAssets((text) => {
                 this.assets = JSON.parse(text);
+                document.getElementById("titleGame").innerHTML = this.assets[8].content.displayname;
                 if(this.assets !== null) this.playInitialDialogue();
             });
         },

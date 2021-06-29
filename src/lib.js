@@ -69,6 +69,7 @@ function createFileProject(directory, properties, assets){
         }
     });
 
+    fs.mkdirSync(propertiesWrite.directory+"Assets\\Properties\\", { recursive: true });
     writeFile(propertiesWrite.directory+properties.name+".vsm", JSON.stringify(propertiesWrite));
     writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
 

@@ -1,5 +1,35 @@
 {
   "name" : "Untitled Project",
+  "displayname" : "Untitled Project",
   "date" : "",
-  "directory" : ""
+  "directory" : "",
+  "description" : "",
+  "icon" : "",
+  "banner" : "",
+  "defaultClickSound" : {
+    "type": {
+      "name" : "Sound",
+      "icon" : "mdi-music-note-outline",
+      "color" : "#ad29e6",
+      "defaultValue" : "null"
+    },
+    "name": "Click Sound",
+    "value": {
+      "type": "value",
+      "value": "null"
+    }
+  },
+  "defaultTextSound" : {
+    "type": {
+      "name" : "Sound",
+      "icon" : "mdi-music-note-outline",
+      "color" : "#ad29e6",
+      "defaultValue" : "null"
+    },
+    "name": "Text Sound",
+    "value": {
+      "type": "value",
+      "value": "null"
+    }
+  }
 }

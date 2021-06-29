@@ -19,7 +19,7 @@
           sizeHeight=3
           @variablespanel="bus.$emit('variables')"
           @enginecode="$emit('enginecode')"
-          @projectproperties="properties"
+          @projectproperties="$emit('properties')"
           @apppreferences="$emit('preferences')">
       </vsm-dropdown-menu>
       <vsm-dropdown-menu

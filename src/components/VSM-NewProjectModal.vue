@@ -88,6 +88,7 @@ export default {
       this.$emit("cancel");
     },
     save(){
+      this.project.displayname = this.project.name;
       this.$emit("save", this.project);
       this.hide();
     },
