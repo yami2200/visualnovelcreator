@@ -39,12 +39,89 @@
                   thumb-label="always"
                   label="Vertical size"
               ></v-slider>
+
+              <v-row justify="space-around" class="mb-7 mt-9">
+
+                <v-spacer></v-spacer>
+                <span class="mt-10 mr-5" style="font-size: 16px"> Default Image : </span>
+                <v-file-input
+                    class="mt-6"
+                    @change="onChangeImage(-1)"
+                    @click="onClickFileInput(baseImage)"
+                    accept="image/*"
+                    label="Default Image"
+                    hide-input
+                    v-model="baseImage"
+                ></v-file-input>
+
+                <v-avatar v-if="baseImage!=null" size="100">
+                  <img
+                      :src="baseImage.path"
+                      alt="Default Image"
+                  >
+                </v-avatar>
+
+                <v-avatar v-else color="#CCCCCC" size="100">
+                  <v-icon>
+                    mdi-image
+                  </v-icon>
+                </v-avatar>
+
+                <v-spacer></v-spacer>
+
+              </v-row>
             </v-col>
             <v-col cols="6">
-              <v-img src="https://culturezvous.com/wp-content/uploads/2019/12/chateau_chambord.jpg"></v-img>
+              <!--<v-img src="https://culturezvous.com/wp-content/uploads/2019/12/chateau_chambord.jpg"></v-img>-->
+              <v-card>
+                <v-list dense height="350px" class="mt-2 overflow-y-auto" v-if="currentCharacter!=null">
+                  <v-list-item
+                      v-for="(imgo, index) in currentCharacter.imgOthers"
+                      :key="index"
+                  >
+                    <v-list-item-avatar v-if="imgo.img !== '' || imageImportList[index].path !== ''">
+                      <v-img v-if="imageImportList[index].path !== ''" :src="imageImportList[index].path"></v-img>
+                      <v-img v-else :src="projectProp.directory + 'Assets\\Characters\\' +imgo.img" @click="print(projectProp.directory + 'Assets\\Characters\\' +imgo.img)"></v-img>
+                    </v-list-item-avatar>
+
+                    <v-list-item-content>
+                      <v-text-field
+                          label="Name"
+                          v-model="imgo.name"
+                          :rules="[rules.required, rules.counter]"
+                      ></v-text-field>
+                    </v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-row>
+                        <v-file-input
+                            @change="onChangeImage(index)"
+                            @click="onClickFileInput(imageImportList[index])"
+                            hide-input
+                            accept="image/*"
+                            prepend-icon="mdi-folder-image"
+                            color="grey darken-5"
+                            v-model="imageImportList[index]"
+                        ></v-file-input>
+                        <v-btn icon @click="deleteNewImageState(index)">
+                          <v-icon color="red lighten-1">mdi-delete</v-icon>
+                        </v-btn>
+
+                      </v-row>
+
+                    </v-list-item-action>
+
+                  </v-list-item>
+                </v-list>
+              </v-card>
+              <v-row class="mt-3">
+                <v-spacer></v-spacer>
+                <v-btn @click="addNewImageState"> Add new Image </v-btn>
+                <v-spacer></v-spacer>
+              </v-row>
             </v-col>
 
-            <v-col cols="6">
+            <!--<v-col cols="6">
               <v-row justify="space-around" class="mb-7 mt-9">
 
                 <v-spacer></v-spacer>
@@ -76,8 +153,8 @@
 
               </v-row>
 
-            </v-col>
-            <v-col cols="6">
+            </v-col>-->
+            <!--<v-col cols="6">
               <v-card>
               <v-list dense height="200px" class="mt-2 overflow-y-auto" v-if="currentCharacter!=null">
                   <v-list-item
@@ -125,7 +202,7 @@
                 <v-spacer></v-spacer>
               </v-row>
 
-            </v-col>
+            </v-col>-->
           </v-row>
         </v-container>
       </v-card-text>

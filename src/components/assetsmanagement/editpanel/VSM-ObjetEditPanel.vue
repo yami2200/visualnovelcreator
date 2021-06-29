@@ -33,17 +33,17 @@
             <v-col cols="6">
               <v-spacer></v-spacer>
 
-              <v-avatar size="300">
+              <v-avatar size="300" v-if="baseImage!=null && baseImage.path!=''">
                 <img
-                    v-if="baseImage!=null && baseImage.path!=''"
                     width="100%"
                     :src="baseImage.path"
                     alt="Default Image"
                 >
-                <img
-                    v-else
-                    :src="require('../../../assets/logo.png')"
-                >
+              </v-avatar>
+              <v-avatar v-else color="#CCCCCC" size="300">
+                <v-icon>
+                  mdi-image
+                </v-icon>
               </v-avatar>
 
               <v-spacer></v-spacer>

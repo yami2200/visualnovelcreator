@@ -53,10 +53,9 @@
                         v-model="currentProperties.description"
                     ></v-textarea>
                     <v-row align="center" justify="center" class="mt-5">
-                      <v-spacer></v-spacer>
-                      <span class="mt-7 mr-5" style="font-size: 20px"> Default Icon : </span>
+                      <span class="mr-5" style="font-size: 20px"> Default Icon : </span>
                       <v-file-input
-                          class="mt-6"
+                          class="mr-5"
                           @change="onChangeIcon"
                           @click="onClickFileInputIcon(icon)"
                           accept=".ico"
@@ -76,15 +75,14 @@
                           mdi-image
                         </v-icon>
                       </v-avatar>
-
+                      <v-spacer></v-spacer>
                       <v-spacer></v-spacer>
                     </v-row>
 
                     <v-row align="center" justify="center" class="mt-5">
-                      <v-spacer></v-spacer>
-                      <span class="mt-7 mr-5" style="font-size: 20px"> Default Banner : </span>
+                      <span class="mt-2 mr-5" style="font-size: 20px"> Default Banner : </span>
                       <v-file-input
-                          class="mt-6"
+                          class="mt-2"
                           @change="onChangeBanner"
                           @click="onClickFileInputBanner(banner)"
                           accept="image/*"
@@ -104,7 +102,7 @@
                           mdi-image
                         </v-icon>
                       </v-avatar>
-
+                      <v-spacer></v-spacer>
                       <v-spacer></v-spacer>
                     </v-row>
 

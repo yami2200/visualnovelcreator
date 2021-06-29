@@ -93,7 +93,7 @@ export default {
       currentMusic: null,
       rules: {
         required: value => !!value || 'Required.',
-        counter: value => value.length <= 20 || 'Max 20 characters',
+        counter: value => value.length <= 30 || 'Max 30 characters',
         existCharName: value => (this.assets[3].content.filter(e => e.name === value).length < 1 || this.previousName == value) || 'Already Exist',
       },
       oldSoundInput: {name: "", path: ""},
