@@ -21,6 +21,8 @@
 
 # ![Scripting Demo](README/ScriptingDemo.gif)
 
+> You can declare global variables to store important values, check the [Variables Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Variables.md) for more info.
+
 >To make a system which is not handled by the scripting system. You have access to an editor with all the code (HTML/JS/CSS) that you can edit like you want.
 
 ## ⚙ Tech :
