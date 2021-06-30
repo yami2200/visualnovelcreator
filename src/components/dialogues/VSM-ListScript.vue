@@ -2,10 +2,10 @@
   <div>
     <vsm-scriptselector :bus="bus" @choseFunction="addFunction"> </vsm-scriptselector>
       <div v-for="(f, index) in action" :key="index">
-        <vsm-scriptcompbasic v-if="f.component === 'Basic'" @InsertNew="addScriptFunctionRequest" @moveTop="moveTop" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcompbasic>
-        <vsm-scriptcompif v-if="f.component === 'ControlIf'" @InsertNew="addScriptFunctionRequest" @moveTop="moveTop" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompif>
-        <vsm-scriptcompifelse v-if="f.component === 'ControlIfElse'" @InsertNew="addScriptFunctionRequest" @moveTop="moveTop" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompifelse>
-        <vsm-scriptcompset v-if="f.component === 'CompSet'" @InsertNew="addScriptFunctionRequest" @moveTop="moveTop" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompset>
+        <vsm-scriptcompbasic v-if="f.component === 'Basic'" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcompbasic>
+        <vsm-scriptcompif v-if="f.component === 'ControlIf'" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompif>
+        <vsm-scriptcompifelse v-if="f.component === 'ControlIfElse'" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompifelse>
+        <vsm-scriptcompset v-if="f.component === 'CompSet'" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompset>
       </div>
       <vsm-scriptcompadd @click="addScriptFunctionRequest" :indentation="indentation" :index="action.length" :functionAction="scriptCompAdd" :lightcolormode="action.length%2===0"></vsm-scriptcompadd>
   </div>
@@ -49,12 +49,10 @@ export default {
     addFunction(data){
       this.action.splice(data.index, 0, data.function);
     },
-    moveTop(index){
-      if(index<=0) return;
-      var f = this.action[index];
-      this.action.splice(index, 1);
-      this.action.splice(index-1, 0, f);
-    },
+    rightClickFunctionComponent(data){
+      let d = {e: data.e, index: data.index, indentation: data.indentation, actions : (data.actions===undefined || data.actions===null ? this.action : data.actions)};
+      this.$emit("rightClickComp",d);
+    }
   },
 }
 </script>

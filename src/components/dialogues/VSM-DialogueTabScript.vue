@@ -1,5 +1,13 @@
 <template>
   <v-card flat height="500">
+    <vsm-scriptselector :bus="bus" @choseFunction="addFunctionTop"> </vsm-scriptselector>
+    <vsm-contextmenu
+        :bus="bus"
+        :item-context-menu="itemsContextMenu"
+        @insertnew="insertNewFunctionTopRequest"
+        @movetop="moveFunctionTop"
+    >
+    </vsm-contextmenu>
     <v-checkbox
         class="ml-2"
         v-model="current.waitEndScript"
@@ -12,7 +20,7 @@
           tile
       >
         <v-list class="mt-2 overflow-y-auto" max-height="450" dense>
-          <vsm-scriptlist :assets="assets" :action="current.action" :indentation="0"> </vsm-scriptlist>
+          <vsm-scriptlist @rightClickComp="rightClickOnFunction" :assets="assets" :action="current.action" :indentation="0"> </vsm-scriptlist>
         </v-list>
 
       </v-card>
@@ -20,16 +28,48 @@
 </template>
 
 <script>
-import listScript from "@/components/dialogues/VSM-ListScript"
+import listScript from "@/components/dialogues/VSM-ListScript";
+import contextmenu from "@/components/VSM-ContextMenu";
+import Vue from "vue";
 
 export default {
   name: "VSM-DialogueTabBasic",
 
   components:{
-    "vsm-scriptlist" : listScript
+    "vsm-scriptlist" : listScript,
+    "vsm-contextmenu" : contextmenu,
+    "vsm-scriptselector" : () => import("@/components/dialogues/VSM-FunctionScriptSelector"),
   },
 
+  data: () => ({
+    bus: new Vue(),
+    itemsContextMenu: [{title : "Insert New on Top", action : "insertnew"}, {title : "Move on Top", action : "movetop"}],
+    CMinfo : null,
+  }),
+
   props:["current", "assets"],
+
+  methods:{
+    rightClickOnFunction(data){
+      this.CMinfo = data;
+      this.bus.$emit("showContextMenu", data.e);
+    },
+    insertNewFunctionTopRequest(){
+      if(this.CMinfo===null)return;
+      this.bus.$emit("showFunctionScriptSelector", {index : this.CMinfo.index, indentation : this.CMinfo.indentation});
+    },
+    addFunctionTop(data){
+      if(this.CMinfo===null)return;
+      this.CMinfo.actions.splice(data.index, 0, data.function);
+    },
+    moveFunctionTop(){
+      if(this.CMinfo===null)return;
+      if(this.CMinfo.index<=0) return;
+      var f = this.CMinfo.actions[this.CMinfo.index];
+      this.CMinfo.actions.splice(this.CMinfo.index, 1);
+      this.CMinfo.actions.splice(this.CMinfo.index-1, 0, f);
+    },
+  }
 }
 </script>
 

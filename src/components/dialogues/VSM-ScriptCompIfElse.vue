@@ -1,13 +1,5 @@
 <template>
   <div>
-    <vsm-contextmenu
-        :bus="busCM"
-        :item-context-menu="itemsContextMenu"
-        @insertnew="insertNewFunctionTop"
-        @movetop="moveFunctionTop"
-    >
-    </vsm-contextmenu>
-
     <v-list-item two-line>
       <v-card :width="getWidthFunctionContainer" :min-width="getWidthFunctionContainer" :style="{marginLeft : getIndentation}" :color="getColor" height="55px" @contextmenu="contextMenuDM">
         <v-row align="center" align-content="center" class="mt-2">
@@ -21,7 +13,7 @@
       </v-card>
     </v-list-item>
 
-    <vsm-scriptlist :assets="assets" :action="functionAction.actionif" :indentation="indentation+3"> </vsm-scriptlist>
+    <vsm-scriptlist @rightClickComp="rightClickComp" :assets="assets" :action="functionAction.actionif" :indentation="indentation+3"> </vsm-scriptlist>
 
     <v-list-item>
       <v-card :width="getWidthFunctionContainer" :min-width="getWidthFunctionContainer" :style="{marginLeft : getIndentation}" :color="getColor" height="30px">
@@ -29,7 +21,7 @@
       </v-card>
     </v-list-item>
 
-    <vsm-scriptlist :assets="assets" :action="functionAction.actionelse" :indentation="indentation+3"> </vsm-scriptlist>
+    <vsm-scriptlist @rightClickComp="rightClickComp" :assets="assets" :action="functionAction.actionelse" :indentation="indentation+3"> </vsm-scriptlist>
 
     <v-list-item>
       <v-card :width="getWidthFunctionContainer" :min-width="getWidthFunctionContainer" :style="{marginLeft : getIndentation}" :color="getColor" height="30px">
@@ -42,7 +34,6 @@
 <script>
 import {mix_scriptcomponent} from "@/mixins/MIX_ScriptComponent";
 import setter from "@/components/variables/VSM-SetterVariable";
-import contextmenu from "@/components/VSM-ContextMenu";
 
 export default {
   name: "VSM-ScriptCompBasic",
@@ -51,13 +42,15 @@ export default {
 
   components:{
     "vsm-setter" : setter,
-    "vsm-contextmenu" : contextmenu,
     "vsm-scriptlist" : () => import("@/components/dialogues/VSM-ListScript"),
   },
 
   methods:{
     deleteF(){
       this.$emit("delete", this.index);
+    },
+    rightClickComp(data){
+      this.$emit("rightClickComp",data);
     },
   },
 

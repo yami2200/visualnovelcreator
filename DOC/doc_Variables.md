@@ -33,7 +33,11 @@
 
 > To set the value of variable, you will need to add the script function **Set** in a dialogue script. You can also use the script functions **Set Random Integer** or **Set Random Float** to set the variable with a random value. 
 >
->See [Scripting Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Scripting.md) to know how to use these functions.
+>See [Scripting Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Scripting.md#variables-) to know how to use these functions.
+
+> String & Integer Variables can also be set with the input Dialogue. The selected variable take the value that the player give in game.
+> 
+> See [Dialogues Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Dialogues.md) to know how it works.
 
 > You will see in many UI of the app the setter variable component :
 > 
@@ -48,7 +52,7 @@
 
 | Type of variable | Guide | Screenshot |
 | :---: |:---:   |:---:   |
-| Boolean Variable | In the case of boolean variable, you can set the value with a comparison. For example, you can check if a variable is equal to a specific value or greater to another one ... <ol type="1"><li> You can set here the first value to compare. </li><li> You can select with this menu the comparison operator ( > , = , < , >= , <= ) </li><li> You can set here the second value to compare with the first one. </li><li> You can select here the types of the 2 values you want to compare.</li></ol> | ![Edit Variable](docimg_guideBooleanSetter.jpg) |
+| Boolean Variable | In the case of boolean variable, you can set the value with a comparison. For example, you can check if a variable is equal to a specific value or greater than another one ... <ol type="1"><li> You can set here the first value to compare. </li><li> You can select with this menu the comparison operator ( > , = , < , >= , <= ) </li><li> You can set here the second value to compare with the first one. </li><li> You can select here the types of the 2 values you want to compare.</li></ol> | ![Edit Variable](docimg_guideBooleanSetter.jpg) |
 | Integer & Float Variables | In the case of integer & float variables, you can set the value with an operation between two values. For example, you can set an integer with the sum of two others ... <ol type="1"><li> You can set here the first value of the operation. </li><li> You can select with this menu the type of operation ( + , - , x , / ) </li><li> You can set here the second value of the operation. </li><li> You can select here the types of the 2 values you want to compare.</li></ol> | ![Edit Variable](docimg_guideBooleanSetter.jpg) |
 
 ## 📃 Some other information :

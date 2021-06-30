@@ -1,12 +1,5 @@
 <template>
   <div>
-    <vsm-contextmenu
-      :bus="busCM"
-      :item-context-menu="itemsContextMenu"
-      @insertnew="insertNewFunctionTop"
-      @movetop="moveFunctionTop"
-    >
-    </vsm-contextmenu>
     <v-list-item two-line>
       <v-card :width="getWidth" :min-width="getWidth" :style="{marginLeft : getIndentation}" :color="getColor" height="55px" @contextmenu="contextMenuDM">
         <v-row>
@@ -40,7 +33,6 @@
 <script>
 import {mix_scriptcomponent} from "@/mixins/MIX_ScriptComponent";
 import setter from "@/components/variables/VSM-SetterVariable";
-import contextmenu from "@/components/VSM-ContextMenu"
 
 export default {
   name: "VSM-ScriptCompBasic",
@@ -55,7 +47,6 @@ export default {
 
   components:{
     "vsm-setter" : setter,
-    "vsm-contextmenu" : contextmenu
   },
 
   methods:{

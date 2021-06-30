@@ -18,6 +18,8 @@
 
 ## 🧱 Scripting :
 >In order to create events and logic system, you will access to a flexible and powerful scripting system. With the scripting system, you can create complex events & logics without any skill in computer science.
+> 
+> Check the [Scripting Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Scripting.md) for more info.
 
 # ![Scripting Demo](README/ScriptingDemo.gif)
 

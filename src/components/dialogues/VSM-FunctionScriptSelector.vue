@@ -6,7 +6,7 @@
   >
     <v-card height="750">
       <v-card-title>
-        Chose a function :
+        Choose a function :
       </v-card-title>
       <v-card-text style="height: 85%">
         <v-row justify="center">

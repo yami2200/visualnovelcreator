@@ -1,13 +1,6 @@
-import Vue from "vue";
-
 export const mix_scriptcomponent = {
 
     props:["indentation", "lightcolormode", "functionAction", "index", "assets"],
-
-    data : () => ({
-        busCM: new Vue(),
-        itemsContextMenu: [{title : "Insert New on Top", action : "insertnew"}, {title : "Move on Top", action : "movetop"}]
-    }),
 
     computed:{
         getIndentation(){
@@ -28,14 +21,8 @@ export const mix_scriptcomponent = {
     },
 
     methods:{
-        insertNewFunctionTop(){
-            this.$emit("InsertNew", this.index, this.indentation);
-        },
-        moveFunctionTop(){
-            this.$emit("moveTop", this.index);
-        },
         contextMenuDM(e){
-            this.busCM.$emit("showContextMenu", e);
+            this.$emit("rightClickComp", {e: e, index: this.index, indentation: this.indentation});
         },
     },
 
