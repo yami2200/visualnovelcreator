@@ -24,7 +24,7 @@ export const mix_dialogueblock = {
             return this.dialogue.y + 5.75;
         },
         xText:function () {
-            return this.dialogue.x + 2 + (7.5 - this.dialogue.title.length / 25 * 7.5);
+            return this.dialogue.x + 1 + (7.5 - this.dialogue.title.length / 25 * 7.5);
         },
         fontSizeText:function () {
             if(this.dialogue.title.length < 10) return 3;
