@@ -5,7 +5,7 @@
       max-width="90%"
       max-height="900px"
   >
-    <vsm-confirmation-request-modal @accept="deleteFile" :bus="bus1" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
+    <vsm-confirmation-request-modal @accept="acceptModal" :bus="bus1" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
     <vsm-editfile @refresh="refreshTabs" :bus="bus" :current-files="currentFiles"></vsm-editfile>
     <v-card
         max-height="80vh"
@@ -21,6 +21,9 @@
               <v-tab v-for="(file,index) in  currentFiles" :key="index+file.title">
                 <v-icon>{{ file.icon }}</v-icon>
                 {{ file.title }}
+                <v-btn v-if="currentFiles[tab].uneditable !== undefined && currentFiles[tab].uneditable" icon @click="resetFileRequest(index)">
+                  <v-icon color="red lighten-1">mdi-file-refresh</v-icon>
+                </v-btn>
               </v-tab>
               <v-tabs-items v-model="tab">
                 <v-tab-item
@@ -85,6 +88,7 @@ import {writeFile} from "../lib";
 import MonacoEditor from 'vue-monaco';
 import ConfirmationRequest from "./modalrequest/VSM-ConfirmationRequestModal";
 import EditFileEngine from "./VSM-EditFileEngineCode";
+import baseAsset from "@/assets/base_assets.json";
 import Vue from "vue";
 
 export default {
@@ -114,6 +118,8 @@ export default {
         language: "javascript",
       },
       currentFiles : [],
+      confirmationModalType : "",
+      fileToReset : null,
     };
   },
 
@@ -125,6 +131,23 @@ export default {
   },
 
   methods:{
+    acceptModal(){
+      if(this.confirmationModalType === "reset"){
+        this.resetFile();
+      } else if(this.confirmationModalType === "delete"){
+        this.deleteFile();
+      }
+    },
+    resetFileRequest(index){
+      this.confirmationModalType = "reset";
+      this.headlineCRM = "Reset File";
+      this.textCRM = "Are you sure you want to reset this file : " + this.currentFiles[index].title;
+      this.fileToReset = index;
+      this.bus1.$emit('showConfirmationRequestModal');
+    },
+    resetFile(){
+      this.currentFiles[this.fileToReset].value = baseAsset[7].content[this.fileToReset].value;
+    },
     newFileRequest(){
       this.bus.$emit("showEngineCodeEditFile", false, this.tab);
     },
@@ -132,6 +155,8 @@ export default {
       this.bus.$emit("showEngineCodeEditFile", true, this.tab);
     },
     deleteFileRequest(){
+      this.confirmationModalType = "delete";
+      this.headlineCRM = "Delete File";
       this.textCRM = "Are you sure you want to delete this file : " + this.currentFiles[this.tab].title;
       this.bus1.$emit('showConfirmationRequestModal');
     },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vsm-scriptselector :bus="bus" @choseFunction="addFunction"> </vsm-scriptselector>
+    <vsm-scriptselector :bus="bus" :listCustom="assets[9].content" @choseFunction="addFunction"> </vsm-scriptselector>
       <div v-for="(f, index) in action" :key="index">
         <vsm-scriptcompbasic v-if="f.component === 'Basic'" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcompbasic>
         <vsm-scriptcompif v-if="f.component === 'ControlIf'" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompif>

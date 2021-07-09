@@ -20,7 +20,9 @@
             <h2 class="mt-2 mb-2 mx-auto"> Controls : </h2>
             <v-btn class="mt-1 mb-1" v-for="t in listVarControl" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
             <h2 class="mt-2 mb-2 mx-auto"> Custom : </h2>
-            <p> Available Soon </p>
+            <v-card flat class="overflow-y-auto" height="230px">
+              <v-btn class="mt-1 mb-1" v-for="t in listCustom" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
+            </v-card>
           </v-col>
         </v-row>
       </v-card-text>
@@ -47,7 +49,7 @@ import listVarControl from "@/assets/listFunctionsControl.json";
 export default {
   name: "VSM-EditDialoguePanel",
 
-  props:["bus"],
+  props:["bus", "listCustom"],
 
   computed:{
     canSave(){

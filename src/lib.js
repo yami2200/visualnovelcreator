@@ -1,4 +1,5 @@
 import fs from "fs";
+import FileCustomFunction from "@/assets/base_customFunctionFile.json";
 
 function readFileSync(path) {
     try{
@@ -72,7 +73,7 @@ function createFileProject(directory, properties, assets){
     fs.mkdirSync(propertiesWrite.directory+"Assets\\Properties\\", { recursive: true });
     writeFile(propertiesWrite.directory+properties.name+".vsm", JSON.stringify(propertiesWrite));
     writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
-
+    writeFile(propertiesWrite.directory+"customFunction.js", getCustomFunctionFileText([]));
 }
 
 function saveProperties(properties){
@@ -134,6 +135,14 @@ function removeDependencyVariableAsset(type, oldname, newname, assets, listPages
 
         });
     });
+
+    // Project preferences
+    if(type === "Sound" && assets[8].content.defaultClickSound.value.type === "value" && assets[8].content.defaultClickSound.value.value === oldname){
+        assets[8].content.defaultClickSound.value.value = newname;
+    }
+    if(type === "Sound" && assets[8].content.defaultTextSound.value.type === "value" && assets[8].content.defaultTextSound.value.value === oldname){
+        assets[8].content.defaultTextSound.value.value = newname;
+    }
 }
 
 function checkInputsAssetDependencyFromAction(action, oldname, newname, type){
@@ -153,7 +162,6 @@ function checkInputsAssetDependencyFromAction(action, oldname, newname, type){
     });
 }
 
-
 function checkConditionForAssetDependency(d, oldname, newname){
     if(d.condition.value.operation !== undefined && d.condition.value.operation !== "value"){
         if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "value" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
@@ -162,7 +170,7 @@ function checkConditionForAssetDependency(d, oldname, newname){
     }
 }
 
-function removeDependencyVariable(type, oldname, newname, listPages) {
+function removeDependencyVariable(type, oldname, newname, listPages, assets) {
     listPages.forEach((p) => {
         p.listDialogues.forEach((d) => {
 
@@ -220,6 +228,24 @@ function removeDependencyVariable(type, oldname, newname, listPages) {
 
         });
     });
+
+    // Project preferences
+    if(type === "Sound" && assets[8].content.defaultClickSound.value.type === "variable" && assets[8].content.defaultClickSound.value.value === oldname){
+        if(newname === "null"){
+            assets[8].content.defaultClickSound.value.type = "value";
+            assets[8].content.defaultClickSound.value.value = "null";
+        } else {
+            assets[8].content.defaultClickSound.value.value = newname;
+        }
+    }
+    if(type === "Sound" && assets[8].content.defaultTextSound.value.type === "variable" && assets[8].content.defaultTextSound.value.value === oldname){
+        if(newname === "null"){
+            assets[8].content.defaultTextSound.value.type = "value";
+            assets[8].content.defaultTextSound.value.value = "null";
+        } else {
+            assets[8].content.defaultTextSound.value.value = newname;
+        }
+    }
 }
 
 function checkInputsVariableDependencyFromAction(action, oldname, newname, type){
@@ -251,7 +277,6 @@ function checkInputsVariableDependencyFromAction(action, oldname, newname, type)
 
 }
 
-
 function checkConditionForVariableDependency(d, oldname, newname, type){
     if(d.condition.value.type === "value") {
         if(d.condition.value.operation !== undefined & d.condition.value.operation !== "value"){
@@ -282,6 +307,15 @@ function dependencyBooleanInputs(newname, input){
     }
 }
 
+function getCustomFunctionFileText(listCustomF){
+    let structure = JSON.parse(JSON.stringify(FileCustomFunction));
+    let text = "";
+    listCustomF.forEach((f) => {
+        text += f.name + "(input = []){\r\n " + f.code + "\r\n },\r\n ";
+    })
+    return structure.begin + text + structure.end;
+}
+
 export {
     readFileSync,
     writeFile,
@@ -295,5 +329,6 @@ export {
     saveProperties,
     saveAssets,
     removeDependencyVariableAsset,
-    removeDependencyVariable
+    removeDependencyVariable,
+    getCustomFunctionFileText
 };

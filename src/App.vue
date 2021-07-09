@@ -1,11 +1,12 @@
 <template>
   <v-app>
     <v-main>
-      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel"></vsm-menu-bar>
+      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel" @customfunction="openCustomFunctionsPanel"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
-      <vsm-variables-panel v-if="assets!=null && assets.length>5" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
+      <vsm-variables-panel v-if="assets!=null && assets.length>5" @save="saveProjectButton" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
       <vsm-enginecode-panel :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
+      <vsm-customfunctions :assets="assets" :bus="bus" @save="saveCustomFunctions"></vsm-customfunctions>
       <vsm-editorpreferences :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
       <vsm-projectproperties :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
         <v-row no-gutters>
@@ -28,7 +29,7 @@
 
 import Vue from "vue";
 import {remote, ipcRenderer} from "electron";
-import {writeFile} from "./lib";
+import {getCustomFunctionFileText, writeFile} from "./lib";
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
 import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
@@ -45,6 +46,7 @@ import jsonBaseAsset from './assets/base_assets.json';
 import EngineCodeComp from '@/components/VSM-EngineCodeEditPanel';
 import EditorPreferencesComp from '@/components/VSM-EditorPreferencesPanel';
 import ProjectPropertiesComp from '@/components/VSM-ProjectPropertiesPanel';
+import CustomFunctionComp from "@/components/VSM-CustomFunctionPanel";
 import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";
 import fse from "fs-extra";
 
@@ -65,7 +67,8 @@ export default {
     'vsm-variables-panel' : VarPanel,
     'vsm-enginecode-panel' : EngineCodeComp,
     'vsm-editorpreferences' : EditorPreferencesComp,
-    'vsm-projectproperties' : ProjectPropertiesComp
+    'vsm-projectproperties' : ProjectPropertiesComp,
+    "vsm-customfunctions" : CustomFunctionComp
   },
 
   mounted() {
@@ -206,6 +209,10 @@ export default {
         writeFile(this.project_properties.directory+f.title, f.value);
       });
 
+      process.nextTick(() => {
+        this.bus.$emit("reload", this.assets[6].content);
+      });
+
       this.endProcessing();
     },
     openProjectButton() {
@@ -234,10 +241,13 @@ export default {
         }
       }
     },
+    saveProjectAfterAssetEdit(){
+      this.saveProjectProperties(this.assets[8].content);
+    },
     saveProjectButton(){
       this.processing = true;
 
-      saveProperties(this.project_properties)
+      saveProperties(this.project_properties);
       saveAssets(this.project_properties, this.assets);
 
       this.endProcessing();
@@ -323,6 +333,14 @@ export default {
     saveProjectProperties(prop){
       this.project_properties = prop;
       this.assets[8].content = this.project_properties;
+      this.saveProjectButton();
+    },
+
+    openCustomFunctionsPanel(){
+      this.bus.$emit("showCustomFunctionEditPanel");
+    },
+    saveCustomFunctions(){
+      writeFile(this.project_properties.directory+"customFunction.js", getCustomFunctionFileText(this.assets[9].content));
       this.saveProjectButton();
     },
 

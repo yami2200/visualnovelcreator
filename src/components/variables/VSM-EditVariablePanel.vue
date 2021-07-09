@@ -113,8 +113,10 @@ export default {
     save(){
       if(this.canSave){
         if(this.editionMode){
+          let oldtype = this.assets[5].content[this.indexEdition].type;
           this.assets[5].content[this.indexEdition] = this.variable;
-          if(this.previousName !== this.variable.name) removeDependencyVariable(this.variable.type.name, this.previousName, this.variable.name, this.listPages);
+          if(this.variable.type.name !== oldtype.name) removeDependencyVariable(oldtype.name, this.previousName, "null", this.listPages, this.assets);
+          else if(this.previousName !== this.variable.name) removeDependencyVariable(this.variable.type.name, this.previousName, this.variable.name, this.listPages, this.assets);
         } else {
           this.assets[5].content.push(this.variable);
         }

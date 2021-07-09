@@ -114,6 +114,7 @@ export default {
     },
     save(){
       this.$forceUpdate();
+      this.$emit("save");
     },
     show(){
       this.dialog = true;
@@ -134,9 +135,9 @@ export default {
       this.bus1.$emit('showConfirmationRequestModal');
     },
     deleteSelected(){
-      removeDependencyVariable(this.variables[this.selectedItem].type.name, this.variables[this.selectedItem].name, "null", this.listPages);
+      removeDependencyVariable(this.variables[this.selectedItem].type.name, this.variables[this.selectedItem].name, "null", this.listPages, this.assets);
       this.variables.splice(this.selectedItem, 1);
-
+      this.$emit("save");
     },
   },
 
