@@ -197,6 +197,8 @@ export default {
     dragOffsetY: 0,
     selectedDialogue: -1,
 
+    windowGame : null,
+
     initialDialogue : {page : null, index: -1},
 
     selectionDialogue: [],
@@ -255,7 +257,15 @@ export default {
       let icon = "";
       if(this.projectproperties.icon!=="") icon = this.projectproperties.directory+this.projectproperties.icon;
 
-      let win = new BrowserWindow({
+      try{
+        if(this.windowGame !== null){
+          this.windowGame.close();
+        }
+      } catch{
+        console.log('');
+      }
+
+      this.windowGame = new BrowserWindow({
         show: false,
         autoHideMenuBar: true,
         width: 1280,
@@ -264,7 +274,7 @@ export default {
         webPreferences: {
           webSecurity: false,
         }});
-      win.on('close', function () { win = null });
+      this.windowGame.on('close', function () { this.windowGame = null });
       let devEngine = false;
       if(devEngine && process.env.NODE_ENV !== 'production'){
         var fileHTML = readFileSync("Y:\\Yami-Production\\Visual Novel Maker (Web Version)\\visualnovelmaker\\src\\engine\\game.html");
@@ -277,10 +287,10 @@ export default {
         writeFile(this.projectproperties.directory+"/libEngine.js", fileJS);
         writeFile(this.projectproperties.directory+"/styleEngine.css", fileCSS);
       }
-      win.loadURL("file://"+this.projectproperties.directory+"/game.html"+textURL);
-      win.once('ready-to-show', () => {
-        win.show()
-      })
+      this.windowGame.loadURL("file://"+this.projectproperties.directory+"/game.html"+textURL);
+      this.windowGame.once('ready-to-show', () => {
+        this.windowGame.show()
+      });
     },
 
     // ########################### GETTER FOR PLUGS LINKS LOCATIONS
