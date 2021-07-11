@@ -71,13 +71,13 @@ function createFileProject(directory, properties, assets){
     });
 
     fs.mkdirSync(propertiesWrite.directory+"Assets\\Properties\\", { recursive: true });
-    writeFile(propertiesWrite.directory+properties.name+".vsm", JSON.stringify(propertiesWrite));
+    writeFile(propertiesWrite.directory+properties.name+".vnc", JSON.stringify(propertiesWrite));
     writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
     writeFile(propertiesWrite.directory+"customFunction.js", getCustomFunctionFileText([]));
 }
 
 function saveProperties(properties){
-    writeFile(properties.directory+properties.name+".vsm", JSON.stringify(properties));
+    writeFile(properties.directory+properties.name+".vnc", JSON.stringify(properties));
 }
 
 function saveAssets(properties, assets){

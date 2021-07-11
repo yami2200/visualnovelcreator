@@ -219,7 +219,7 @@ export default {
       var path = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [
-          { name : 'Visual Novel Maker Project', extensions: ['vsm'] }
+          { name : 'Visual Novel Creator Project', extensions: ['vnc'] }
           ],
       });
       if(path === null || path === undefined) return;
@@ -271,6 +271,10 @@ export default {
       fse.copySync(srcDir, destDir,{ overwrite: true });
 
       this.project_properties = tempoProperties;
+      this.assets[7].content.forEach((f) => {
+        writeFile(this.project_properties.directory+f.title, f.value);
+      });
+      this.saveCustomFunctions();
       this.endProcessing();
     },
     exitButton(){

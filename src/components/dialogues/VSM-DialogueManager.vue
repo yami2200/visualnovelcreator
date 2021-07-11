@@ -82,7 +82,7 @@
             </svg>
           </panZoom>
 
-    <v-card-actions style="height: 50px; position: relative; z-index: 10; bottom: 50px; pointer-events:none;">
+    <v-card-actions style="height: 50px; position: fixed; z-index: 10; bottom: 5px; pointer-events:none;">
       <v-btn
           style="pointer-events: auto;"
           @mouseenter="leaveDialogueManager"

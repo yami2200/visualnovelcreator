@@ -1,8 +1,8 @@
-# 🎨🧱 Visual Novel Maker 
+# 🎨🧱 Visual Novel Creator 
 
 ## ⭐ Getting started
 
->Visual Novel Maker is an application/game engine to make Visual Novel games.
+>Visual Novel Creator is an application/game engine to make Visual Novel games.
 
 ## 📚 Manage your assets :
 >For every project, you will be able to manage & list all your assets. Import new assets, edit & delete old ones ...
