@@ -97,7 +97,8 @@
         <v-icon>mdi-play</v-icon>
       </v-btn>
       <v-btn
-          style="pointer-events: auto; margin-left: 70px"
+          style="margin-left: 70px"
+          :style="{pointerEvents : (disablePlayFromDialogueBtn ? 'none' : 'auto')}"
           @mouseenter="leaveDialogueManager"
           :disabled="disablePlayFromDialogueBtn"
           @click="playGame(true)"
