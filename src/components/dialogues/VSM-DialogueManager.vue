@@ -47,10 +47,10 @@
 
     <vsm-editdialoguepanel :bus="bus" :listDialogues="listDialogues" @refresh="refresh" :assets="assets" :listPages="listPages" @DeleteTransition="deleteTransitionDialogue"></vsm-editdialoguepanel>
 
-          <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1,beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true,boundsPadding: 1}">
+          <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1, beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true, boundsPadding: 1}" style="outline: none;">
 
-            <svg :height="height+'px'" :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}" width="100%" ref="svgBox" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
-
+            <!--<svg :height="height+'px'" :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}" width="100%" ref="svgBox" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">-->
+            <svg :height="2000+'px'" :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}" :width="2000+'px'" ref="svgBox" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
               <line v-if="linkingBlock !== -1" pointer-events="none" :x1="linkingOutput===-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput===-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
@@ -200,6 +200,12 @@ export default {
 
     selectionDialogue: [],
   }),
+
+  watch: {
+    panzoom: function (val) {
+      console.log(val);
+    },
+  },
 
   computed : {
     selectionBoxX(){
@@ -514,7 +520,8 @@ export default {
     // ############################ LOCATIONS MANAGEMENT
     initPanZoom(instance){
       this.panzoom = instance;
-      this.panzoom.zoomTo(0.5,0.5,1.5);
+      this.panzoom.setTransformOrigin(null);
+      this.panzoom.zoomTo(0.5,0.5,5);
     },
     updatePlugsLocFromChild(data){
       this.listDialogues[data.index].outputsLoc = data.outputsLoc;
