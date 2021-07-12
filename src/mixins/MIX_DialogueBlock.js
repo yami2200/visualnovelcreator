@@ -21,10 +21,10 @@ export const mix_dialogueblock = {
             return this.dialogue.y + 0.5;
         },
         yText: function () {
-            return this.dialogue.y + 5.75;
+            return this.dialogue.y + 5.25;
         },
         xText:function () {
-            return this.dialogue.x + 1 + (7.5 - this.dialogue.title.length / 25 * 7.5);
+            return this.dialogue.x + 10.5;
         },
         fontSizeText:function () {
             if(this.dialogue.title.length < 10) return 3;

@@ -51,6 +51,8 @@
 
     <text
         pointer-events="none"
+        dominant-baseline="middle"
+        text-anchor="middle"
         :x="xText"
         :y="yText"
         class="text"

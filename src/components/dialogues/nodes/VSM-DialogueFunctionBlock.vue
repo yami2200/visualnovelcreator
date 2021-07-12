@@ -54,6 +54,8 @@
         :x="xText"
         :y="yText"
         class="text"
+        dominant-baseline="middle"
+        text-anchor="middle"
         font-family="Nunito"
         :font-size="fontSizeText">
       {{ textValue }}

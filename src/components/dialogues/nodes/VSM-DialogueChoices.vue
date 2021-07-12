@@ -56,6 +56,8 @@
         pointer-events="none"
         :x="xText"
         :y="yText"
+        dominant-baseline="middle"
+        text-anchor="middle"
         class="text"
         font-family="Nunito"
         :font-size="fontSizeText">
@@ -90,7 +92,7 @@ export default {
       return 21 + (this.dialogue.choices.length-3) * 7;
     },
     xText:function () {
-      return this.dialogue.x + 1 + (((this.sizeBlock / 2) - 3) - this.dialogue.title.length / 25 * 7.5);
+      return this.dialogue.x + this.sizeBlock/2;
     },
   },
 

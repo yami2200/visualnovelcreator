@@ -55,6 +55,8 @@
         pointer-events="none"
         :x="xText"
         :y="yText"
+        dominant-baseline="middle"
+        text-anchor="middle"
         class="text"
         font-family="Nunito"
         :font-size="fontSizeText">
