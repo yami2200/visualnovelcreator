@@ -39,9 +39,9 @@ async function createWindow() {
     win.webContents.send("shortcut", input)
   });
 
-  win.on('page-title-updated', function(e) {
+  /*win.on('page-title-updated', function(e) {
     e.preventDefault()
-  });
+  });*/
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

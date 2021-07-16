@@ -204,12 +204,6 @@ export default {
     selectionDialogue: [],
   }),
 
-  watch: {
-    panzoom: function (val) {
-      console.log(val);
-    },
-  },
-
   computed : {
     selectionBoxX(){
       if(this.mouseEvent == null) return this.selectingBoxLoc.x;

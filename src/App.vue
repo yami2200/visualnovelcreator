@@ -9,6 +9,7 @@
       <vsm-customfunctions :assets="assets" :bus="bus" @save="saveCustomFunctions"></vsm-customfunctions>
       <vsm-editorpreferences :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
       <vsm-projectproperties :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
+      <vsm-projectopening :bus="bus" :preferences="editorPreferences" @newProject="newProjectButton" @openProject="openProjectButton" @openRecent="loadProjectFromProjectProperties"></vsm-projectopening>
         <v-row no-gutters>
           <v-col cols="8">
             <vsm-dialogue-manager v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
@@ -23,10 +24,6 @@
 </template>
 
 <script>
-//const remote = require('electron').remote;
-//const render = require('electron').ipcRenderer;
-//const fse = require("fs-extra");
-
 import Vue from "vue";
 import {remote, ipcRenderer} from "electron";
 import {getCustomFunctionFileText, writeFile} from "./lib";
@@ -34,9 +31,8 @@ import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
 import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
 import PagesPanel from './components/pages/VSM-PagesPanel';
-import jsonAssets from './test/assets.json';
-import jsonVariables from './test/listVar.json';
-import jsonProjectProperties from './test/project_properties.json';
+import OpenProjectModal from './components/modalrequest/VSM-ProjectOpeningModal';
+import jsonAssets from './assets/base_assets.json';
 import jsonBasePage from './assets/base_page.json';
 import jsonBasePreferences from './assets/base_editorPreferences.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
@@ -68,7 +64,8 @@ export default {
     'vsm-enginecode-panel' : EngineCodeComp,
     'vsm-editorpreferences' : EditorPreferencesComp,
     'vsm-projectproperties' : ProjectPropertiesComp,
-    "vsm-customfunctions" : CustomFunctionComp
+    "vsm-customfunctions" : CustomFunctionComp,
+    'vsm-projectopening' : OpenProjectModal
   },
 
   mounted() {
@@ -87,10 +84,11 @@ export default {
   created() {
     remote.getCurrentWindow().addListener("resize", this.resizeWindow);
     document.documentElement.style.overflow = 'hidden';
-    process.nextTick(() => {
-      this.loadProjectFromProjectProperties(this.project_properties, [this.project_properties.directory+"\\azz"]);
-    });
+    window.document.title = "Visual Novel Creator";
     this.loadEditorPreferences();
+    process.nextTick(() => {
+      this.bus.$emit("showOpeningAppProject");
+    });
   },
 
   destroyed() {
@@ -208,6 +206,10 @@ export default {
       this.assets[7].content.forEach((f) => {
         writeFile(this.project_properties.directory+f.title, f.value);
       });
+      window.document.title = "Visual Novel Creator - "+this.project_properties.name;
+      this.bus.$emit("hideOpeningAppProject");
+
+      this.addProjectToRecentPreferences();
 
       process.nextTick(() => {
         this.bus.$emit("reload", this.assets[6].content);
@@ -238,6 +240,9 @@ export default {
           process.nextTick(() => {
             this.bus.$emit("reload", this.assets[6].content);
           });
+          window.document.title = "Visual Novel Creator - "+this.project_properties.name;
+          this.bus.$emit("hideOpeningAppProject");
+          this.addProjectToRecentPreferences();
         }
       }
     },
@@ -330,6 +335,13 @@ export default {
       writeFile(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json", JSON.stringify(this.editorPreferences));
       this.updateEditorPreferences();
     },
+    addProjectToRecentPreferences(){
+      if(this.editorPreferences.recentProjects === undefined) this.editorPreferences.recentProjects = [];
+      let url = this.project_properties.directory + this.project_properties.name + ".vnc";
+      this.editorPreferences.recentProjects = this.editorPreferences.recentProjects.filter(p => p !== url);
+      this.editorPreferences.recentProjects.unshift(url);
+      this.saveEditorPreferences(this.editorPreferences);
+    },
 
     openProjectPropertiesPanel(){
       this.bus.$emit("showProjectPropertiesPanel");
@@ -402,28 +414,16 @@ export default {
     height: window.innerHeight,
     width: window.innerWidth,
     processing : false,
-    assets : jsonAssets,
+    assets : JSON.parse(JSON.stringify(jsonAssets)),
     bus: new Vue(),
-    project_properties: JSON.parse(JSON.stringify(jsonProjectProperties)),
-    variables: JSON.parse(JSON.stringify(jsonVariables)),
+    project_properties: null,
+    variables: null,
     minimized: false,
     selectedDialoguePage: 0,
     listNamePages: [],
     refresh : true,
     editorPreferences : null,
     w: remote.getCurrentWindow(),
-    /*listPage: [
-      {
-        title : "First Page",
-        unkillable : true,
-        listDialogues: [],
-      },
-      {
-        title : "Untitled Page",
-        unkillable : false,
-        listDialogues: [],
-      },
-    ]*/
   }),
 
 
