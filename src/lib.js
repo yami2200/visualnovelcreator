@@ -73,6 +73,7 @@ function createFileProject(directory, properties, assets){
     fs.mkdirSync(propertiesWrite.directory+"Assets\\Properties\\", { recursive: true });
     writeFile(propertiesWrite.directory+properties.name+".vnc", JSON.stringify(propertiesWrite));
     writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
+    writeFile(propertiesWrite.directory+"engine_assets.js", "var assets = "+JSON.stringify(assets)+";");
     writeFile(propertiesWrite.directory+"customFunction.js", getCustomFunctionFileText([]));
 }
 
@@ -81,7 +82,8 @@ function saveProperties(properties){
 }
 
 function saveAssets(properties, assets){
-    writeFile(properties.directory+"Assets.json", JSON.stringify(assets));
+    writeFile(properties.directory+"assets.json", JSON.stringify(assets));
+    writeFile(properties.directory+"engine_assets.js", "var assets = "+JSON.stringify(assets)+";");
 }
 
 function removeDependencyVariableAsset(type, oldname, newname, assets, listPages = []){
