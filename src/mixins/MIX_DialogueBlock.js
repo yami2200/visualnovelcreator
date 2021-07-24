@@ -54,7 +54,7 @@ export const mix_dialogueblock = {
         },
         showContextMenu(e, type, indexIO){
             if(type === "global"){
-                this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Input Links", action:"breakinputs"}, {title : "Break Output Links", action:"breakoutputs"}, {title : "Edit Dialogue", action:"editdialogue"}, {title : "Delete Dialogue", action:"deletedialogue"}, {title : "Set Initial Dialogue", action:"initialdialogue"}]});
+                this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Input Links", action:"breakinputs"}, {title : "Break Output Links", action:"breakoutputs"}, {title : "Edit Node", action:"editdialogue"}, {title : "Delete Node", action:"deletedialogue"}, {title : "Set Initial Dialogue", action:"initialdialogue"}]});
             } else{
                 this.$emit("contextMenu", {e:e, indexD: this.index, type: type, indexIO: indexIO, items: [{title : "Break Links", action:"breaklinks"}]});
             }

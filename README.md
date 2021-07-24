@@ -16,6 +16,8 @@
 
 # ![Dialogue Manager Demo](README/DialogueManagerDemov3.gif)
 
+> Check the [Dialogue Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Dialogues.md) for more info.
+
 ## 🧱 Scripting :
 >In order to create events and logic system, you will access to a flexible and powerful scripting system. With the scripting system, you can create complex events & logics without any skill in computer science.
 > 
