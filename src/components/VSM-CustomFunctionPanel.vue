@@ -120,10 +120,30 @@ export default {
     },
     deleteFunction(){
       if(this.selectedItem === -1 || this.selectedItem === null) return;
+
+      this.assets[6].content.forEach((p) => {
+        p.listDialogues.forEach((d) => {
+          if(d.action !== undefined){
+            d.action = this.deleteFunctionCall(d.action);
+          }
+        });
+      });
+
       this.currentFunctions.splice(this.selectedItem,1);
       this.selectedItem = null;
       this.$forceUpdate();
     },
+
+    deleteFunctionCall(listAction){
+      listAction = listAction.filter((s) => s.code === undefined || (s.name !== this.currentFunctions[this.selectedItem].name));
+      listAction.forEach((f) => {
+        if(f.action !== undefined) f.action = this.deleteFunctionCall(f.action);
+        if(f.actionif !== undefined) f.actionif = this.deleteFunctionCall(f.actionif);
+        if(f.actionelse !== undefined) f.actionelse = this.deleteFunctionCall(f.actionelse);
+      });
+      return listAction;
+    },
+
     hide(){
       this.dialog = false;
     },
@@ -139,17 +159,12 @@ export default {
       if(data.edit){
         // If the user change the name of the custom function
         if(this.currentFunctions[this.selectedItem].name !== data.f.name){
-          let ref = this;
+          //let ref = this;
           this.assets[6].content.forEach((p) => {
             p.listDialogues.forEach((d) => {
               if(d.action !== undefined){
-                d.action.forEach((s) => {
-                  if(s.code !== undefined){
-                    if(s.name === ref.currentFunctions[this.selectedItem].name) s.name = data.f.name;
-                  }
-                });
+                d.action = this.renameCustomFunction(d.action, data.f.name);
               }
-
             });
           });
         }
@@ -158,23 +173,7 @@ export default {
           this.assets[6].content.forEach((p) => {
             p.listDialogues.forEach((d) => {
               if(d.action !== undefined){
-                d.action.forEach((s) => {
-                  if(s.code !== undefined){
-                    if(s.name === data.f.name) {
-                      let oldInputs = s.inputs;
-                      s.inputs = [];
-                      for(var i = 0;i<data.f.inputs.length;i++){
-                        if(oldInputs[i] !== undefined && oldInputs[i].type.name === data.f.inputs[i].type.name){
-                          let input = data.f.inputs[i];
-                          input.value = oldInputs[i].value;
-                          s.inputs.push(input);
-                        } else {
-                          s.inputs.push(data.f.inputs[i]);
-                        }
-                      }
-                    }
-                  }
-                });
+                d.action = this.changeInputFunction(d.action, data);
               }
 
             });
@@ -186,6 +185,43 @@ export default {
       }
       this.$forceUpdate();
     },
+
+    renameCustomFunction(listAction, newname){
+      listAction.forEach((s) => {
+        if(s.code !== undefined){
+          if(s.name === this.currentFunctions[this.selectedItem].name) s.name = newname;
+        }
+        if(s.action !== undefined) s.action = this.renameCustomFunction(s.action, newname);
+        if(s.actionif !== undefined) s.actionif = this.renameCustomFunction(s.actionif, newname);
+        if(s.actionelse !== undefined) s.actionelse = this.renameCustomFunction(s.actionelse, newname);
+      });
+      return listAction;
+    },
+
+    changeInputFunction(listAction, data){
+      listAction.forEach((s) => {
+        if(s.code !== undefined){
+          if(s.name === data.f.name) {
+            let oldInputs = s.inputs;
+            s.inputs = [];
+            for(var i = 0;i<data.f.inputs.length;i++){
+              if(oldInputs[i] !== undefined && oldInputs[i].type.name === data.f.inputs[i].type.name){
+                let input = data.f.inputs[i];
+                input.value = oldInputs[i].value;
+                s.inputs.push(input);
+              } else {
+                s.inputs.push(data.f.inputs[i]);
+              }
+            }
+          }
+        }
+        if(s.action !== undefined) s.action = this.changeInputFunction(s.action, data);
+        if(s.actionif !== undefined) s.actionif = this.changeInputFunction(s.actionif, data);
+        if(s.actionelse !== undefined) s.actionelse = this.changeInputFunction(s.actionelse, data);
+      });
+      return listAction;
+    },
+
   },
 }
 </script>
