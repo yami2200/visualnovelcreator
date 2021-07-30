@@ -1,8 +1,9 @@
 <template>
   <v-app>
     <v-main>
-      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel" @customfunction="openCustomFunctionsPanel"></vsm-menu-bar>
+      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @package="packageProjectRequest" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel" @customfunction="openCustomFunctionsPanel"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
+      <vsm-packageproject :bus="bus" @save="packageProject"></vsm-packageproject>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
       <vsm-variables-panel v-if="assets!=null && assets.length>5" @save="saveProjectButton" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
       <vsm-enginecode-panel :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
@@ -25,8 +26,7 @@
 
 <script>
 import Vue from "vue";
-import {remote, ipcRenderer} from "electron";
-import {getCustomFunctionFileText, writeFile} from "./lib";
+import {remote, ipcRenderer, shell} from "electron";
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
 import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
@@ -37,18 +37,22 @@ import jsonBasePage from './assets/base_page.json';
 import jsonBasePreferences from './assets/base_editorPreferences.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import newProject from "@/components/VSM-NewProjectModal";
+import packageProject from "@/components/VSM-PackageProjectModal";
 import VarPanel from "@/components/variables/VSM-VariablesPanel";
 import jsonBaseAsset from './assets/base_assets.json';
 import EngineCodeComp from '@/components/VSM-EngineCodeEditPanel';
 import EditorPreferencesComp from '@/components/VSM-EditorPreferencesPanel';
 import ProjectPropertiesComp from '@/components/VSM-ProjectPropertiesPanel';
 import CustomFunctionComp from "@/components/VSM-CustomFunctionPanel";
-import {createFileProject, readFileSync, saveAssets, saveProperties} from "@/lib";
+import {createFileProject, readFileSync, saveAssets, saveProperties, createPackageWeb, createPackageWindows, getCustomFunctionFileText, writeFile} from "@/lib";
 import fse from "fs-extra";
+import path from "path";
 
+const removeFilePart = dirname => path.parse(dirname).dir;
 const basePage = jsonBasePage;
 const {dialog} = remote;
 var pathPreferences = remote.app.getPath('appData');
+const pathApp = remote.app.getPath("exe");
 
 export default {
   name: 'App',
@@ -65,7 +69,8 @@ export default {
     'vsm-editorpreferences' : EditorPreferencesComp,
     'vsm-projectproperties' : ProjectPropertiesComp,
     "vsm-customfunctions" : CustomFunctionComp,
-    'vsm-projectopening' : OpenProjectModal
+    'vsm-projectopening' : OpenProjectModal,
+    "vsm-packageproject" : packageProject
   },
 
   mounted() {
@@ -280,6 +285,22 @@ export default {
         writeFile(this.project_properties.directory+f.title, f.value);
       });
       this.saveCustomFunctions();
+      this.endProcessing();
+    },
+    packageProjectRequest(){
+      this.bus.$emit("showPackageProjectModal");
+    },
+    packageProject(project){
+      this.processing = true;
+      switch (project.type){
+        case "Windows":
+          createPackageWindows(project.directory, this.assets, process.env.NODE_ENV !== 'production', path.join(removeFilePart(pathApp),"/packageWindows/"));
+          break;
+        case "Web" :
+          createPackageWeb(project.directory, this.assets);
+          break;
+      }
+      shell.openPath(project.directory);
       this.endProcessing();
     },
     exitButton(){

@@ -1,5 +1,7 @@
 import fs from "fs";
+import path from "path";
 import FileCustomFunction from "@/assets/base_customFunctionFile.json";
+const removeFilePart = dirname => path.parse(dirname).dir;
 
 function readFileSync(path) {
     try{
@@ -30,6 +32,14 @@ function deleteFile(path){
         fs.unlinkSync(path);
     } catch {
         return;
+    }
+}
+
+function renamePath(oldPath, newPath){
+    try {
+        fs.renameSync(oldPath, newPath);
+    } catch(err) {
+        console.log(err)
     }
 }
 
@@ -75,6 +85,100 @@ function createFileProject(directory, properties, assets){
     writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
     writeFile(propertiesWrite.directory+"engine_assets.js", "var assets = "+JSON.stringify(assets)+";");
     writeFile(propertiesWrite.directory+"customFunction.js", getCustomFunctionFileText([]));
+}
+
+function createPackageWeb(directory, assets){
+    if(!fs.existsSync(directory)) return;
+    fs.mkdirSync(directory+"\\"+assets[8].content.displayname+"\\", { recursive: true });
+    copyFolderRecursiveSync(assets[8].content.directory, directory);
+    deleteFile(directory+"\\"+assets[8].content.name+"\\"+assets[8].content.name+".vnc");
+}
+
+function createPackageWindows(directory, assets, devMode, packagePath = ""){
+    if(!fs.existsSync(directory)) return;
+    fs.mkdirSync(directory+"\\"+assets[8].content.displayname+"\\", { recursive: true });
+    copyFolderRecursiveSync(assets[8].content.directory, directory+"\\"+assets[8].content.displayname+"\\");
+    renamePath(directory+"\\"+assets[8].content.displayname+"\\"+assets[8].content.name, directory+"\\"+assets[8].content.displayname+"\\game");
+    deleteFile(directory+"\\"+assets[8].content.displayname+"\\game\\"+assets[8].content.name+".vnc");
+    let listPackage = [];
+    let directoryFilesPackage = "public/packageWindows/";
+    if(!devMode){
+        directoryFilesPackage = packagePath;
+    }
+    listPackage = getAllFilesPathAtDirectory(directoryFilesPackage);
+    if(listPackage.length === 0) return;
+    listPackage.forEach((filepath) => {
+        let fileData = readFileSync(filepath);
+        if(fileData !== null){
+            let pathFolder = removeFilePart(directory+"\\"+assets[8].content.displayname+"\\"+filepath.substring(directoryFilesPackage.length));
+            if(!existFile(pathFolder)){
+                fs.mkdirSync(pathFolder, { recursive: true });
+            }
+            writeFile(directory+"\\"+assets[8].content.displayname+"\\"+filepath.substring(directoryFilesPackage.length), fileData)
+        }
+    });
+    renamePath(directory+"\\"+assets[8].content.displayname+"\\visualnovelexecutable.exe", directory+"\\"+assets[8].content.displayname+"\\"+assets[8].content.displayname+".exe");
+    if(assets[8].content.icon !== ""){
+        let iconData = readFileSync(path.join(directory+"\\"+assets[8].content.displayname+"\\game\\",assets[8].content.icon));
+        if(iconData!==null){
+            writeFile(directory+"\\"+assets[8].content.displayname+"\\game\\Assets\\defaultIcon.ico", iconData);
+        }
+    }
+}
+
+function getAllFilesPathAtDirectory(directory){
+    let list = [];
+    try{
+        fs.readdirSync(directory).forEach(file => {
+            if(file.includes('.')){
+                list.push(directory+file);
+            } else {
+                list = list.concat(getAllFilesPathAtDirectory(path.join(directory, file+"/")));
+            }
+        });
+    } catch {
+        return list;
+    }
+    return list;
+}
+
+// SOURCE : https://stackoverflow.com/questions/13786160/copy-folder-recursively-in-node-js/26038979 @ Simon Zyx
+function copyFileSync( source, target ) {
+
+    var targetFile = target;
+
+    // If target is a directory, a new file with the same name will be created
+    if ( fs.existsSync( target ) ) {
+        if ( fs.lstatSync( target ).isDirectory() ) {
+            targetFile = path.join( target, path.basename( source ) );
+        }
+    }
+
+    fs.writeFileSync(targetFile, fs.readFileSync(source));
+}
+
+// SOURCE : https://stackoverflow.com/questions/13786160/copy-folder-recursively-in-node-js/26038979 @ Simon Zyx
+function copyFolderRecursiveSync( source, target ) {
+    var files = [];
+
+    // Check if folder needs to be created or integrated
+    var targetFolder = path.join( target, path.basename( source ) );
+    if ( !fs.existsSync( targetFolder ) ) {
+        fs.mkdirSync( targetFolder );
+    }
+
+    // Copy
+    if ( fs.lstatSync( source ).isDirectory() ) {
+        files = fs.readdirSync( source );
+        files.forEach( function ( file ) {
+            var curSource = path.join( source, file );
+            if ( fs.lstatSync( curSource ).isDirectory() ) {
+                copyFolderRecursiveSync( curSource, targetFolder );
+            } else {
+                copyFileSync( curSource, targetFolder );
+            }
+        } );
+    }
 }
 
 function saveProperties(properties){
@@ -332,5 +436,8 @@ export {
     saveAssets,
     removeDependencyVariableAsset,
     removeDependencyVariable,
-    getCustomFunctionFileText
+    getCustomFunctionFileText,
+    createPackageWeb,
+    createPackageWindows,
+    getAllFilesPathAtDirectory
 };

@@ -13,6 +13,19 @@ module.exports = {
   ],
   pluginOptions: {
     electronBuilder: {
+      builderOptions: {
+        appId: "com.yamiprod.visualnovelcreator",
+        productName : "Visual Novel Creator",
+        win: {
+          icon: 'public/temporarylogo.png'
+        },
+        extraFiles: [
+          {
+            from: "./public/packageWindows/",
+            "to": "./packageWindows/"
+          }
+        ]
+      },
       nodeIntegration: true
     }
   }
