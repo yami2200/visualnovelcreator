@@ -6,22 +6,22 @@
   >
     <v-card>
       <v-card-title>
-        <span class="headline" v-text="'New Project :'"></span>
+        <span class="headline" v-text="'Package Project :'"></span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
             <v-col cols="12">
-              <v-text-field
-                  v-if="project!=null"
-                  label="Name"
-                  :rules="[rules.required, rules.counter]"
-                  v-model="project.name"
-                  :value="project.name"
-              ></v-text-field>
+
+              <v-select
+                  class="mt-5"
+                  :items="listPackageType"
+                  v-model="project.type"
+                  label="Package Platform"
+                  solo
+              ></v-select>
 
               <v-text-field
-                  v-if="project!=null"
                   label="Directory"
                   :rules="[rules.required]"
                   v-model="project.directory"
@@ -56,7 +56,6 @@
 </template>
 
 <script>
-import baseProject from './../assets/base_projectproperties.json'
 import {remote} from "electron";
 import {existFile} from "@/lib";
 const dialog = remote.dialog;
@@ -69,17 +68,17 @@ export default {
   data () {
     return {
       dialog: false,
+      project: {directory: "", type: "Windows"},
+      listPackageType : ["Windows", "Web"],
       rules: {
         required: value => !!value || 'Required.',
-        counter: value => value.length <= 20 || 'Max 20 characters',
       },
-      project: null,
     };
   },
 
   computed: {
     cantSave : function(){
-      return (this.project==null || this.project.name === "" || this.project.name.length>20 || this.project.directory === "");
+      return (!this.listPackageType.includes(this.project.type) || this.project.directory === "");
     }
   },
 
@@ -89,7 +88,6 @@ export default {
       this.$emit("cancel");
     },
     save(){
-      this.project.displayname = this.project.name;
       this.$emit("save", this.project);
       this.hide();
     },
@@ -97,9 +95,7 @@ export default {
       this.dialog = false;
     },
     show(){
-      this.project = JSON.parse(JSON.stringify(baseProject));
-      var d = new Date();
-      this.project.date = String(d.getDate()).padStart(2, '0')+"/"+String(d.getMonth() + 1).padStart(2, '0')+"/"+d.getFullYear();
+      this.project = {directory: "", type: "Windows"}
       this.dialog = true;
     },
     changeDirectory(){
@@ -112,8 +108,8 @@ export default {
   },
 
   mounted() {
-    this.bus.$on('hideNewProjectModal', this.hide);
-    this.bus.$on('showNewProjectModal', this.show);
+    this.bus.$on('hidePackageProjectModal', this.hide);
+    this.bus.$on('showPackageProjectModal', this.show);
 
   },
 

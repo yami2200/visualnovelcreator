@@ -10,6 +10,7 @@
           @openproject="bus.$emit('openproject')"
           @save="bus.$emit('save')"
           @saveas="bus.$emit('saveas')"
+          @package="$emit('package')"
           @exit="bus.$emit('exit')">
       </vsm-dropdown-menu>
       <vsm-dropdown-menu
@@ -83,6 +84,8 @@ export default {
         action: "save"},
       {title: "Save As",
         action: "saveas"},
+      {title: "Package Project",
+        action: "package"},
       {title: "Exit",
         action: "exit"},
     ],

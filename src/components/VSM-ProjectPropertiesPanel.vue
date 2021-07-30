@@ -226,7 +226,7 @@ export default {
       this.dialog = false;
     },
     goDirectory(){
-      shell.openPath(this.currentProperties.directory)
+      shell.openPath(this.currentProperties.directory);
     },
   },
 }
