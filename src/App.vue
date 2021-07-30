@@ -87,6 +87,7 @@ export default {
   },
 
   created() {
+    remote.getCurrentWindow().removeAllListeners("resize");
     remote.getCurrentWindow().addListener("resize", this.resizeWindow);
     document.documentElement.style.overflow = 'hidden';
     window.document.title = "Visual Novel Creator";
