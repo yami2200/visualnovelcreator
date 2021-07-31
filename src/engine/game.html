@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="title" content="Game Title">
-    <meta name="description" content="Game description">
+    <meta id="metaTitle" name="title" content="Game Title">
+    <meta id="metaDescription" name="description" content="Game description">
+    <meta id="metaImage" name="image" property="og:image"/>
+    <link id="faviconID" rel="icon" href="">
     <meta name="keywords" content="Visual Novel, Video Game">
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"></script>
     <script src="libEngine.js"> </script>
+    <script src="customFunction.js"> </script>
+    <script src="engine_assets.js"> </script>
     <script type="text/javascript" src="assets.json"></script>
     <link rel="stylesheet" href="styleEngine.css">
 
@@ -18,18 +22,18 @@
                     <div class="modal-container">
 
                         <div class="modal-header">
-                            <h3> Inventory </h3>
+                            <h3 id="titleInventory"> Inventory </h3>
                         </div>
 
                         <div class="modal-body">
-                            <button v-for="(item, index) in inventory" :key="index+item.name" class="buttonitem unselectable" @click="$emit('clickitem', index)">
+                            <button v-for="(item, index) in inventory" :key="index+item.name" class="buttonClass buttonitem unselectable" @click="$emit('clickitem', index)">
                                 <img class="imgitem" :src="'Assets/Objects/'+item.img">
                                 <p class="textitem"> {{ item.name }} {{ amountItemInventoryText(item) }}</p>
                             </button>
                         </div>
 
                         <div class="modal-footer">
-                            <button class="modal-default-button" @click="$emit('close')">
+                            <button class="unselectable buttonClass buttonInventory inventorybutton modal-default-button" @click="$emit('close')">
                                 Return
                             </button>
                         </div>
@@ -53,49 +57,51 @@
     const urlParams = new URLSearchParams(queryString);
 
     const app = Vue.createApp({
-       template:
-           '<modal v-if="showModal" :inventory="inventory" @close="showModal = false" @clickitem="clickiteminventory"> </modal>' +
-           '<div id="characterDiv" class="list-characters" :style="{gridTemplateColumns : columnsCharacterDiv}">' +
-           '  <div class="list-group-list-character" v-for="(char,index) in listCharactersInScene" :key="char.name+index" :style="{gridColumn : char.gridColumn}">\n' +
-           '    <img class="imgcharacter unselectable" :src="\'Assets/Characters/\'+char.img" draggable="false" @mousedown="() => {return false}" @dragstart="() => {return false}">' +
-           '  </div>\n' +
-           '</div>' +
-           '<div id="bottom">' +
-           '<div id="lineInput">' +
-           '<transition name="fade">\n' +
-           '<div id="inputLoc" v-if="askinput">' +
-           '   <input :type="inputtype" id="input" v-model="input" required> \n' +
-           '   <button id="buttoninput" @click="submitInput" :disabled="!canSubmit" class="unselectable"> Submit </button>' +
-           '</div>' +
-           '</transition>\n' +
-           '</div>' +
-           '<div id="bloc-text" @click="clickText()">\n' +
-           '        <p id="personnage" class="unselectable"> <strong> {{ currentCharacter }} </strong> </p>\n' +
-           '        <p id="text" class="unselectable"> {{ currentText }} </p>\n' +
-           '</div>\n' +
-           '<transition name="fade">\n' +
-           '<div v-if="inChoices">' +
-           '    <div id="choicesLoc" :class="{grid2choices : currentChoicePageList.length <= 2, grid3choices : currentChoicePageList.length === 3, grid4choices : currentChoicePageList.length === 4, grid5choices : currentChoicePageList.length === 5, grid6choices : currentChoicePageList.length === 6, grid7choices : currentChoicePageList.length === 7, grid8choices : currentChoicePageList.length === 8}">' +
-           '        <button v-for="(choice, index) in currentChoicePageList" id="buttonchoice" @click="clickChoice(choice.index)" class="unselectable" :style="{gridColumn: getColumnChoice(index), gridRow : getRowChoice(index)}"> {{ choice.text }} </button>' +
-           '    </div>' +
-           '    <div id="pagesinventorypanel">' +
-           '        <button id="leftpagebutton" :disabled="disableBackPageChoiceButtons" class="unselectable" @click="backPageChoice"> &lt </button>' +
-           '        <button id="inventorybutton" class="unselectable" @click="showInventory">  Inventory </button>' +
-           '        <button id="rightpagebutton" :disabled="disableNextPageChoiceButtons" class="unselectable" @click="nextPageChoice"> > </button>' +
-           '    </div>' +
-           '</div>' +
-           '</transition>\n' +
-           '</div>',
+        template:
+            '<modal v-if="showModal" :inventory="inventory" @close="showModal = false" @clickitem="clickiteminventory"> </modal>' +
+            '<div id="characterDiv" class="list-characters" :style="{gridTemplateColumns : columnsCharacterDiv}">' +
+            '  <div class="list-group-list-character" v-for="(char,index) in listCharactersInScene" :key="char.name+index" :style="{gridColumn : char.gridColumn}">\n' +
+            '    <img class="imgcharacter unselectable" :src="\'Assets/Characters/\'+char.img" draggable="false" @mousedown="() => {return false}" @dragstart="() => {return false}">' +
+            '  </div>\n' +
+            '</div>' +
+            '<div id="bottom">' +
+            '<div id="lineInput">' +
+            '<transition name="fade">\n' +
+            '<div id="inputLoc" v-if="askinput">' +
+            '   <input :type="inputtype" id="input" v-model="input" required> \n' +
+            '   <button class="buttonClass" id="buttoninput" @click="submitInput" :disabled="!canSubmit" class="unselectable"> Submit </button>' +
+            '</div>' +
+            '</transition>\n' +
+            '</div>' +
+            '<div id="bloc-text" @click="clickText()">\n' +
+            '        <p id="personnage" class="unselectable"> <strong> {{ currentCharacter }} </strong> </p>\n' +
+            '        <p id="text" class="unselectable"> {{ currentText }} </p>\n' +
+            '</div>\n' +
+            '<transition name="fade">\n' +
+            '<div v-if="inChoices">' +
+            '    <div id="choicesLoc" :class="{grid2choices : currentChoicePageList.length <= 2, grid3choices : currentChoicePageList.length === 3, grid4choices : currentChoicePageList.length === 4, grid5choices : currentChoicePageList.length === 5, grid6choices : currentChoicePageList.length === 6, grid7choices : currentChoicePageList.length === 7, grid8choices : currentChoicePageList.length === 8}">' +
+            '        <button v-for="(choice, index) in currentChoicePageList" id="buttonchoice" @click="clickChoice(choice.index)" class="unselectable buttonClass choiceButton" :style="{gridColumn: getColumnChoice(index), gridRow : getRowChoice(index)}"> {{ choice.text }} </button>' +
+            '    </div>' +
+            '    <div id="pagesinventorypanel">' +
+            '        <button v-if="!disableBackPageChoiceButtons" id="leftpagebutton" class="unselectable buttonClass buttonInventory" @click="backPageChoice"> &lt </button>' +
+            '        <button class="unselectable buttonClass buttonInventory inventorybutton" @click="showInventory">  Inventory </button>' +
+            '        <button v-if="!disableNextPageChoiceButtons" id="rightpagebutton" class="unselectable buttonClass buttonInventory" @click="nextPageChoice"> > </button>' +
+            '    </div>' +
+            '</div>' +
+            '</transition>\n' +
+            '</div>',
 
+
+        mixins: [mix_engine],
 
         data: () => ({
             page : "null",
-            currentDialogueIndex : 0,
+            currentDialogueIndex : -1,
             currentText : "",
             currentCharacter : "test",
             canPassDialogue : true,
             animationText : null,
-            assets : null,
+            assets : assets,
             allText : "",
             askinput : false,
             input : "",
@@ -112,17 +118,20 @@
             listMusics : [],
             listSounds : [],
             canGoNext : false,
+            textSoundID : 0,
         }),
 
         mounted() {
             if(urlParams.get('page') !== null) this.page = urlParams.get('page');
             if(urlParams.get('dialogue') !== null) this.currentDialogueIndex = parseInt(urlParams.get('dialogue'));
+            if(this.assets === null) return;
 
-            this.loadAssets((text) => {
-                this.assets = JSON.parse(text);
-                document.getElementById("titleGame").innerHTML = this.assets[8].content.displayname;
-                if(this.assets !== null) this.playInitialDialogue();
-            });
+            document.getElementById("titleGame").innerHTML = this.assets[8].content.displayname;
+            document.getElementById("metaTitle").setAttribute('content', this.assets[8].content.displayname);
+            document.getElementById("metaDescription").setAttribute('content', this.assets[8].content.description);
+            if(this.assets[8].content.banner !== "") document.getElementById("metaImage").setAttribute('content', this.assets[8].content.banner);
+            if(this.assets[8].content.icon !== "") document.getElementById("faviconID").setAttribute('href', this.assets[8].content.icon);
+            this.playInitialDialogue();
         },
 
         computed:{
@@ -138,9 +147,9 @@
                     }
                 }
                 return false;
-           },
+            },
             disableNextPageChoiceButtons(){
-               return this.listChoice.length <= this.currentChoicePage*8+8 ;
+                return this.listChoice.length <= this.currentChoicePage*8+8 ;
             },
             disableBackPageChoiceButtons(){
                 return this.currentChoicePage === 0;
@@ -155,20 +164,25 @@
         },
 
         methods:{
-           // #################### INITIAL LOADING
-            loadAssets(callback){
-               var xmlhttp = new XMLHttpRequest();
-               xmlhttp.onreadystatechange = function() {
-                   if (this.readyState === 4 && this.status === 200) {
-                       callback(xmlhttp.responseText);
-                   }
-               };
-               xmlhttp.open("GET", "assets.json", true);
-               xmlhttp.send();
-           },
+            // #################### INITIAL LOADING
             playInitialDialogue(){
-               var dialogue = getDialogue(this.page, this.currentDialogueIndex, this.assets);
-               this.playDialogue(dialogue, this.currentDialogueIndex);
+                if(this.page === "null" && this.currentDialogueIndex === -1) this.setInitialDialogue();
+
+                var dialogue = getDialogue(this.page, this.currentDialogueIndex, this.assets);
+                this.playDialogue(dialogue, this.currentDialogueIndex);
+            },
+            setInitialDialogue(){
+                this.assets[6].content.forEach((p) => {
+                    var i = 0;
+                    p.listDialogues.forEach((d) => {
+                        if(d.initial !== undefined && d.initial){
+                            this.page = p.title;
+                            this.currentDialogueIndex = i;
+                            return;
+                        }
+                        i++;
+                    });
+                });
             },
 
             // #################### DIALOGUES MANAGEMENT
@@ -278,11 +292,11 @@
 
             // #################### TEXT MANAGEMENT
             showText(text, character){
-               this.currentText = "";
+                this.currentText = "";
                 this.allText = text;
-               let regex = /\${((\w|\s)+)}/g;
+                let regex = /\${((\w|\s)+)}/g;
 
-               const listMatch = [...text.matchAll(regex)];
+                const listMatch = [...text.matchAll(regex)];
                 listMatch.forEach((m) => {
                     var value = getVariableValueByName(m[1], this.assets);
                     if(value === "null" || value === null) this.allText = this.allText.replace(m[0], "");
@@ -291,24 +305,41 @@
 
                 this.currentCharacter = character;
                 var charList = this.allText.split("");
-               this.animationText = setInterval(() => {
-                   if(charList.length>0) this.currentText += charList.shift();
-                   else this.stopAnimationText();
-               }, 10)
-           },
+
+                let sound = getVariableValue(this.assets[8].content.defaultTextSound, this.assets);
+                if(sound !== "null" && sound !== null){
+                    let soundAsset = getSound(sound, this.assets);
+                    if(soundAsset !== null){
+                        this.textSoundID = this.playSound(soundAsset, sound, true);
+                    }
+                }
+
+                this.animationText = setInterval(() => {
+                    if(charList.length>0) this.currentText += charList.shift();
+                    else this.stopAnimationText();
+                }, 10)
+            },
             stopAnimationText(){
-               clearInterval(this.animationText);
-               this.animationText = null;
-               this.currentText = this.allText;
+                this.removeEndSound(this.textSoundID);
+                clearInterval(this.animationText);
+                this.animationText = null;
+                this.currentText = this.allText;
             },
             clickText(){
-               if(this.animationText === null) {
-                   if(this.canPassDialogue && this.canGoNext){
-                       this.playNextDialogue(0);
-                   }
-               } else {
-                   this.stopAnimationText();
-               }
+                let sound = getVariableValue(this.assets[8].content.defaultClickSound, this.assets);
+                if(sound !== "null" && sound !== null){
+                    let soundAsset = getSound(sound, this.assets);
+                    if(soundAsset !== null){
+                        this.playSound(soundAsset, sound);
+                    }
+                }
+                if(this.animationText === null) {
+                    if(this.canPassDialogue && this.canGoNext){
+                        this.playNextDialogue(0);
+                    }
+                } else {
+                    this.stopAnimationText();
+                }
             },
 
             // ##################### INPUT MANAGEMENT
@@ -397,7 +428,7 @@
                 }
             },
             showInventory(){
-              this.showModal = true;
+                this.showModal = true;
             },
             clickiteminventory(index){
                 var list = this.listObjectChoice.filter((o) => o.object === this.inventory[index].name);
@@ -429,10 +460,32 @@
                     this.listSounds.splice(index, 1);
                 }
             },
+            playSound(asset, name, loop = false){
+                var ref = this;
+                var id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+                this.listSounds.push({
+                    name : name,
+                    volume : asset.volume,
+                    id :id,
+                    howl : new Howl({
+                        src: ["Assets/Sounds/"+asset.path],
+                        autoplay: true,
+                        loop: loop,
+                        volume: asset.volume/100,
+                        onend: function() {
+                            if(!loop)ref.removeEndSound(id);
+                        }
+                    })
+                });
+                return id;
+            },
 
             // ################### SCRIPT MANAGEMENT
             executeActionScript(action, callback){
                 let execCallback = true;
+                if(action.code !== undefined && action.code !== ""){
+                    this[action.name](action.inputs);
+                }
                 switch(action.name){
                     case "Change Background":
                         let scene = getVariableValue(action.inputs[0], this.assets);
@@ -462,8 +515,8 @@
                         if(amountToRemove === "null" || amountToRemove === null || amountToRemove === 0) break;
                         let index = this.inventory.findIndex((i) => i.name === objectToRemove);
                         if(index !== -1){
-                             this.inventory[index].amount -= amountToRemove;
-                             if(this.inventory[index].amount <= 0){
+                            this.inventory[index].amount -= amountToRemove;
+                            if(this.inventory[index].amount <= 0){
                                 this.inventory.splice(index, 1);
                             }
                         }
@@ -601,22 +654,7 @@
                         if(sound === "null" || sound === null) break;
                         let soundAsset = getSound(sound, this.assets);
                         if(soundAsset === null) break;
-                            var ref = this;
-                            var id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-                            this.listSounds.push(
-                                {
-                                    name : sound,
-                                    volume : soundAsset.volume,
-                                    id :id,
-                                    howl : new Howl({
-                                        src: ["Assets/Sounds/"+soundAsset.path],
-                                        autoplay: true,
-                                        loop: false,
-                                        volume: soundAsset.volume/100,
-                                        onend: function() {
-                                            ref.removeEndSound(id);
-                                        }})
-                                });
+                        this.playSound(soundAsset, sound);
                         break;
                     case "Stop Sound":
                         let soundTR = getVariableValue(action.inputs[0], this.assets);
@@ -629,6 +667,10 @@
                         break;
                 }
                 if(execCallback) callback();
+            },
+
+            getInputValue(input){
+                return getVariableValue(input, this.assets);
             },
         }
     });

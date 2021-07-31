@@ -1,7 +1,19 @@
+:root {
+    --btnchoicelight: #ff4242;
+    --btnchoicedark: #b82e2e;
+    --btninputlight: #92DE34;
+    --btninputdark: #69BC22;
+    --btninventorylight: #58a0e8;
+    --btninventorydark: #3b6ea1;
+    --btnchoicetext: #000000;
+    --backgroundcolor: #FFFFFF;
+}
+
 body{
     background-repeat: no-repeat;
-    background-size: cover;
-    background-color: white;
+    background-size: auto 100vh;
+    background-position: top;
+    background-color: var(--backgroundcolor);
     -webkit-transition: background-image 0.2s ease;
     transition: background-image 0.2s ease;
     overflow: hidden;
@@ -79,6 +91,69 @@ body{
     grid-row: 1;
     height: 70%;
     margin-top: 10%;
+    background-color: var(--btninputlight);
+    box-shadow: 0 0 0 7px var(--btninputlight) inset;
+    color: var(--btninputtext);
+}
+
+#buttoninput:hover {
+    background-image: linear-gradient(
+            145deg,
+            transparent 10%,
+            var(--btninputdark) 10% 20%,
+            transparent 20% 30%,
+            var(--btninputdark) 30% 40%,
+            transparent 40% 50%,
+            var(--btninputdark) 50% 60%,
+            transparent 60% 70%,
+            var(--btninputdark) 70% 80%,
+            transparent 80% 90%,
+            var(--btninputdark) 90% 100%
+    );
+    animation: background 3s linear infinite;
+}
+
+.buttonClass{
+    display: block;
+    cursor: pointer;
+    outline: none;
+    height: 35px;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    background-size: 100% 100%;
+}
+
+.choiceButton{
+    background-color: var(--btnchoicelight);
+    box-shadow: 0 0 0 7px var(--btnchoicelight) inset;
+    color: var(--btnchoicetext);
+}
+
+.choiceButton:hover {
+    background-image: linear-gradient(
+            145deg,
+            transparent 10%,
+            var(--btnchoicedark) 10% 20%,
+            transparent 20% 30%,
+            var(--btnchoicedark) 30% 40%,
+            transparent 40% 50%,
+            var(--btnchoicedark) 50% 60%,
+            transparent 60% 70%,
+            var(--btnchoicedark) 70% 80%,
+            transparent 80% 90%,
+            var(--btnchoicedark) 90% 100%
+    );
+    animation: background 3s linear infinite;
+}
+
+@keyframes background {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 400px 0;
+    }
 }
 
 #input {
@@ -141,21 +216,45 @@ body{
     grid-column: 1;
     grid-row: 1;
     width: 100%;
+    background-color: var(--btninventorylight);
+    box-shadow: 0 0 0 7px var(--btninventorylight) inset;
+    color: var(--btnchoicetext);
 }
 
 #rightpagebutton{
     grid-column: 10;
     grid-row: 1;
     width: 100%;
+    background-color: var(--btninventorylight);
+    box-shadow: 0 0 0 7px var(--btninventorylight) inset;
+    color: var(--btnchoicetext);
 }
 
-#inventorybutton{
+.inventorybutton{
     grid-column: 2/10;
     grid-row: 1;
     width: 100%;
+    background-color: var(--btninventorylight);
+    box-shadow: 0 0 0 7px var(--btninventorylight) inset;
+    color: var(--btnchoicetext);
 }
 
-
+.buttonInventory:hover {
+    background-image: linear-gradient(
+            145deg,
+            transparent 10%,
+            var(--btninventorydark) 10% 20%,
+            transparent 20% 30%,
+            var(--btninventorydark) 30% 40%,
+            transparent 40% 50%,
+            var(--btninventorydark) 50% 60%,
+            transparent 60% 70%,
+            var(--btninventorydark) 70% 80%,
+            transparent 80% 90%,
+            var(--btninventorydark) 90% 100%
+    );
+    animation: background 3s linear infinite;
+}
 
 .modal-mask {
     position: fixed;
@@ -209,6 +308,7 @@ body{
 
 .modal-default-button {
     float: right;
+    width: 20%;
 }
 
 .modal-fade-enter,
@@ -221,16 +321,41 @@ body{
     transition: opacity .5s ease;
 }
 
+#titleInventory{
+    color : var(--btninventorydark);
+}
+
 .buttonitem{
     height: 100%;
     width: 100%;
     display: grid;
     grid-template-rows: repeat(5, 1fr);
+    background-color: var(--btninventorylight);
+    box-shadow: 0 0 0 7px var(--btninventorylight) inset;
+    color: var(--btnchoicetext);
+}
+
+.buttonitem:hover {
+    background-image: linear-gradient(
+            145deg,
+            transparent 10%,
+            var(--btninventorydark) 10% 20%,
+            transparent 20% 30%,
+            var(--btninventorydark) 30% 40%,
+            transparent 40% 50%,
+            var(--btninventorydark) 50% 60%,
+            transparent 60% 70%,
+            var(--btninventorydark) 70% 80%,
+            transparent 80% 90%,
+            var(--btninventorydark) 90% 100%
+    );
+    animation: background 3s linear infinite;
 }
 
 .imgitem{
     width: 100%;
-    height: 100%;
+    margin-top: 15%;
+    height: 90%;
     grid-row: 1/5;
     pointer-events: none;
 }
