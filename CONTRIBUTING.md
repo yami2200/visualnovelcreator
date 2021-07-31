@@ -6,7 +6,7 @@ You have many ways to help me :
 ## 🚩 Testing :
 
 I'm developping the software alone for now, I don't specially spend so much time on testing the software.
-So, if you want to help me by testing the software and by reporting any bugs, issues you found; your help
+So, if you want to help me by testing the software and by reporting any bugs, issues you found : your help
 will be really appreciated. 
 
 ## 🧤 Suggestion :
@@ -17,4 +17,7 @@ don't hesitate to suggest them to me.
 ## 💻 Coding :
 
 You think that some part of the software could be added or improved, and you feel quite comfortable to code them ?
-Don't hesitate to contact me.
+You have a solution for some issues ? Don't hesitate to make pull request to improve the app.
+
+Note : The packaging (for Windows) will not work if you fork the app because the windows package folder isn't on the github because of file size. 
+If you need it just contact me.
