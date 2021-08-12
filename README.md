@@ -16,7 +16,7 @@
 ## 📢 Dialogue Manager :
 >To make your storyline, you will able to use a practical and simple graph system.
 
-# ![Dialogue Manager Demo](README/DialogueManagerDemov3.gif)
+# ![Dialogue Manager Demo](README/DialogueManagerDemov4.gif)
 
 > Check the [Dialogue Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Dialogues.md) for more info.
 

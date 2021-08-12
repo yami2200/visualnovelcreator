@@ -2,6 +2,8 @@
 
 ## 📃 Dialogue Manager Panel :
 
+>Note : The documentation below contains old images from an older version of the app.
+
 > The dialogue manager panel is used to create the storyline of the game. The dialogues are represented with nodes and links.
 ># ![Dialogue Manager Panel](docimg_dialogueManagerPanel.jpg)
 > Nodes and links are seperated within pages. They are visible on the right top corner of the app.

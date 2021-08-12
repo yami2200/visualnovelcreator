@@ -7,9 +7,9 @@
         @mousedown="selecting"
         @dblclick="clickOnDialogue"
         @contextmenu="showContextMenu($event, 'global', -1)"
-        fill="#81D152"
+        fill="url(#DialogueBlock)"
         :stroke="selected ? '#e5ae00' : '#000000'"
-        stroke-width="0.5"
+        stroke-width="0.25"
         :x="dialogue.x"
         :y="dialogue.y"
         width="21"
@@ -17,37 +17,32 @@
         rx="1"
         ry="1"/>
 
-    <rect
-        @mouseenter="mouseEnter"
-        @mouseleave="mouseLeave"
-        @mouseup="linkEnd($event, 0, 'input')"
-        @mousedown="startLinkingFromInput($event, 0)"
-        @contextmenu="showContextMenu($event, 'input', 0)"
-        class="button_diag clickable"
-        stroke="#000000"
-        stroke-width="0.3"
-        :x="xChild"
-        :y="yTop"
-        width="5.5"
-        height="2"
-        rx="1"
-        ry="1"/>
+    <vsm-plug
+        fillGradient="#DialogueBlockOutput"
+        type="input"
+        :locX="dialogue.x + 10.5"
+        :locY="yTop"
+        :index="0"
+        @mEnter="mouseEnter($event)"
+        @mLeave="mouseLeave"
+        @mUp="linkEnd"
+        @mDown="startLinkingFromInput"
+        @cMenu="showContextMenu"
+    >
+    </vsm-plug>
 
-    <rect
-        @mouseenter="mouseEnter"
-        @mouseleave="mouseLeave"
-        @mouseup="linkEnd($event, 0, 'output')"
-        @mousedown="startLinkingFromOutput($event, 0)"
-        @contextmenu="showContextMenu($event, 'output', 0)"
-        class="button_diag clickable"
-        stroke="#000000"
-        stroke-width="0.3"
-        :x="xChild"
-        :y="yBottom"
-        width="5.5"
-        height="2"
-        rx="1"
-        ry="1"/>
+    <vsm-plug
+        fillGradient="#DialogueBlockOutput"
+        type="output"
+        :locX="dialogue.x + 10.5"
+        :locY="yBottom"
+        :index="0"
+        @mEnter="mouseEnter"
+        @mLeave="mouseLeave"
+        @mUp="linkEnd"
+        @mDown="startLinkingFromOutput"
+        @cMenu="showContextMenu">
+    </vsm-plug>
 
     <text
         pointer-events="none"
@@ -56,26 +51,31 @@
         :x="xText"
         :y="yText"
         class="text"
-        font-family="Nunito"
+        font-family="Karla"
         :font-size="fontSizeText">
       {{ textValue }}
     </text>
-    <polygon
+
+    <vsm-initialicon
         v-if="dialogue.initial"
-        fill="#0000ff"
-        stroke="#FFFFFF"
-        stroke-width="0.3"
-        :points="pointsTriangle"/>
+        :x="dialogue.x"
+        :y="dialogue.y">
+    </vsm-initialicon>
+
   </g>
 </template>
 
 <script>
 import { mix_dialogueblock } from "@/mixins/MIX_DialogueBlock";
+import PlugNodeComponent from "./VSM-PlugNodeComponent";
+import InitialDialogueIcon from "./VSM-InitialDialogueIcon";
 
 export default {
   name: "vsm-dialogueblock",
 
   mixins: [mix_dialogueblock],
+
+  components:{"vsm-plug" : PlugNodeComponent, "vsm-initialicon" : InitialDialogueIcon},
 }
 </script>
 
@@ -92,5 +92,10 @@ export default {
 
   .text {
     user-select: none;
+  }
+
+  .test:hover{
+    fill: url(#DialogueBlockOutputHovered);
+    cursor: pointer;
   }
 </style>

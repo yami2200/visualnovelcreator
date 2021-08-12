@@ -49,11 +49,110 @@
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1, beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true, boundsPadding: 1}" style="outline: none;">
 
-            <!--<svg :height="height+'px'" :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}" width="100%" ref="svgBox" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">-->
             <svg :height="2000+'px'" :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}" :width="2000+'px'" ref="svgBox" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
-              <line v-if="linkingBlock !== -1" pointer-events="none" :x1="linkingOutput===-1 ? linkXInp(linkingBlock, linkingInput) : linkXOut(linkingBlock, linkingOutput)" :y1="linkingOutput===-1 ? linkYInp(linkingBlock, linkingInput) : linkYOut(linkingBlock, linkingOutput)" :x2="xMouse" :y2="yMouse" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
+
+              <defs>
+
+                <linearGradient id="InitialDialogueIcon" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#3455eb"/>
+                  <stop offset="100%" stop-color="#051d87"/>
+                </linearGradient>
+
+                <linearGradient id="DialogueBlock" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#81D152"/>
+                  <stop offset="100%" stop-color="#519e24"/>
+                </linearGradient>
+                <linearGradient id="DialogueBlockOutput" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#6bad44"/>
+                  <stop offset="100%" stop-color="#3e7a1b"/>
+                </linearGradient>
+                <linearGradient id="DialogueBlockOutputHovered" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#558a36"/>
+                  <stop offset="100%" stop-color="#2b5712"/>
+                </linearGradient>
+
+                <linearGradient id="ChoiceBlock" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#42ADC7"/>
+                  <stop offset="100%" stop-color="#097791"/>
+                </linearGradient>
+                <linearGradient id="ChoiceBlockOutput" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#2669b1"/>
+                  <stop offset="100%" stop-color="#024b99"/>
+                </linearGradient>
+                <linearGradient id="ChoiceBlockOutputHovered" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#1f548c"/>
+                  <stop offset="100%" stop-color="#023b78"/>
+                </linearGradient>
+                <linearGradient id="ChoiceBlockObjectOutput" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#1436ad"/>
+                  <stop offset="100%" stop-color="#002194"/>
+                </linearGradient>
+                <linearGradient id="ChoiceBlockObjectOutputHovered" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#10256e"/>
+                  <stop offset="100%" stop-color="#001663"/>
+                </linearGradient>
+
+                <linearGradient id="ConditionalBlock" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#FF5347"/>
+                  <stop offset="100%" stop-color="#b30d02"/>
+                </linearGradient>
+                <linearGradient id="ConditionalBlockOutput" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#b82127"/>
+                  <stop offset="100%" stop-color="#ab0208"/>
+                </linearGradient>
+                <linearGradient id="ConditionalBlockOutputHovered" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#821e22"/>
+                  <stop offset="100%" stop-color="#570306"/>
+                </linearGradient>
+
+                <linearGradient id="FunctionBlock" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#FF9D4F"/>
+                  <stop offset="100%" stop-color="#ba5e14"/>
+                </linearGradient>
+                <linearGradient id="FunctionBlockOutput" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#de6723"/>
+                  <stop offset="100%" stop-color="#b84300"/>
+                </linearGradient>
+                <linearGradient id="FunctionBlockOutputHovered" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#914519"/>
+                  <stop offset="100%" stop-color="#752b01"/>
+                </linearGradient>
+
+                <linearGradient id="InputBlock" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#F5F263"/>
+                  <stop offset="100%" stop-color="#d6d206"/>
+                </linearGradient>
+                <linearGradient id="InputBlockOutput" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#cfb826"/>
+                  <stop offset="100%" stop-color="#a69007"/>
+                </linearGradient>
+                <linearGradient id="InputBlockOutputHovered" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#a39224"/>
+                  <stop offset="100%" stop-color="#5e5203"/>
+                </linearGradient>
+
+                <linearGradient id="TransitionBlock" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#5B4DB7"/>
+                  <stop offset="100%" stop-color="#251499"/>
+                </linearGradient>
+                <linearGradient id="TransitionBlockOutput" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#451ca5"/>
+                  <stop offset="100%" stop-color="#29008a"/>
+                </linearGradient>
+                <linearGradient id="TransitionBlockOutputHovered" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#351a73"/>
+                  <stop offset="100%" stop-color="#16004a"/>
+                </linearGradient>
+
+              </defs>
+
+              <path v-if="linkingBlock !== -1" pointer-events="none" :d="getPathLinkBezierToMouse(linkingOutput===-1 ? xMouse : linkXOut(linkingBlock, linkingOutput), linkingOutput===-1 ? yMouse : linkYOut(linkingBlock, linkingOutput), linkingOutput===-1 ? linkXInp(linkingBlock, linkingInput) : xMouse, linkingOutput===-1 ? linkYInp(linkingBlock, linkingInput) : yMouse)" style="stroke:rgb(0,0,0);stroke-width:0.3" fill="none"/>
 
               <g v-for="(value,index) in listDialogues" v-bind:key="index">
+                <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
+                  <path v-if="valueL.id !== -1" pointer-events="none" :d="getPathLinkBezier(index, indexL, valueL)" style="stroke:rgb(0,0,0);stroke-width:0.3" fill="none"/>
+                </g>
+
                 <vsm-dialogueblock v-if="value.type === 'dialogue'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
                 <vsm-dialoguechoices v-if="value.type === 'choices'" @clickDialogue="clickDialogue" @choiceHover="onChoiceHovered" @choiceStopHover="onChoiceStopHovered" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguechoices>
                 <vsm-dialoguecondition v-else-if="value.type === 'condition'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
@@ -61,9 +160,6 @@
                 <vsm-dialogueinput v-else-if="value.type === 'input'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
                 <vsm-dialoguetransition v-else-if="value.type === 'transition'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguetransition>
 
-                <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
-                  <line v-if="valueL.id !== -1" pointer-events="none" :x1="linkXOut(index, indexL)" :y1="linkYOut(index, indexL)" :x2="linkXInp(valueL.id, valueL.ii)" :y2="linkYInp(valueL.id, valueL.ii)" style="stroke:rgb(0,0,0);stroke-width:0.7" ></line>
-                </g>
               </g>
 
               <rect
@@ -232,7 +328,6 @@ export default {
       return this.initialDialogue === null || this.initialDialogue.page === null || this.initialDialogue.index === -1;
     },
   },
-
   methods:{
     test(){
       console.log("enter")
@@ -298,7 +393,17 @@ export default {
       return this.listDialogues[id].inputsLoc[ii].x;
     },
     linkYInp(id, ii){
-      return  this.listDialogues[id].inputsLoc[ii].y;
+      return this.listDialogues[id].inputsLoc[ii].y;
+    },
+    getPathLinkBezier(index, indexL, valueL){
+      let linkX = this.linkXOut(index, indexL);
+      let linkY = this.linkYOut(index, indexL);
+      let linkX2 = this.linkXInp(valueL.id, valueL.ii);
+      let linkY2 = this.linkYInp(valueL.id, valueL.ii);
+      return 'M '+linkX+','+linkY+' C '+linkX+', '+(linkY+10)+' '+linkX2+', '+(linkY2-10)+' '+linkX2+', '+linkY2;
+    },
+    getPathLinkBezierToMouse(x1, y2, xMouse, yMouse){
+      return 'M '+x1+','+y2+' C '+x1+', '+(y2+10)+' '+xMouse+', '+(yMouse-10)+' '+xMouse+', '+yMouse;
     },
 
     // ############################# SELECTION BEHAVIOR

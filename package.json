@@ -1,6 +1,6 @@
 {
   "name": "visualnovelcreator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "author" : "yami2200",
   "description": "A Game Engine to make Visual Novel Games. Made with VueJS & Electron.",

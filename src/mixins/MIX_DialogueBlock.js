@@ -15,7 +15,7 @@ export const mix_dialogueblock = {
             return this.dialogue.x + 7.5;
         },
         yBottom: function () {
-            return this.dialogue.y + 7.5;
+            return this.dialogue.y + 8;
         },
         yTop: function () {
             return this.dialogue.y + 0.5;
@@ -34,9 +34,6 @@ export const mix_dialogueblock = {
         textValue:function () {
             if(this.dialogue.title.length < 25) return this.dialogue.title;
             return this.dialogue.title.substring(0,25) + " ...";
-        },
-        pointsTriangle(){
-            return (this.dialogue.x + 2) + ' ' + (this.dialogue.y) + ' ' + (this.dialogue.x - 1) + ' ' + (this.dialogue.y + 2) + ' ' + (this.dialogue.x - 1) + ' ' + (this.dialogue.y - 2);
         },
     },
 
