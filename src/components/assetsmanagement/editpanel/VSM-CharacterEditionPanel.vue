@@ -22,23 +22,25 @@
               <v-slider
                   v-if="currentCharacter!=null"
                   class="mt-5"
-                  v-model="currentCharacter.sizex"
-                  :max="100"
-                  :min="1"
+                  v-model="currentCharacter.size"
+                  :max="5"
+                  :min="0.1"
+                  :step="0.1"
                   :thumb-size="20"
                   thumb-label="always"
-                  label="Horizontal size"
+                  label="Image size"
               ></v-slider>
-              <v-slider
+              <!--<v-slider
                   v-if="currentCharacter!=null"
                   class="mt-5"
-                  :max="100"
-                  :min="1"
+                  :max="5"
+                  :min="0.1"
+                  :step="0.1"
                   :thumb-size="20"
                   v-model="currentCharacter.sizey"
                   thumb-label="always"
                   label="Vertical size"
-              ></v-slider>
+              ></v-slider>-->
 
               <v-row justify="space-around" class="mb-7 mt-9">
 

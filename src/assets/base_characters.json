@@ -2,7 +2,8 @@
   "name" : "",
   "img" : "",
   "imgshow" : "",
-  "sizex" : "10",
-  "sizey" : "10",
+  "sizex" : 1,
+  "sizey" : 1,
+  "size" : 1,
   "imgOthers" : []
 }
