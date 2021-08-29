@@ -83,7 +83,10 @@ export default {
     this.bus.$on('variables', this.variablesPanel);
     ipcRenderer.on('shortcut', (event, message) => {
       if(event.senderId === 0) this.shortcuts(message);
-    })
+    });
+    ipcRenderer.on("notifShouldUseDarkColor", (event, message) => {
+      console.log(message);
+    });
   },
 
   created() {
@@ -320,7 +323,7 @@ export default {
     loadEditorPreferences(first = true){
       var preferences = null;
       try{
-        preferences = JSON.parse(readFileSync(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json"));
+        preferences = JSON.parse(readFileSync(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json"));
       }
       catch {
         console.log("An error occured when trying to read editor preferences ! \n The editor will load default preferences.");
@@ -330,7 +333,13 @@ export default {
         this.updateEditorPreferences();
         return;
       } else if (first){
-        writeFile(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json", JSON.stringify(jsonBasePreferences));
+        let editorPreferencesNew = JSON.parse(JSON.stringify(jsonBasePreferences));
+        let shouldUseDarkColors = ipcRenderer.sendSync("getNativeThemeDarkColor");
+        if(shouldUseDarkColors){
+          editorPreferencesNew.theme = "dark";
+        }
+
+        writeFile(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json", JSON.stringify(editorPreferencesNew));
         this.loadEditorPreferences(false);
       } else {
         alert("An error occured when trying to read editor preferences ! \n The editor will load default preferences.");

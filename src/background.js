@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcRenderer } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, nativeTheme } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -89,7 +89,7 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
-  createWindow()
+  createWindow();
 })
 
 // Exit cleanly on request from parent process in development mode.
@@ -106,3 +106,7 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.on("getNativeThemeDarkColor", (event) => {
+  event.returnValue = nativeTheme.shouldUseDarkColors;
+});
