@@ -13,6 +13,7 @@
             @click:append-outer="increment"
             prepend-icon="mdi-minus-circle"
             type="number"
+            :rules="[rules.required]"
             @click:prepend="decrement">
         </v-text-field>
         <vsm-settervariable v-else :assets="assets" :variable="input1" :listvar="listvariables" :initialval="!refEnabledInput1"></vsm-settervariable>
@@ -66,6 +67,7 @@ export default {
     },
     changeInt(e){
       if(e.key === "Backspace") return;
+      if(e.key === "-") return;
       if(!["0","1","2","3","4","5","6","7","8","9"].includes(e.key)){
         e.preventDefault();
       }

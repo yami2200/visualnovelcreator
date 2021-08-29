@@ -5,7 +5,7 @@
       <v-col>
         <v-text-field
             v-if="operationSelected == 'value'"
-            v-model.number="value"
+            v-model="value"
             :disabled="disabledInputSpecific"
             label="Float Number"
             append-outer-icon="mdi-plus-circle"
@@ -13,6 +13,7 @@
             prepend-icon="mdi-minus-circle"
             @keydown="changeFloat($event)"
             type="number"
+            :rules="[rules.required]"
             @click:prepend="decrement">
         </v-text-field>
         <vsm-settervariable v-else :assets="assets" :variable="input1" :listvar="listvariables" :initialval="!refEnabledInput1"></vsm-settervariable>
@@ -72,6 +73,7 @@ export default {
     },
     changeFloat(e){
       if(e.key === "Backspace") return;
+      if(e.key === "-") return;
       if(!["0","1","2","3","4","5","6","7","8","9"].includes(e.key)){
         if(e.key === "," || e.key === "."){
           if(!this.value.toString().includes(".")) return;

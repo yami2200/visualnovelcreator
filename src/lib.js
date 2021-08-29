@@ -373,6 +373,13 @@ function checkInputsVariableDependencyFromAction(action, oldname, newname, type)
             } else {
                 i.value.value = newname;
             }
+        } else if((type === "Integer" || type === "Float") && (i.type.name === "Integer" || i.type.name === "Float") && i.value.type === "value" && i.value.operation !== undefined && i.value.operation !== "value"){
+            checkNumberForVariableDependency(i, oldname, newname, type, i.type.defaultValue);
+        }
+
+        if(i.type.name === "variable" && i.value.value === oldname){
+            if(newname === "null") i.value.value = "";
+            else i.value.value = newname;
         }
 
         if(i.type.name === "Boolean" && i.value.type === "value"){
@@ -385,7 +392,7 @@ function checkInputsVariableDependencyFromAction(action, oldname, newname, type)
 
 function checkConditionForVariableDependency(d, oldname, newname, type){
     if(d.condition.value.type === "value") {
-        if(d.condition.value.operation !== undefined & d.condition.value.operation !== "value"){
+        if(d.condition.value.operation !== undefined && d.condition.value.operation !== "value"){
             if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "variable" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
             if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "variable" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
             d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
@@ -410,6 +417,37 @@ function dependencyBooleanInputs(newname, input){
         } else {
             input.value.value = newname;
         }
+    }
+}
+
+function checkNumberForVariableDependency(v, oldname, newname, type, defaultValue){
+    let newText = newname;
+    if(newname === "null") newText = defaultValue;
+    if(v.value.input1 !== undefined && v.value.input1.value.type === "value" && v.value.input1.value.operation !== undefined && v.value.input1.value.operation !== "value") checkNumberForVariableDependency(v.value.input1, oldname, newText, type, defaultValue);
+    if(v.value.input2 !== undefined && v.value.input1.value.type === "value" && v.value.input2.value.operation !== undefined && v.value.input2.value.operation !== "value") checkNumberForVariableDependency(v.value.input2, oldname, newText, type, defaultValue);
+
+    if(v.value.input1.value.type === "variable" && v.value.input1.value.value === oldname) {
+        if(newText === defaultValue){
+            v.value.input1.value.type = "value";
+            v.value.input1.value.operation = "value";
+        }
+        v.value.input1.value.value = newText;
+    }
+    if(v.value.input2.value.type === "variable" && v.value.input2.value.value === oldname) {
+        if (newText === defaultValue) {
+            v.value.input2.value.type = "value";
+            v.value.input2.value.operation = "value";
+        }
+        v.value.input2.value.value = newText;
+    }
+    v.value.value = getTextOperationNumberVariable(v.value.input1, v.value.input2, v.value.operation);
+}
+
+function getTextOperationNumberVariable(input1, input2, operation){
+    if(operation === "Random" || operation === "Min" || operation === "Max"){
+        return operation + "(" + input1.value.value + ", " + input2.value.value +")";
+    } else {
+        return input1.value.value + " " + operation + " " + input2.value.value;
     }
 }
 
@@ -439,5 +477,6 @@ export {
     getCustomFunctionFileText,
     createPackageWeb,
     createPackageWindows,
-    getAllFilesPathAtDirectory
+    getAllFilesPathAtDirectory,
+    getTextOperationNumberVariable
 };

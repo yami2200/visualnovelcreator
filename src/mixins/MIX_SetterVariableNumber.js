@@ -1,10 +1,15 @@
+import {getTextOperationNumberVariable} from "@/lib";
+
 export const mix_settervariablenumber = {
 
     props:["assets"],
 
     data: () => ({
-        listOperator : ["value" , "+", "-", "x", "÷"],
+        listOperator : ["value" , "+", "-", "x", "÷", "Random", "Min", "Max"],
         operationSelected : "value",
+        rules: {
+            required: value => !!value || 'Not Correct.',
+        },
         input1 : {
             type: {
                 name : "Float",
@@ -91,8 +96,9 @@ export const mix_settervariablenumber = {
             if(this.disableSaveButton) return;
             if(this.choice === "1") {
                 let valText = this.value;
+                if(this.value === "") valText = this.variable.type.defaultValue;
                 if(this.operationSelected !== "value"){
-                    valText = this.input1.value.value + " " + this.operationSelected + " " +this.input2.value.value;
+                    valText = getTextOperationNumberVariable(this.input1, this.input2, this.operationSelected);
                 }
                 this.$emit("newval", {type: "value", operation: this.operationSelected ,value: valText, input1 : this.input1, input2: this.input2});
             } else {
