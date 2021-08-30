@@ -42,6 +42,7 @@
       </v-card-text>
 
       <v-card-actions>
+        <vsm-help-button link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_Variables.md"></vsm-help-button>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -68,6 +69,7 @@ import listVariables from '../../assets/listTypesVariables.json'
 import baseVariable from '../../assets/base_variables.json'
 import Setter from "@/components/variables/VSM-SetterVariable";
 import {removeDependencyVariable} from "@/lib";
+import helpButton from "@/components/VSM-HelpButton";
 
 export default {
   name: "VSM-EditVariablePanel",
@@ -76,6 +78,7 @@ export default {
 
   components:{
     "vsm-setter" : Setter,
+    "vsm-help-button" : helpButton,
   },
 
   computed:{

@@ -64,6 +64,7 @@
         </v-card>
       </v-card-text>
       <v-card-actions>
+        <vsm-help-button link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_Variables.md"></vsm-help-button>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -83,13 +84,16 @@ import Vue from "vue";
 import VSMEditVariablePanel from "@/components/variables/VSM-EditVariablePanel";
 import ConfirmationModal from "@/components/modalrequest/VSM-ConfirmationRequestModal"
 import {removeDependencyVariable} from "@/lib";
+import helpButton from "@/components/VSM-HelpButton";
 
 export default {
   name: "VSM-VariablesPanel",
   components: {
     "vsm-editpanelvariables" : VSMEditVariablePanel,
-    "vsm-confirmation-request-modal" : ConfirmationModal
+    "vsm-confirmation-request-modal" : ConfirmationModal,
+    "vsm-help-button" : helpButton,
   },
+
   props:["bus", "variables", "assets", "listPages"],
 
   data () {

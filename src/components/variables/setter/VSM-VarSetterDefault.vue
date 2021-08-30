@@ -47,6 +47,7 @@
       </v-card-text>
 
       <v-card-actions>
+        <vsm-help-button link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_Variables.md"></vsm-help-button>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -69,6 +70,8 @@
 </template>
 
 <script>
+import helpButton from "@/components/VSM-HelpButton";
+
 export default {
   name: "VSM-VarSetterDefault",
 
@@ -77,6 +80,10 @@ export default {
     choice: "1",
     value: 0,
   }),
+
+  components:{
+    "vsm-help-button" : helpButton,
+  },
 
   props:["dialog", "disableSaveButton", "disabledInputSpecific", "listCompatibleVariables", "refEnabled", "bus", "onlyVariable"],
 

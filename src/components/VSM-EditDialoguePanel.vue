@@ -29,6 +29,7 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
+        <vsm-help-button link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_Dialogues.md"></vsm-help-button>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -58,6 +59,7 @@ import TabDialogueInput from "@/components/dialogues/VSM-DialogueTabInput"
 import TabDialogueTransition from "@/components/dialogues/VSM-DialogueTabTransition"
 import TabDialogueChoice from "@/components/dialogues/VSM-DialogueTabChoice"
 import TabDialogueScript from "@/components/dialogues/VSM-DialogueTabScript"
+import helpButton from "@/components/VSM-HelpButton";
 
 export default {
   name: "VSM-EditDialoguePanel",
@@ -70,7 +72,8 @@ export default {
     "vsm-tabinput" : TabDialogueInput,
     "vsm-tabtransition" : TabDialogueTransition,
     "vsm-tabchoice" : TabDialogueChoice,
-    "vsm-tabscript" : TabDialogueScript
+    "vsm-tabscript" : TabDialogueScript,
+    "vsm-help-button" : helpButton,
   },
 
   computed:{

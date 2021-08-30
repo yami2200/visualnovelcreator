@@ -69,6 +69,7 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
+        <vsm-help-button link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_CustomFunctions.md"></vsm-help-button>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -95,6 +96,7 @@ import BaseCustomFunction from "@/assets/base_customFunction.json";
 import Var from "@/assets/base_variables.json";
 import MonacoEditor from 'vue-monaco';
 import listVariables from "../assets/listTypesVariables.json";
+import helpButton from "@/components/VSM-HelpButton";
 
 export default {
   name: "VSM-EditCustomFunctionPanel",
@@ -103,6 +105,7 @@ export default {
 
   components: {
     MonacoEditor,
+    "vsm-help-button" : helpButton,
   },
 
   computed:{

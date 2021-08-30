@@ -27,6 +27,7 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
+        <vsm-help-button link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_Scripting.md"></vsm-help-button>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -45,11 +46,16 @@
 import listVarFunction from "@/assets/listFunctionsVariables.json";
 import listVarAction from "@/assets/listFunctionsAction.json";
 import listVarControl from "@/assets/listFunctionsControl.json";
+import helpButton from "@/components/VSM-HelpButton";
 
 export default {
   name: "VSM-EditDialoguePanel",
 
   props:["bus", "listCustom"],
+
+  components:{
+    "vsm-help-button" : helpButton,
+  },
 
   computed:{
     canSave(){

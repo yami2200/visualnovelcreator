@@ -8,11 +8,14 @@
         @movetop="moveFunctionTop"
     >
     </vsm-contextmenu>
-    <v-checkbox
-        class="ml-2"
-        v-model="current.waitEndScript"
-        label="Wait the end of all script before leaving the dialogue:"
-    ></v-checkbox>
+    <v-row justify="space-between">
+      <v-checkbox
+          class="ml-2"
+          v-model="current.waitEndScript"
+          label="Wait the end of all script before leaving the dialogue:"
+      ></v-checkbox>
+      <vsm-help-button class="mt-3 mr-3" link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_Scripting.md"></vsm-help-button>
+    </v-row>
       <v-card
           class="mx-auto"
           width="100%"
@@ -31,6 +34,7 @@
 import listScript from "@/components/dialogues/VSM-ListScript";
 import contextmenu from "@/components/VSM-ContextMenu";
 import Vue from "vue";
+import helpButton from "@/components/VSM-HelpButton";
 
 export default {
   name: "VSM-DialogueTabBasic",
@@ -39,6 +43,7 @@ export default {
     "vsm-scriptlist" : listScript,
     "vsm-contextmenu" : contextmenu,
     "vsm-scriptselector" : () => import("@/components/dialogues/VSM-FunctionScriptSelector"),
+    "vsm-help-button" : helpButton,
   },
 
   data: () => ({

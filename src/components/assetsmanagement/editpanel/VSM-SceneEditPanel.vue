@@ -52,6 +52,7 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
+        <vsm-help-button link="https://github.com/yami2200/visualnovelcreator/blob/master/DOC/doc_AssetManager.md"></vsm-help-button>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -77,6 +78,7 @@
 import jsonBaseCharacter from '../../../assets/base_characters.json';
 import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '../../../lib.js';
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
+import helpButton from "@/components/VSM-HelpButton";
 
 const baseScene = jsonBaseCharacter;
 
@@ -85,6 +87,10 @@ export default {
 
   props: {
     height: {required: true},
+  },
+
+  components:{
+    "vsm-help-button" : helpButton,
   },
 
   mixins: [mix_editassetpanel],
