@@ -40,6 +40,7 @@
         </v-tabs>
       </v-card-text>
       <v-card-actions>
+        <p class="ml-3"> v-{{ editorVersion }}</p>
         <v-spacer></v-spacer>
         <v-btn
             color="blue darken-1"
@@ -61,6 +62,8 @@
 </template>
 
 <script>
+import {remote} from "electron";
+
 export default {
   name: "VSM-EngineCodeEditPanel",
 
@@ -70,6 +73,13 @@ export default {
       currentPreferences : null,
       listTheme : ["light", "dark"]
     };
+  },
+
+  computed:{
+    editorVersion(){
+      if(remote.app.getVersion() !== undefined) return remote.app.getVersion();
+      return "1.0.x";
+    },
   },
 
   props:["preferences", "bus"],
