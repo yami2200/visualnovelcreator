@@ -14,6 +14,7 @@
           @keydown="pressKey"
           class="mr-4 ml-4"
           v-model="textinput"
+          ref="inputTextField"
           :rules="[rules.required, rules.counter, rules.duplicate]"
       ></v-text-field>
 
@@ -73,6 +74,10 @@ export default {
     show(textinit) {
       this.dialog = true;
       this.textinput = textinit;
+      let ref = this;
+      setTimeout(function(){
+        ref.$refs["inputTextField"].focus();
+      }, 100);
     },
     hide() {
       this.dialog = false;

@@ -4,59 +4,38 @@
     <vsm-contextmenu
         :bus="bus"
         :item-context-menu="itemsMenu"
-        @editpage="renameRequest"
-        @deletepage="deletePageRequest"
+        @editpage="renameRequest(contextMenuIndex)"
+        @deletepage="deletePageRequest(contextMenuIndex)"
     > </vsm-contextmenu>
 
-    <v-list shaped height="25vh" class="overflow-y-auto">
-      <v-list-item-group
-          mandatory
-          v-model="selectedItem"
-          color="primary"
-      >
-        <v-list-item
-            v-for="(item, i) in listPage"
-            :key="i"
-            @click="onChange"
-            @contextmenu="contextMenuClick($event, i)"
-        >
-          <v-list-item-icon>
-            <v-icon> mdi-book-open-page-variant-outline </v-icon>
-          </v-list-item-icon>
 
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-          </v-list-item-content>
+    <vsm-listobject
+        height="30vh"
+        :items="listPage"
+        :bus="bus1"
+        :mandatory="true"
+        :canSearch="false"
+        searchAttribrute="title"
+        @newObject="newPageRequest"
+        @contextMenuClick="contextMenuClick"
+        @editObject="renameRequest"
+        @deleteObject="deletePageRequest"
+        @changeItem="onChange">
 
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+      <template v-slot:default="slotProps">
+        <vsm-listobjectasseticon icon="mdi-book-open-page-variant-outline" :name="slotProps.itemList.title"></vsm-listobjectasseticon>
+      </template>
 
-    <v-app-bar
-        dense
-        height="50vh"
-    >
-      <v-spacer></v-spacer>
+    </vsm-listobject>
 
-      <v-btn icon @click="deletePageRequest" :disabled=disableEditButtons>
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="renameRequest" :disabled=disableEditButtons>
-        <v-icon>mdi-pencil-outline</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="newPageRequest">
-        <v-icon>mdi-plus-circle</v-icon>
-      </v-btn>
-
-      <v-spacer></v-spacer>
-    </v-app-bar>
   </v-card>
 </template>
 
 <script>
 import contextMenu from "@/components/VSM-ContextMenu";
+import ListObjectComp from "@/components/VSM-ListObjectComponent";
+import Vue from "vue";
+import ListObjectAssetIconComp from "@/components/listObject/VSM-ListObjectAssetIconComp";
 
 export default {
   name: "VSM-PagesPanel",
@@ -65,43 +44,40 @@ export default {
 
   components:{
     'vsm-contextmenu' : contextMenu,
+    "vsm-listobject" : ListObjectComp,
+    "vsm-listobjectasseticon" : ListObjectAssetIconComp,
   },
 
   data: () => ({
-    selectedItem: null,
     itemsMenu: [],
+    bus1: new Vue(),
+    contextMenuIndex: -1,
   }),
-
-  computed: {
-    disableEditButtons : function () {
-      return (this.selectedItem==null || this.selectedItem.unkillable);
-    }
-  },
 
   methods:{
     newPageRequest(){
-      this.$emit("requestPage", {index : this.selectedItem, type : "new"});
+      this.$emit("requestPage", {index : 0, type : "new"});
     },
-    deletePageRequest(){
-      this.$emit("requestPage", {index : this.selectedItem, type : "delete"});
+    deletePageRequest(index){
+      this.$emit("requestPage", {index : index, type : "delete"});
     },
-    renameRequest(){
-      this.$emit("requestPage", {index : this.selectedItem, type : "rename"});
+    renameRequest(index){
+      this.$emit("requestPage", {index : index, type : "rename"});
     },
-    onChange(){
+    onChange(i){
+      if(i === undefined || i === null) return;
       process.nextTick(() => {
-        this.$emit("changePage", this.selectedItem);
+        this.$emit("changePage", i);
       });
     },
     changeSelectedPage(newIndex){
-      if(newIndex<0) this.selectedItem = 0;
-      else this.selectedItem = newIndex;
+      this.bus1.$emit("setSelectItem", (newIndex<0 ? 0 : newIndex));
       this.$forceUpdate();
     },
 
     contextMenuClick(e, index){
       this.itemsMenu = [{title: "Rename Page", action: "editpage"},{title: "Delete Page", action: "deletepage"}]
-      this.selectedItem = index;
+      this.contextMenuIndex = index;
       this.bus.$emit("showContextMenu", e);
     },
 

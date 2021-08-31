@@ -12,8 +12,8 @@
         id="5"
         :bus="bus"
         :item-context-menu="itemsMenu"
-        @editasset="editAssetRequest"
-        @deleteasset="deleteAssetsRequest"
+        @editasset="editAssetRequest(contextMenuIndex)"
+        @deleteasset="deleteAssetsRequest(contextMenuIndex)"
     > </vsm-contextmenu>
 
     <v-tabs
@@ -53,56 +53,42 @@
           :value="'tab-' + (assets.indexOf(item)+1)"
       >
 
-        <v-list shaped height="57vh" class="overflow-y-auto">
-          <v-subheader> {{ item.type }} : </v-subheader>
-          <v-list-item-group
-              v-model="selectedItem[assets.indexOf(item)]"
-              color="primary"
-          >
-            <v-list-item
-                v-for="(iteml, i) in item.content"
-                :key="i"
-                @contextmenu="contextMenuClick($event, i)"
-            >
-              <v-list-item-avatar v-if="item.type == 'Characters' || item.type == 'Scenes' || item.type == 'Objects'">
-                <v-img :src="project_prop.directory + 'Assets\\' + item.type + '\\' + iteml.img"></v-img>
-              </v-list-item-avatar>
+        <vsm-listobject
+            v-if="item.type === 'Characters' || item.type === 'Scenes' || item.type === 'Objects'"
+            height="62vh"
+            :items="item.content"
+            :bus="bus1"
+            searchAttribrute="name"
+            @newObject="newAssetRequest"
+            @contextMenuClick="contextMenuClick"
+            @editObject="editAssetRequest"
+            @deleteObject="deleteAssetsRequest">
 
-              <v-list-item-icon v-else>
-                <v-icon> mdi-music-note-outline </v-icon>
-              </v-list-item-icon>
+          <template v-slot:default="slotProps">
+            <vsm-listobjectassetimage :img="project_prop.directory + 'Assets\\' + item.type + '\\' + slotProps.itemList.img" :name="slotProps.itemList.name"></vsm-listobjectassetimage>
+          </template>
 
-              <v-list-item-content>
-                <v-list-item-title v-text="iteml.name"></v-list-item-title>
-              </v-list-item-content>
+        </vsm-listobject>
 
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
+        <vsm-listobject
+            v-else
+            height="62vh"
+            :items="item.content"
+            :bus="bus1"
+            searchAttribrute="name"
+            @newObject="newAssetRequest"
+            @contextMenuClick="contextMenuClick"
+            @editObject="editAssetRequest"
+            @deleteObject="deleteAssetsRequest">
+
+          <template v-slot:default="slotProps">
+            <vsm-listobjectassetsound :name="slotProps.itemList.name" icon="mdi-music-note-outline"></vsm-listobjectassetsound>
+          </template>
+
+        </vsm-listobject>
 
       </v-tab-item>
     </v-tabs-items>
-
-    <v-app-bar
-        dense
-        height="50vh"
-    >
-      <v-spacer></v-spacer>
-
-      <v-btn icon @click="deleteAssetsRequest" :disabled=disableEditionButtons>
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="editAssetRequest" :disabled=disableEditionButtons>
-        <v-icon>mdi-pencil-outline</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="newAssetRequest">
-        <v-icon>mdi-plus-circle</v-icon>
-      </v-btn>
-
-      <v-spacer></v-spacer>
-    </v-app-bar>
 
   </v-card>
 </template>
@@ -116,6 +102,10 @@ import SoundEditPanel from './editpanel/VSM-Sound-Edit-Panel';
 import MusicEditPanel from './editpanel/VSM-Music-Edit-Panel';
 import {deleteFile, removeDependencyVariableAsset} from '../../lib.js';
 import contextMenu from "@/components/VSM-ContextMenu";
+import ListObjectComp from "@/components/VSM-ListObjectComponent";
+import ListObjectAssetImageComp from "@/components/listObject/VSM-ListObjectAssetImageComp";
+import ListObjectAssetSoundComp from "@/components/listObject/VSM-ListObjectAssetIconComp";
+import Vue from "vue";
 
 export default {
   name: "VSM-AssetsPanel",
@@ -136,6 +126,9 @@ export default {
     'vsm-sound-edit-modal' : SoundEditPanel,
     'vsm-music-edit-modal' : MusicEditPanel,
     'vsm-contextmenu' : contextMenu,
+    "vsm-listobject" : ListObjectComp,
+    "vsm-listobjectassetimage" : ListObjectAssetImageComp,
+    "vsm-listobjectassetsound" : ListObjectAssetSoundComp,
   },
 
   computed: {
@@ -148,9 +141,6 @@ export default {
     sizeTabs: function () {
       return (this.sizeHeight * 0.05)+"px";
     },
-    disableEditionButtons : function () {
-      return (this.tab==null || !(this.assets[this.tab.substring(4,5)-1].content.length>0 && this.selectedItem[this.tab.substring(4,5)-1]!=null));
-    }
   },
 
   data: () => ({
@@ -161,13 +151,16 @@ export default {
     EditionMode: true,
     EditionIndex: 0,
     itemsMenu: [],
+    contextMenuIndex: 0,
+    deleteIndex: 0,
+    bus1: new Vue(),
   }),
 
   methods: {
-    deleteAssetsRequest(){
+    deleteAssetsRequest(index){
       if(this.tab!=null){
         var indextab = this.tab.substring(4,5)-1;
-        var index = this.selectedItem[indextab];
+        this.deleteIndex = index;
         if(this.assets[indextab].content.length>0 && index!=null){
           this.headlineCRM = "Do you really want to delete this asset ?";
           this.textCRM = "You are trying to delete the "+this.assets[indextab].type.slice(0, -1)+" : "+this.assets[indextab].content[index].name +", are you sure you want to continue ? ";
@@ -178,8 +171,8 @@ export default {
     deleteAsset(){
       if(this.tab!=null){
         var indextab = this.tab.substring(4,5)-1;
-        var index = this.selectedItem[indextab];
-        if(this.assets[indextab].content.length>0 && index!=null){
+        var index = this.deleteIndex;
+        if(this.assets[indextab].content.length>0 && index!==null && index!==-1){
           switch (this.assets[indextab].type) {
             case "Characters" :
               this.deleteCharacterDependency(this.assets[indextab].content[index]);
@@ -198,7 +191,7 @@ export default {
               break;
           }
           this.assets[indextab].content.splice(index,1);
-          this.selectedItem[indextab] = undefined;
+          this.bus1.$emit("resetSelectItem");
           this.$emit("saveAssets");
         }
       }
@@ -227,14 +220,10 @@ export default {
       deleteFile(this.project_prop.directory + "Assets\\Objects\\" + object.img);
       removeDependencyVariableAsset("Object", object.name, "null", this.assets, this.listPages);
     },
-    editAssetRequest(){
-      if(!this.disableEditionButtons){
-        this.EditionMode = true;
-        var indextab = this.tab.substring(4,5)-1;
-        var index = this.selectedItem[indextab];
-        this.EditionIndex = index;
-        this.showEditionPanel(true);
-      }
+    editAssetRequest(index){
+      this.EditionMode = true;
+      this.EditionIndex = index;
+      this.showEditionPanel(true, index);
     },
     newAssetRequest(){
       if(this.tab!=null) {
@@ -242,9 +231,8 @@ export default {
         this.showEditionPanel(false);
       }
     },
-    showEditionPanel(editMode){
+    showEditionPanel(editMode, index = 0){
       var indexTab = this.tab.substring(4,5)-1;
-      var index = this.selectedItem[indexTab];
       this.bus.$emit('show'+this.assets[indexTab].type.slice(0, -1)+'EditPanel', {type: editMode, index: index});
     },
     saveEdit(){
@@ -254,8 +242,7 @@ export default {
 
     contextMenuClick(e, index){
       this.itemsMenu = [{title: "Edit Asset", action: "editasset"},{title: "Delete Asset", action: "deleteasset"}]
-      var indextab = this.tab.substring(4,5)-1;
-      this.selectedItem[indextab] = index;
+      this.contextMenuIndex = index;
       this.bus.$emit("showContextMenu5", e);
     },
   },

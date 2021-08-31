@@ -15,52 +15,22 @@
       </v-card-title>
       <v-card-text>
         <v-card>
-        <v-container>
 
-          <v-list max-height="39vh" class="mt-1 overflow-y-auto">
-            <v-list-item-group v-model="selectedItem">
-            <v-list-item
-                v-for="(varia, index) in variables"
-                :key="index"
-            >
-              <v-list-item-avatar>
-                <v-icon :color="varia.type.color" large> {{ varia.type.icon }} </v-icon>
-              </v-list-item-avatar>
+          <vsm-listobject
+              height="39vh"
+              :items="variables"
+              :bus="bus1"
+              searchAttribrute="name"
+              @newObject="newV"
+              @editObject="edit"
+              @deleteObject="deleteV">
 
-              <v-list-item-content>
-                <v-list-item-title style="overflow: visible;" class="text-h6"> <strong :style="{color: varia.type.color}">{{ varia.type.name }}</strong> : {{varia.name}} </v-list-item-title>
-              </v-list-item-content>
+            <template v-slot:default="slotProps">
+              <vsm-listobjectvariable :variable="slotProps.itemList"></vsm-listobjectvariable>
+            </template>
 
-              <v-list-item-action>
+          </vsm-listobject>
 
-              </v-list-item-action>
-
-            </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-container>
-        <v-app-bar
-            dense
-            bottom
-            width="100%"
-            height="50px"
-        >
-          <v-spacer></v-spacer>
-
-          <v-btn icon @click="deleteV" :disabled="disableEditButton">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-
-          <v-btn icon @click="edit" :disabled="disableEditButton">
-            <v-icon>mdi-pencil-outline</v-icon>
-          </v-btn>
-
-          <v-btn icon @click="newV">
-            <v-icon>mdi-plus-circle</v-icon>
-          </v-btn>
-
-          <v-spacer></v-spacer>
-        </v-app-bar>
         </v-card>
       </v-card-text>
       <v-card-actions>
@@ -85,6 +55,8 @@ import VSMEditVariablePanel from "@/components/variables/VSM-EditVariablePanel";
 import ConfirmationModal from "@/components/modalrequest/VSM-ConfirmationRequestModal"
 import {removeDependencyVariable} from "@/lib";
 import helpButton from "@/components/VSM-HelpButton";
+import ListObjectComp from "@/components/VSM-ListObjectComponent";
+import ListObjectVariableComp from "@/components/listObject/VSM-ListObjectVariableComp";
 
 export default {
   name: "VSM-VariablesPanel",
@@ -92,6 +64,8 @@ export default {
     "vsm-editpanelvariables" : VSMEditVariablePanel,
     "vsm-confirmation-request-modal" : ConfirmationModal,
     "vsm-help-button" : helpButton,
+    "vsm-listobject" : ListObjectComp,
+    "vsm-listobjectvariable" : ListObjectVariableComp,
   },
 
   props:["bus", "variables", "assets", "listPages"],
@@ -99,17 +73,11 @@ export default {
   data () {
     return {
       dialog: false,
-      selectedItem : null,
       headlineCRM: "",
       textCRM: "",
       bus1: new Vue(),
+      deleteIndex: 0,
     };
-  },
-
-  computed: {
-    disableEditButton() {
-      return this.selectedItem == null;
-    },
   },
 
   methods:{
@@ -117,7 +85,7 @@ export default {
       this.hide();
     },
     save(){
-      this.$forceUpdate();
+      this.bus1.$emit("updateList");
       this.$emit("save");
     },
     show(){
@@ -126,21 +94,22 @@ export default {
     hide(){
       this.dialog = false;
     },
-    edit(){
-      this.bus.$emit("showEditVariable", {type: true, index: this.selectedItem})
+    edit(index){
+      this.bus.$emit("showEditVariable", {type: true, index: index})
     },
     newV(){
       this.bus.$emit("showEditVariable", {type: false, index: -1})
     },
-    deleteV(){
-      if(this.disableEditButton) return;
+    deleteV(index){
       this.headlineCRM = "Do you really want to delete this variable ?";
-      this.textCRM = "You are trying to delete the variable : "+ this.variables[this.selectedItem].name +", are you sure you want to continue ? ";
+      this.textCRM = "You are trying to delete the variable : "+ this.variables[index].name +", are you sure you want to continue ? ";
+      this.deleteIndex = index;
       this.bus1.$emit('showConfirmationRequestModal');
     },
     deleteSelected(){
-      removeDependencyVariable(this.variables[this.selectedItem].type.name, this.variables[this.selectedItem].name, "null", this.listPages, this.assets);
-      this.variables.splice(this.selectedItem, 1);
+      removeDependencyVariable(this.variables[this.deleteIndex].type.name, this.variables[this.deleteIndex].name, "null", this.listPages, this.assets);
+      this.variables.splice(this.deleteIndex, 1);
+      this.bus1.$emit("setSelectItem", null);
       this.$emit("save");
     },
   },

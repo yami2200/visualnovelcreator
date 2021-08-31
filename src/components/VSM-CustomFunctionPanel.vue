@@ -14,45 +14,23 @@
       </v-card-title>
       <v-card-text>
         <v-card>
-          <v-container>
 
-            <v-list max-height="39vh" class="mt-1 overflow-y-auto">
-              <v-list-item-group v-model="selectedItem">
-                <v-list-item
-                    v-for="(functionC, index) in currentFunctions"
-                    :key="index"
-                >
+          <vsm-listobject
+              height="39vh"
+              :items="currentFunctions"
+              :bus="bus1"
+              searchAttribrute="name"
+              @newObject="newFunction"
+              @editObject="edit"
+              @deleteObject="deleteFunctionRequest"
+              @changeItem="changeItem">
 
-                  <v-list-item-content>
-                    <v-list-item-title style="overflow: visible;" class="text-h6"> <strong :style="{color: functionC.color}" style="text-shadow: 1px 1px 2px black;"> {{ functionC.name }}</strong> </v-list-item-title>
-                  </v-list-item-content>
+            <template v-slot:default="slotProps">
+              <vsm-listobjectfunction :functionC="slotProps.itemList"></vsm-listobjectfunction>
+            </template>
 
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-container>
-          <v-app-bar
-              dense
-              bottom
-              width="100%"
-              height="50px"
-          >
-            <v-spacer></v-spacer>
+          </vsm-listobject>
 
-            <v-btn icon @click="deleteFunctionRequest" :disabled="disableEditButton">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-
-            <v-btn icon @click="edit" :disabled="disableEditButton">
-              <v-icon>mdi-pencil-outline</v-icon>
-            </v-btn>
-
-            <v-btn icon @click="newFunction">
-              <v-icon>mdi-plus-circle</v-icon>
-            </v-btn>
-
-            <v-spacer></v-spacer>
-          </v-app-bar>
         </v-card>
       </v-card-text>
       <v-card-actions>
@@ -76,6 +54,8 @@ import EditCustomFunction from "./VSM-EditCustomFunctionPanel";
 
 import Vue from "vue";
 import helpButton from "@/components/VSM-HelpButton";
+import ListObjectComp from "@/components/VSM-ListObjectComponent";
+import ListObjectCustomFunctionComp from "@/components/listObject/VSM-ListObjectCustomFunctionComp";
 
 export default {
   name: "VSM-EngineCodeEditPanel",
@@ -84,12 +64,8 @@ export default {
     'vsm-confirmation-request-modal' : ConfirmationRequest,
     "vsm-editcustomfunction" : EditCustomFunction,
     "vsm-help-button" : helpButton,
-  },
-
-  computed:{
-    disableEditButton() {
-      return this.selectedItem == null;
-    },
+    "vsm-listobject" : ListObjectComp,
+    "vsm-listobjectfunction" : ListObjectCustomFunctionComp,
   },
 
   data () {
@@ -99,7 +75,8 @@ export default {
       textCRM: "Are you sure you want to delete this function : ",
       bus1: new Vue(),
       currentFunctions : [],
-      selectedItem : null,
+      deleteIndex: 0,
+      editIndex:0,
     };
   },
 
@@ -114,15 +91,17 @@ export default {
     newFunction(){
       this.bus1.$emit('showEditCustomFunction', {edit : false});
     },
-    edit(){
-      this.bus1.$emit('showEditCustomFunction', {edit : true, f: this.currentFunctions[this.selectedItem]});
+    edit(index){
+      this.editIndex = index;
+      this.bus1.$emit('showEditCustomFunction', {edit : true, f: this.currentFunctions[index]});
     },
-    deleteFunctionRequest(){
-      this.textCRM = "Are you sure you want to delete this custom function : " + this.currentFunctions[this.selectedItem].name;
+    deleteFunctionRequest(index){
+      this.textCRM = "Are you sure you want to delete this custom function : " + this.currentFunctions[index].name;
+      this.deleteIndex = index;
       this.bus1.$emit('showConfirmationRequestModal');
     },
     deleteFunction(){
-      if(this.selectedItem === -1 || this.selectedItem === null) return;
+      if(this.deleteIndex === -1 || this.deleteIndex === null) return;
 
       this.assets[6].content.forEach((p) => {
         p.listDialogues.forEach((d) => {
@@ -132,13 +111,13 @@ export default {
         });
       });
 
-      this.currentFunctions.splice(this.selectedItem,1);
-      this.selectedItem = null;
+      this.currentFunctions.splice(this.deleteIndex,1);
+      this.bus1.$emit("setSelectItem", null);
       this.$forceUpdate();
     },
 
     deleteFunctionCall(listAction){
-      listAction = listAction.filter((s) => s.code === undefined || (s.name !== this.currentFunctions[this.selectedItem].name));
+      listAction = listAction.filter((s) => s.code === undefined || (s.name !== this.currentFunctions[this.deleteIndex].name));
       listAction.forEach((f) => {
         if(f.action !== undefined) f.action = this.deleteFunctionCall(f.action);
         if(f.actionif !== undefined) f.actionif = this.deleteFunctionCall(f.actionif);
@@ -161,7 +140,7 @@ export default {
     saveCustomFunction(data){
       if(data.edit){
         // If the user change the name of the custom function
-        if(this.currentFunctions[this.selectedItem].name !== data.f.name){
+        if(this.currentFunctions[this.editIndex].name !== data.f.name){
           //let ref = this;
           this.assets[6].content.forEach((p) => {
             p.listDialogues.forEach((d) => {
@@ -172,7 +151,7 @@ export default {
           });
         }
         // If the user change the type/name of an input
-        if(JSON.stringify(this.currentFunctions[this.selectedItem].inputs) !== JSON.stringify(data.f.inputs)){
+        if(JSON.stringify(this.currentFunctions[this.editIndex].inputs) !== JSON.stringify(data.f.inputs)){
           this.assets[6].content.forEach((p) => {
             p.listDialogues.forEach((d) => {
               if(d.action !== undefined){
@@ -182,17 +161,17 @@ export default {
             });
           });
         }
-        this.currentFunctions[this.selectedItem] = data.f;
+        this.currentFunctions[this.editIndex] = data.f;
       } else {
         this.currentFunctions.push(data.f);
       }
-      this.$forceUpdate();
+      this.bus1.$emit("updateList");
     },
 
     renameCustomFunction(listAction, newname){
       listAction.forEach((s) => {
         if(s.code !== undefined){
-          if(s.name === this.currentFunctions[this.selectedItem].name) s.name = newname;
+          if(s.name === this.currentFunctions[this.editIndex].name) s.name = newname;
         }
         if(s.action !== undefined) s.action = this.renameCustomFunction(s.action, newname);
         if(s.actionif !== undefined) s.actionif = this.renameCustomFunction(s.actionif, newname);
@@ -224,7 +203,9 @@ export default {
       });
       return listAction;
     },
-
+    changeItem(index){
+      this.editIndex = index;
+    },
   },
 }
 </script>
