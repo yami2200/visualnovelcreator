@@ -1,6 +1,6 @@
 <template>
-  <v-app>
-    <v-main>
+  <v-app style="width: 100%">
+    <v-main style="width: 100%">
       <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @package="packageProjectRequest" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel" @customfunction="openCustomFunctionsPanel"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-packageproject :bus="bus" @save="packageProject"></vsm-packageproject>
@@ -11,7 +11,15 @@
       <vsm-editorpreferences :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
       <vsm-projectproperties :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
       <vsm-projectopening :bus="bus" :preferences="editorPreferences" @newProject="newProjectButton" @openProject="openProjectButton" @openRecent="loadProjectFromProjectProperties"></vsm-projectopening>
-        <v-row no-gutters>
+      <div class="mainWindow" id="mainWindow">
+        <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
+        <div id="separator"></div>
+        <div id="pageandassetmanager">
+          <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
+          <vsm-assets-panel @saveAssets="saveProjectButton" :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
+        </div>
+      </div>
+        <!--<v-row no-gutters>
           <v-col cols="8">
             <vsm-dialogue-manager v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
           </v-col>
@@ -19,7 +27,7 @@
             <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
             <vsm-assets-panel @saveAssets="saveProjectButton" :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
           </v-col>
-        </v-row>
+        </v-row>-->
     </v-main>
   </v-app>
 </template>
@@ -54,6 +62,57 @@ const {dialog} = remote;
 var pathPreferences = remote.app.getPath('appData');
 const pathApp = remote.app.getPath("exe");
 
+
+function dragElement(element, direction, firstid, secondid)
+{
+  var   md; // remember mouse down info
+  const first  = document.getElementById(firstid);
+  const second = document.getElementById(secondid);
+
+  element.onmousedown = onMouseDown;
+
+  function onMouseDown(e)
+  {
+    md = {e,
+      offsetLeft:  element.offsetLeft,
+      offsetTop:   element.offsetTop,
+      firstWidth:  first.offsetWidth,
+      secondWidth: second.offsetWidth,
+      firstHeight: first.offsetHeight,
+      secondHeight: second.offsetHeight
+    };
+
+    document.onmousemove = onMouseMove;
+    document.onmouseup = () => {
+      document.onmousemove = document.onmouseup = null;
+    }
+  }
+
+  function onMouseMove(e)
+  {
+    var delta = {x: e.clientX - md.e.clientX,
+      y: e.clientY - md.e.clientY};
+
+    if (direction === "H" ) // Horizontal
+    {
+      delta.x = Math.min(Math.max(delta.x, -md.firstWidth), md.secondWidth);
+
+      const sizeW = document.getElementById("mainWindow").offsetWidth;
+
+      element.style.left = ( md.offsetLeft + delta.x) / sizeW * 100 + "%";
+      first.style.width = (md.firstWidth + delta.x) / sizeW * 100+ "%";
+      second.style.width = (md.secondWidth - delta.x) / sizeW * 100 + "%";
+    } else if(direction === "V"){
+      delta.y = Math.min(Math.max(delta.y, -md.firstHeight), md.secondHeight);
+
+      element.style.top = md.offsetTop + delta.y + "px";
+      first.style.height = (md.firstHeight + delta.y) + "px";
+      second.style.height = (md.secondHeight - delta.y) + "px";
+    }
+  }
+}
+
+
 export default {
   name: 'App',
 
@@ -87,6 +146,8 @@ export default {
     ipcRenderer.on("notifShouldUseDarkColor", (event, message) => {
       console.log(message);
     });
+    dragElement( document.getElementById("separator"), "H" , "dialoguemanager", "pageandassetmanager");
+    //dragElement( document.getElementById("separator2"), "V" , "page", "asset");
   },
 
   created() {
@@ -466,6 +527,65 @@ export default {
 
 body{
   font-family: 'Karla', sans-serif;
+}
+
+.mainWindow{
+  width: 100%;
+  display: flex;
+}
+
+#separator {
+  cursor: col-resize;
+  background-color: #aaa;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='30'><path d='M2 0 v30 M5 0 v30 M8 0 v30' fill='none' stroke='black'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 5px;
+  height: 100vh;
+
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#separator2 {
+  cursor: row-resize;
+  background-color: #aaa;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='30'><path d='M2 0 v30 M5 0 v30 M8 0 v30' fill='none' stroke='black'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 5px;
+
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#dialoguemanager {
+  width: 80%;
+  height: 100%;
+  min-width: 100px;
+}
+
+#pageandassetmanager {
+  width: 20%;
+  height: 100vh;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+#page{
+  width: 100%;
+  height: 30%;
+  min-height: 100px;
+}
+
+#asset{
+  width: 100%;
+  height: 70%;
+  min-height: 100px;
 }
 
 </style>

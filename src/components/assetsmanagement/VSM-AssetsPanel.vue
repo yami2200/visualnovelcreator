@@ -53,39 +53,39 @@
           :value="'tab-' + (assets.indexOf(item)+1)"
       >
 
-        <vsm-listobject
-            v-if="item.type === 'Characters' || item.type === 'Scenes' || item.type === 'Objects'"
-            height="62vh"
-            :items="item.content"
-            :bus="bus1"
-            searchAttribrute="name"
-            @newObject="newAssetRequest"
-            @contextMenuClick="contextMenuClick"
-            @editObject="editAssetRequest"
-            @deleteObject="deleteAssetsRequest">
+            <vsm-listobject
+                v-if="item.type === 'Characters' || item.type === 'Scenes' || item.type === 'Objects'"
+                height="62vh"
+                :items="item.content"
+                :bus="bus1"
+                searchAttribrute="name"
+                @newObject="newAssetRequest"
+                @contextMenuClick="contextMenuClick"
+                @editObject="editAssetRequest"
+                @deleteObject="deleteAssetsRequest">
 
-          <template v-slot:default="slotProps">
-            <vsm-listobjectassetimage :img="project_prop.directory + 'Assets\\' + item.type + '\\' + slotProps.itemList.img" :name="slotProps.itemList.name"></vsm-listobjectassetimage>
-          </template>
+              <template v-slot:default="slotProps">
+                <vsm-listobjectassetimage :img="project_prop.directory + 'Assets\\' + item.type + '\\' + slotProps.itemList.img" :name="slotProps.itemList.name"></vsm-listobjectassetimage>
+              </template>
 
-        </vsm-listobject>
+            </vsm-listobject>
 
-        <vsm-listobject
-            v-else
-            height="62vh"
-            :items="item.content"
-            :bus="bus1"
-            searchAttribrute="name"
-            @newObject="newAssetRequest"
-            @contextMenuClick="contextMenuClick"
-            @editObject="editAssetRequest"
-            @deleteObject="deleteAssetsRequest">
+            <vsm-listobject
+                v-else
+                height="62vh"
+                :items="item.content"
+                :bus="bus1"
+                searchAttribrute="name"
+                @newObject="newAssetRequest"
+                @contextMenuClick="contextMenuClick"
+                @editObject="editAssetRequest"
+                @deleteObject="deleteAssetsRequest">
 
-          <template v-slot:default="slotProps">
-            <vsm-listobjectassetsound :name="slotProps.itemList.name" icon="mdi-music-note-outline"></vsm-listobjectassetsound>
-          </template>
+              <template v-slot:default="slotProps">
+                <vsm-listobjectassetsound :name="slotProps.itemList.name" icon="mdi-music-note-outline"></vsm-listobjectassetsound>
+              </template>
 
-        </vsm-listobject>
+            </vsm-listobject>
 
       </v-tab-item>
     </v-tabs-items>
