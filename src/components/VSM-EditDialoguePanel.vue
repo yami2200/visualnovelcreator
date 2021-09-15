@@ -60,6 +60,7 @@ import TabDialogueTransition from "@/components/dialogues/VSM-DialogueTabTransit
 import TabDialogueChoice from "@/components/dialogues/VSM-DialogueTabChoice"
 import TabDialogueScript from "@/components/dialogues/VSM-DialogueTabScript"
 import helpButton from "@/components/VSM-HelpButton";
+import {sizeChoiceNode} from "@/lib";
 
 export default {
   name: "VSM-EditDialoguePanel",
@@ -124,7 +125,10 @@ export default {
         }
       }
 
+
+      // ########################## CASE CHOICE DIALOGUE
       if(this.current.type === "choices"){
+        this.current.offsetLoc.x = -sizeChoiceNode(this.current.choices.length)/2;
         for(var i = 0;i<this.listDialogues.length ; i++){
           this.listDialogues[i] = this.listDialoguesTempo[i];
         }

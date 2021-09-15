@@ -7,7 +7,7 @@
   "id" : 0,
   "transitionpage" : "",
   "tabs" : ["Transition"],
-  "offsetLoc" : {"x" :  -10, "y" :  -5},
+  "offsetLoc" : {"x" :  -10.5, "y" :  -5},
   "previousDialogue" : [
     [{
       "id": -1,

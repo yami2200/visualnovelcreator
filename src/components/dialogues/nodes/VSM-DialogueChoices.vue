@@ -68,6 +68,7 @@
 import { mix_dialogueblock } from "@/mixins/MIX_DialogueBlock";
 import PlugNodeComponent from "@/components/dialogues/nodes/VSM-PlugNodeComponent";
 import InitialDialogueIcon from "@/components/dialogues/nodes/VSM-InitialDialogueIcon";
+import {sizeChoiceNode} from "@/lib";
 
 export default {
   name: "vsm-dialogueblock",
@@ -84,8 +85,7 @@ export default {
       return this.dialogue.x + (this.sizeBlock / 2) ;
     },
     sizeBlock : function (){
-      if(this.dialogue.choices.length<4) return 21;
-      return 21 + (this.dialogue.choices.length-3) * 7;
+      return sizeChoiceNode(this.dialogue.choices.length);
     },
     intervalSize : function (){
       return ((this.sizeBlock - this.dialogue.choices.length * 4) / (this.dialogue.choices.length+1));

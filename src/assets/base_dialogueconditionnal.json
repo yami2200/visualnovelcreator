@@ -20,7 +20,7 @@
   },
 
   "tabs" : ["Condition"],
-  "offsetLoc" : {"x" :  -10, "y" :  -7.5},
+  "offsetLoc" : {"x" :  -10.5, "y" :  -7.5},
   "previousDialogue" : [
     [{
       "id": -1,

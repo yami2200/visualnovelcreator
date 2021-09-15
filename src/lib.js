@@ -61,8 +61,20 @@ function removePreviousDialoguesFromOutput(listdialogues, indexDialogue, indexOu
 
 function squareIntoSelection(minX, maxX, minY, maxY, x, y, width, height){
     return (
+        (minY>=y && maxY<=y+height) && ((x>=minX && x<=maxX) || (x+width>=minX && x+width<=maxX))
+    ) || (
+        (minY<=y && maxY>=y) && ((minX>=x && minX<=x+width) || (maxX>=x && maxX<=x+width))
+    ) || (
         (((x+width >= minX && x+width <=maxX) || (x >= minX && x <= maxX)) && ((y >=minY && y <= maxY) || (y+height >=minY && y+height <= maxY)))
+    ) || (
+        ((minX>=x && minX<= x+width) || (maxX>=x && maxX<=x+width)) && ((minY>=y && minY<=y+height) || (maxY>=y && maxY<=y+height))
     );
+}
+
+function sizeChoiceNode(numberChoice){
+    var value = 21 + (numberChoice-3) * 7;
+    if(numberChoice<4) value = 21;
+    return value;
 }
 
 function createFileProject(directory, properties, assets){
@@ -478,5 +490,6 @@ export {
     createPackageWeb,
     createPackageWindows,
     getAllFilesPathAtDirectory,
-    getTextOperationNumberVariable
+    getTextOperationNumberVariable,
+    sizeChoiceNode
 };
