@@ -311,6 +311,7 @@ export default {
       this.saveProjectProperties(this.assets[8].content);
     },
     saveProjectButton(){
+      if(this.project_properties === null) return;
       this.processing = true;
 
       saveProperties(this.project_properties);
