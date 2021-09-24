@@ -39,6 +39,7 @@
 <script>
 import setter from "@/components/variables/VSM-SetterVariable"
 import listTypes from "@/assets/listTypesVariables.json"
+import {mix_editdialoguetab} from "@/mixins/MIX_EditDialogueTab";
 
 export default {
   name: "VSM-DialogueTabBasic",
@@ -47,7 +48,7 @@ export default {
     "vsm-setter" : setter
   },
 
-  props:["current", "assets"],
+  mixins: [mix_editdialoguetab],
 
   data : () => ({
     listTypesInput : ["String", "Integer"],

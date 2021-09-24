@@ -46,6 +46,7 @@
 import setter from "@/components/variables/VSM-SetterVariable"
 import baseChoice from "@/assets/base_choice.json"
 import baseObject from "@/assets/base_objectChoice.json"
+import {mix_editdialoguetab} from "@/mixins/MIX_EditDialogueTab";
 
 export default {
   name: "VSM-DialogueTabBasic",
@@ -53,6 +54,8 @@ export default {
   components:{
     "vsm-setter" : setter
   },
+
+  mixins: [mix_editdialoguetab],
 
   methods:{
     addChoice(){
@@ -154,7 +157,7 @@ export default {
     },
   },
 
-  props:["current", "assets", "listDialogues", "indexChoice"],
+  props:["listDialogues", "indexChoice"],
 }
 </script>
 

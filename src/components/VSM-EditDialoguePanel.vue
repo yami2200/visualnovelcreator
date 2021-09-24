@@ -17,12 +17,12 @@
                 v-for="(tab,indexT) in current.tabs"
                 :key="indexT"
             >
-              <vsm-tabdialogue v-if="tab === 'Dialogue'" :current="current" :assets="assets"></vsm-tabdialogue>
-              <vsm-tabcondition v-if="tab === 'Condition'" :current="current" :assets="assets"></vsm-tabcondition>
-              <vsm-tabinput v-if="tab === 'Input'" :current="current" :assets="assets"></vsm-tabinput>
-              <vsm-tabtransition v-if="tab === 'Transition'" :current="current" :assets="assets" :listPages="listPages"></vsm-tabtransition>
-              <vsm-tabchoice v-if="tab === 'Choice'" :current="current" :assets="assets" :list-dialogues="listDialoguesTempo" :index-choice="index"></vsm-tabchoice>
-              <vsm-tabscript v-if="tab === 'Script'" :current="current" :assets="assets"></vsm-tabscript>
+              <vsm-tabdialogue v-if="tab === 'Dialogue'" ref="dialogue" :current="current" :assets="assets"></vsm-tabdialogue>
+              <vsm-tabcondition v-if="tab === 'Condition'" ref="condition" :current="current" :assets="assets"></vsm-tabcondition>
+              <vsm-tabinput v-if="tab === 'Input'" ref="input" :current="current" :assets="assets"></vsm-tabinput>
+              <vsm-tabtransition v-if="tab === 'Transition'" ref="transition" :current="current" :assets="assets" :listPages="listPages"></vsm-tabtransition>
+              <vsm-tabchoice v-if="tab === 'Choice'" ref="choice" :current="current" :assets="assets" :list-dialogues="listDialoguesTempo" :index-choice="index"></vsm-tabchoice>
+              <vsm-tabscript v-if="tab === 'Script'" ref="script" :current="current" :assets="assets"></vsm-tabscript>
 
             </v-tab-item>
           </v-tabs-items>
@@ -60,12 +60,15 @@ import TabDialogueTransition from "@/components/dialogues/VSM-DialogueTabTransit
 import TabDialogueChoice from "@/components/dialogues/VSM-DialogueTabChoice"
 import TabDialogueScript from "@/components/dialogues/VSM-DialogueTabScript"
 import helpButton from "@/components/VSM-HelpButton";
+import {mix_modal} from "@/mixins/MIX_Modal";
 import {sizeChoiceNode} from "@/lib";
 
 export default {
   name: "VSM-EditDialoguePanel",
 
-  props:["bus", "listDialogues", "listVar", "assets", "listPages"],
+  props:["listDialogues", "listVar", "assets", "listPages"],
+
+  mixins:[mix_modal],
 
   components:{
     "vsm-tabdialogue" : TabDialogue,
@@ -84,7 +87,8 @@ export default {
   },
 
   data: () => ({
-    dialog: false,
+    //dialog: false,
+    nameText: "EditDialoguePanel",
     current: null,
     listDialoguesTempo : null,
     tab: "",
@@ -154,14 +158,22 @@ export default {
         this.dialog = true;
       });
     },
-    hide(){
-      this.dialog = false;
-    }
+    handleShortcut(e){
+      if(this.dialog){
+        if(e.control && e.key === "s"){
+          this.save();
+        } else if(e.key === "Escape"){
+          this.cancel();
+        } else {
+          if(this.tab !== null){
+            this.$refs[this.current.tabs[this.tab].toLowerCase()][0].handleShortcut(e);
+          }
+        }
+        return true;
+      }
+      return false;
+    },
   },
-
-  mounted() {
-    this.bus.$on("showEditDialoguePanel", this.show);
-  }
 }
 </script>
 

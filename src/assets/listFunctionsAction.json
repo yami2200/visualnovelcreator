@@ -4,6 +4,7 @@
     "component" : "Basic",
     "lightColor" : "#ff9870",
     "darkColor" : "#ff7b47",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -26,6 +27,7 @@
     "component" : "Basic",
     "lightColor" : "#5d56fc",
     "darkColor" : "#3c33ff",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -48,6 +50,7 @@
     "component" : "Basic",
     "lightColor" : "#5d56fc",
     "darkColor" : "#3c33ff",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -83,6 +86,7 @@
     "component" : "Basic",
     "lightColor" : "#5d56fc",
     "darkColor" : "#3c33ff",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -105,6 +109,7 @@
     "component" : "Basic",
     "lightColor" : "#a770ff",
     "darkColor" : "#873dff",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -127,6 +132,7 @@
     "component" : "Basic",
     "lightColor" : "#a770ff",
     "darkColor" : "#873dff",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [{
       "type": {
@@ -147,6 +153,7 @@
     "component" : "Basic",
     "lightColor" : "#d166ff",
     "darkColor" : "#c338ff",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -169,6 +176,7 @@
     "component" : "Basic",
     "lightColor" : "#d166ff",
     "darkColor" : "#c338ff",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -191,6 +199,7 @@
     "component" : "Basic",
     "lightColor" : "#fffa70",
     "darkColor" : "#fff83b",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -226,6 +235,7 @@
     "component" : "Basic",
     "lightColor" : "#fffa70",
     "darkColor" : "#fff83b",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {

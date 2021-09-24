@@ -19,6 +19,7 @@
           Cancel
         </v-btn>
         <v-btn
+            ref="validButton"
             color="green darken-1"
             text
             @click="accept"
@@ -49,6 +50,10 @@ export default {
   methods: {
     show() {
       this.dialog = true;
+      let ref = this;
+      setTimeout(function(){
+        ref.$refs["validButton"].$el.focus();
+      }, 100);
     },
     hide() {
       this.dialog = false;

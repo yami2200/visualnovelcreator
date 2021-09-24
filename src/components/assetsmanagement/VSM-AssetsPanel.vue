@@ -2,11 +2,11 @@
   <v-card height="67vh">
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
-    <vsm-character-edition-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-character-edition-modal>
-    <vsm-scene-edit-modal @accept="saveEdit" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages">  </vsm-scene-edit-modal>
-    <vsm-object-edit-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-object-edit-modal>
-    <vsm-sound-edit-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-sound-edit-modal>
-    <vsm-music-edit-modal @accept="saveEdit" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-music-edit-modal>
+    <vsm-character-edition-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-character-edition-modal>
+    <vsm-scene-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages">  </vsm-scene-edit-modal>
+    <vsm-object-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-object-edit-modal>
+    <vsm-sound-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-sound-edit-modal>
+    <vsm-music-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-music-edit-modal>
 
     <vsm-contextmenu
         id="5"
@@ -157,6 +157,9 @@ export default {
   }),
 
   methods: {
+    addShortcutPanelList(panel){
+      this.$emit("initShortcut", panel);
+    },
     deleteAssetsRequest(index){
       if(this.tab!=null){
         var indextab = this.tab.substring(4,5)-1;

@@ -4,6 +4,7 @@
     "component" : "CompSet",
     "lightColor" : "#b07838",
     "darkColor" : "#9c601c",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {

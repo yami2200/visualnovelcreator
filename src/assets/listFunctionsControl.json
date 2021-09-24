@@ -4,6 +4,7 @@
     "component" : "ControlIf",
     "lightColor" : "#eb3434",
     "darkColor" : "#eb3434",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -27,6 +28,7 @@
     "component" : "ControlIfElse",
     "lightColor" : "#eb3434",
     "darkColor" : "#eb3434",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {
@@ -51,6 +53,7 @@
     "component" : "Basic",
     "lightColor" : "#6aebac",
     "darkColor" : "#34e38e",
+    "enable" : true,
     "indentation" : 0,
     "inputs" : [
       {

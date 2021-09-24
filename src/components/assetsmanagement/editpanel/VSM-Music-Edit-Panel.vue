@@ -76,6 +76,7 @@ import jsonBaseMusic from "@/assets/base_music.json";
 import Vue from "vue";
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 import helpButton from "@/components/VSM-HelpButton";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 const baseMusic = jsonBaseMusic;
 
@@ -87,11 +88,12 @@ export default {
     "vsm-help-button" : helpButton,
   },
 
-  mixins: [mix_editassetpanel],
+  mixins: [mix_modal, mix_editassetpanel],
 
   data () {
     return {
       type:"MusicEditPanel",
+      nameText: "MusicEditPanel",
       soundInputFile: null,
       currentMusic: null,
       rules: {

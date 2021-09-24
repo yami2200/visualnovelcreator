@@ -12,22 +12,13 @@
       <vsm-projectproperties :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
       <vsm-projectopening :bus="bus" :preferences="editorPreferences" @newProject="newProjectButton" @openProject="openProjectButton" @openRecent="loadProjectFromProjectProperties"></vsm-projectopening>
       <div class="mainWindow" id="mainWindow">
-        <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
+        <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @initShortcut="addListPanelShortcut($event, true)" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
         <div id="separator"></div>
         <div id="pageandassetmanager">
           <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
-          <vsm-assets-panel @saveAssets="saveProjectButton" :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
+          <vsm-assets-panel @initShortcut="addListPanelShortcut" @saveAssets="saveProjectButton" :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
         </div>
       </div>
-        <!--<v-row no-gutters>
-          <v-col cols="8">
-            <vsm-dialogue-manager v-if="selectedDialoguePage!=null" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
-          </v-col>
-          <v-col cols="4">
-            <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
-            <vsm-assets-panel @saveAssets="saveProjectButton" :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
-          </v-col>
-        </v-row>-->
     </v-main>
   </v-app>
 </template>
@@ -424,7 +415,7 @@ export default {
     },
     saveEditorPreferences(pref){
       this.editorPreferences = pref;
-      writeFile(pathPreferences+"\\"+"visualnovelmaker"+"\\"+"preferences.json", JSON.stringify(this.editorPreferences));
+      writeFile(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json", JSON.stringify(this.editorPreferences));
       this.updateEditorPreferences();
     },
     addProjectToRecentPreferences(){
@@ -454,30 +445,14 @@ export default {
 
     // ############################# INPUTS
     shortcuts(event){
-      if(event.type === "keyDown"){
-        switch (event.key){
-          case "s":
-            if(event.control) {
-              this.saveProjectButton();
-            }
-            break;
-          case "c":
-            if(event.control) {
-              this.bus.$emit("copyDialogue");
-            }
-            break;
-          case "v":
-            if(event.control) {
-              this.bus.$emit("pasteDialogue");
-            }
-            break;
-          case "x":
-            if(event.control) {
-              this.bus.$emit("cutDialogue");
-            }
-            break;
-        }
+      if(event.type !== "keyDown") return;
+      for(let i = 0; i<this.listShortcutsPanel.length;i++){
+        if(this.listShortcutsPanel[i].f(event)) return;
       }
+    },
+    addListPanelShortcut(panel, end = false){
+      if(end) this.listShortcutsPanel.push(panel);
+      else this.listShortcutsPanel.splice(0,0,panel);
     },
     endProcessing(){
       setTimeout(() => {
@@ -516,6 +491,7 @@ export default {
     refresh : true,
     editorPreferences : null,
     w: remote.getCurrentWindow(),
+    listShortcutsPanel: [],
   }),
 
 
@@ -563,13 +539,13 @@ body{
 }
 
 #dialoguemanager {
-  width: 80%;
+  width: 65%;
   height: 100%;
   min-width: 100px;
 }
 
 #pageandassetmanager {
-  width: 20%;
+  width: 35%;
   height: 100vh;
   min-width: 200px;
   display: flex;

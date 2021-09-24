@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-list-item two-line>
-      <v-card :width="getWidth" :min-width="getWidth" :style="{marginLeft : getIndentation}" :color="getColor" height="55px" @contextmenu="contextMenuDM">
+      <v-card :width="getWidth" :min-width="getWidth" :style="{marginLeft : getIndentation, boxShadow: getBorder}" :color="getColor" height="55px" @contextmenu="contextMenuDM" @click="select">
         <v-row>
           <h2 class="ml-6 mr-1 mt-7"> {{ functionAction.name }} {{ functionAction.inputs.length>0  ? ':' : ''}} </h2>
 

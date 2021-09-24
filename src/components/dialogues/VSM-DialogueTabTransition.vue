@@ -22,10 +22,14 @@
 </template>
 
 <script>
+import {mix_editdialoguetab} from "@/mixins/MIX_EditDialogueTab";
+
 export default {
   name: "VSM-DialogueTabBasic",
 
-  props:["current", "assets", "listPages"],
+  props:["listPages"],
+
+  mixins: [mix_editdialoguetab],
 
   computed:{
     listPagesNames(){

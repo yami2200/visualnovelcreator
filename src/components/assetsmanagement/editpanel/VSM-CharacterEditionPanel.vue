@@ -236,13 +236,14 @@ import jsonBaseCharacter from '../../../assets/base_characters.json';
 import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '../../../lib.js';
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 import helpButton from "@/components/VSM-HelpButton.vue";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 const baseCharacter = jsonBaseCharacter;
 
 export default {
   name: "VSM-CharacterEditionPanel",
 
-  mixins: [mix_editassetpanel],
+  mixins: [mix_modal, mix_editassetpanel],
 
   components:{
     "vsm-help-button" : helpButton,
@@ -251,6 +252,7 @@ export default {
   data () {
     return {
       type:"CharacterEditPanel",
+      nameText: "CharacterEditPanel",
       indexAsset: 0,
       baseImage: null,
       currentCharacter: null,

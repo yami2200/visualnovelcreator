@@ -45,7 +45,7 @@
 
       > </vsm-contextmenu>
 
-    <vsm-editdialoguepanel :bus="bus" :listDialogues="listDialogues" @refresh="refresh" :assets="assets" :listPages="listPages" @DeleteTransition="deleteTransitionDialogue"></vsm-editdialoguepanel>
+    <vsm-editdialoguepanel @initShortcut="initShortcutLink" :bus="bus" :listDialogues="listDialogues" @refresh="refresh" :assets="assets" :listPages="listPages" @DeleteTransition="deleteTransitionDialogue"></vsm-editdialoguepanel>
 
           <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1, beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true, boundsPadding: 1}" style="outline: none;">
 
@@ -292,6 +292,7 @@ export default {
     dragOffsetX: 0,
     dragOffsetY: 0,
     selectedDialogue: -1,
+    editDialogueShortcutFunction: null,
 
     windowGame : null,
 
@@ -705,6 +706,21 @@ export default {
         this.selectingBoxContent = indexs;
       }
     },
+    shorcutHandle(e){
+      if(this.editDialogueShortcutFunction(e)) return;
+      if(e.control && e.key === "c"){
+        this.copyDialogues();
+      } else if(e.control && e.key === "x"){
+        this.cutDialogues();
+      } else if(e.control && e.key === "v"){
+        this.pasteDialogues();
+      } else if(e.control && e.key === "s"){
+        this.$emit("save");
+      }
+    },
+    initShortcutLink(p){
+      this.editDialogueShortcutFunction = p.f;
+    },
 
     // ############################ DIALOGUES EDITING
     addDialogue(type){
@@ -1012,10 +1028,8 @@ export default {
   mounted() {
     this.busEntry.$on("deleteTransitionId", this.deleteDialogueID);
     this.busEntry.$on("deleteAllTransitionId", this.deleteAllDialogueID);
-    this.busEntry.$on("copyDialogue", this.copyDialogues);
-    this.busEntry.$on("pasteDialogue", this.pasteDialogues);
-    this.busEntry.$on("cutDialogue", this.cutDialogues);
     this.busEntry.$on("reload", this.setInitialWhenLoading);
+    this.$emit("initShortcut", {name : "DialogueManager", f: this.shorcutHandle})
   }
 
 }

@@ -1,6 +1,6 @@
 <template>
   <v-list-item>
-    <v-btn @click="click" :width="getWidth" :style="{marginLeft : getIndentation}" :color="getColor"> </v-btn>
+    <v-btn @click="click" @contextmenu="$emit('contextmenu', $event)" :width="getWidth" :style="{marginLeft : getIndentation}" :color="getColor"> </v-btn>
   </v-list-item>
 </template>
 

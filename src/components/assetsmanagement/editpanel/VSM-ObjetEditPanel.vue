@@ -81,13 +81,14 @@ import jsonBaseObject from '../../../assets/base_object.json';
 import {deleteFile, getDate, readFileSync, removeDependencyVariableAsset, renameFile, writeFile} from "@/lib";
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 import helpButton from "@/components/VSM-HelpButton";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 const baseObject = jsonBaseObject;
 
 export default {
   name: "VSM-ObjetEditPanel",
 
-  mixins: [mix_editassetpanel],
+  mixins: [mix_modal, mix_editassetpanel],
 
   components:{
     "vsm-help-button" : helpButton,
@@ -96,6 +97,7 @@ export default {
   data () {
     return {
       type: "ObjectEditPanel",
+      nameText: "ObjectEditPanel",
       baseImage: null,
       currentObject: null,
       rules: {

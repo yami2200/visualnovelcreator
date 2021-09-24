@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import FileCustomFunction from "@/assets/base_customFunctionFile.json";
+import {clipboard} from "electron";
 const removeFilePart = dirname => path.parse(dirname).dir;
 
 function readFileSync(path) {
@@ -472,6 +473,17 @@ function getCustomFunctionFileText(listCustomF){
     return structure.begin + text + structure.end;
 }
 
+function checkValidClipboard(type){
+    let clipboardObj = null;
+    try {
+        clipboardObj = JSON.parse(clipboard.readText());
+    } catch {
+        //empty
+    }
+    if(!(clipboardObj === null || clipboardObj.type === undefined || clipboardObj.type !== type || clipboardObj.content === undefined)) return clipboardObj;
+    return null;
+}
+
 export {
     readFileSync,
     writeFile,
@@ -491,5 +503,6 @@ export {
     createPackageWindows,
     getAllFilesPathAtDirectory,
     getTextOperationNumberVariable,
-    sizeChoiceNode
+    sizeChoiceNode,
+    checkValidClipboard
 };
