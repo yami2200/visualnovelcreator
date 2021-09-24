@@ -13,8 +13,14 @@
 > To call a function in a dialogue, you juste have to click on a gray bar button. A window with the list of all functions will then appears.
 >
 >![Script Selector](docimg_scriptSelector.jpg)
-
 > Here is now the list of all functions with their parameters & their actions.
+
+> You can also insert new function above or below an other one by hovering with mouse a side of a function and then right click:
+> ![Script Insertion](docimg_ScriptingInsertion.gif)
+> You can also paste functions like this :
+>![Script Paster Insertion](docimg_ScriptingInsertion&Paster.gif)
+
+> In order to manipulate functions correctly, you can select them with left click. If you press CTRL, you can select many of them at the same time.
 
 > ### Actions :
 > > Actions Functions change some visual or audio elements in game.
@@ -38,8 +44,6 @@
 > | Function Name | Function Description | Function Parameters | Image |
 > |:---|:---:|:---:|:---:|
 > | Set | This function set the value of a variable. | <ol type="1"><li> **[Variable]** : The variable you want to set. </li><li> **[VariableType]** The new value of the variable.</li></ol>   | ![Tabs list](scripts/docimg_set.jpg) |
-> | Set Random Integer| This function set a random value of an integer variable. | <ol type="1"><li> **[IntegerVariable]** : The variable you want to set. </li><li> **[Integer]** The minimum value to set. </li><li> **[Integer]** The maximum value to set. </li></ol>   | ![Tabs list](scripts/docimg_setRandomInteger.jpg) |
-> | Set Random Float| This function set a random value of an float variable. | <ol type="1"><li> **[FloatVariable]** : The variable you want to set. </li><li> **[Float]** The minimum value to set. </li><li> **[Float]** The maximum value to set. </li></ol>   | ![Tabs list](scripts/docimg_setRandomFloat.jpg) |
 
 > ### Controls :
 > > Controls functions have an impact on the others functions which come next.
@@ -62,3 +66,9 @@
 > 
 > | <ol type="1"><li> First of all, it changes the background with the Forest Scene. </li><li> Then we arrive in a if function. We see that the condition is equal to true. So we execute functions in it. </li><li> We play the music Nyancat. </li><li> Then we have a delay of 3 seconds. Even if there is no function after the delay in the **if block**. The delay will take effect and we will leave the **if block** only after 3 seconds. </li><li> After the 3 seconds delay, the background is changed with the mountain scene asset. </li></ul> | ![Scripting Panel](scripts/docimg_exampleDelay.jpg) |
 > |:---:   |:---:   |
+
+> ### Useful Shortcuts :
+> You can press CTRL + C to copy selected functions.
+> You can press CTRL + X to cut selected functions.
+> You can press CTRL + V when hovering a function's side, to paste functions above or below.
+> You can press Delete to delete selected functions.
