@@ -13,10 +13,12 @@
 > To call a function in a dialogue, you juste have to click on a gray bar button. A window with the list of all functions will then appears.
 >
 >![Script Selector](docimg_scriptSelector.jpg)
+
 > Here is now the list of all functions with their parameters & their actions.
 
 > You can also insert new function above or below an other one by hovering with mouse a side of a function and then right click:
 > ![Script Insertion](docimg_ScriptingInsertion.gif)
+
 > You can also paste functions like this :
 >![Script Paster Insertion](docimg_ScriptingInsertion&Paster.gif)
 
