@@ -70,7 +70,7 @@
 > |:---:   |:---:   |
 
 > ### Useful Shortcuts :
-> You can press CTRL + C to copy selected functions.
-> You can press CTRL + X to cut selected functions.
-> You can press CTRL + V when hovering a function's side, to paste functions above or below.
+> You can press CTRL + C to copy selected functions.\
+> You can press CTRL + X to cut selected functions.\
+> You can press CTRL + V when hovering a function's side, to paste functions above or below.\
 > You can press Delete to delete selected functions.
