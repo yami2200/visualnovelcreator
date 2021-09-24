@@ -90,6 +90,7 @@ import ConfirmationRequest from "./modalrequest/VSM-ConfirmationRequestModal";
 import EditFileEngine from "./VSM-EditFileEngineCode";
 import baseAsset from "@/assets/base_assets.json";
 import Vue from "vue";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 export default {
   name: "VSM-EngineCodeEditPanel",
@@ -106,9 +107,11 @@ export default {
     },
   },
 
+
+
   data () {
     return {
-      dialog: false,
+      nameText : "EngineCodeEditPanel",
       headlineCRM: "Delete File",
       textCRM: "Are you sure you want to delete this file : ",
       tab: null,
@@ -123,12 +126,9 @@ export default {
     };
   },
 
-  props:["assets", "bus", "properties"],
+  props:["assets", "properties"],
 
-  mounted() {
-    this.bus.$on('showEngineCodeEditPanel', this.show);
-    this.bus.$on('hideEngineCodeEditPanel', this.hide);
-  },
+  mixins:[mix_modal],
 
   methods:{
     acceptModal(){

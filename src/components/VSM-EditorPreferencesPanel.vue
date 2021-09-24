@@ -70,7 +70,6 @@ export default {
 
   data () {
     return {
-      dialog: false,
       currentPreferences : null,
       listTheme : ["light", "dark"],
       nameText: "EditorPreferencesPanel",

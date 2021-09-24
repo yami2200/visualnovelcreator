@@ -159,7 +159,6 @@ export default {
 
   data () {
     return {
-      dialog: false,
       currentProperties : null,
       icon: null,
       oldiconinput: null,
