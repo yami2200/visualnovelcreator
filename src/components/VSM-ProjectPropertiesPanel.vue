@@ -152,6 +152,7 @@
 import {shell} from "electron";
 import Setter from "@/components/variables/VSM-SetterVariable";
 import {deleteFile, getDate, readFileSync, writeFile} from "../lib";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 export default {
   name: "VSM-EngineCodeEditPanel",
@@ -164,6 +165,7 @@ export default {
       oldiconinput: null,
       banner: null,
       oldbannerinput: null,
+      nameText: "ProjectPropertiesPanel",
     };
   },
 
@@ -171,12 +173,9 @@ export default {
     'vsm-setter' : Setter,
   },
 
-  props:["properties", "bus", "assets"],
+  mixins:[mix_modal],
 
-  mounted() {
-    this.bus.$on('showProjectPropertiesPanel', this.show);
-    this.bus.$on('hideProjectPropertiesPanel', this.hide);
-  },
+  props:["properties", "assets"],
 
   methods:{
     onClickFileInputIcon(i){

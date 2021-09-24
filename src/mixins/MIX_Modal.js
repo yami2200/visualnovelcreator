@@ -30,7 +30,7 @@ export const mix_modal = {
           //empty
         },
         cancel(){
-          //empty
+          this.hide();
         },
         hide(){
             this.dialog = false;

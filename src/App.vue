@@ -8,8 +8,8 @@
       <vsm-variables-panel v-if="assets!=null && assets.length>5" @save="saveProjectButton" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
       <vsm-enginecode-panel :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
       <vsm-customfunctions :assets="assets" :bus="bus" @save="saveCustomFunctions"></vsm-customfunctions>
-      <vsm-editorpreferences :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
-      <vsm-projectproperties :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
+      <vsm-editorpreferences @initShortcut="addListPanelShortcut" :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
+      <vsm-projectproperties @initShortcut="addListPanelShortcut" :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
       <vsm-projectopening :bus="bus" :preferences="editorPreferences" @newProject="newProjectButton" @openProject="openProjectButton" @openRecent="loadProjectFromProjectProperties"></vsm-projectopening>
       <div class="mainWindow" id="mainWindow">
         <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @initShortcut="addListPanelShortcut($event, true)" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>

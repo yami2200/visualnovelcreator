@@ -63,6 +63,7 @@
 
 <script>
 import {remote} from "electron";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 export default {
   name: "VSM-EngineCodeEditPanel",
@@ -71,9 +72,12 @@ export default {
     return {
       dialog: false,
       currentPreferences : null,
-      listTheme : ["light", "dark"]
+      listTheme : ["light", "dark"],
+      nameText: "EditorPreferencesPanel",
     };
   },
+
+  mixins:[mix_modal],
 
   computed:{
     editorVersion(){
@@ -82,12 +86,7 @@ export default {
     },
   },
 
-  props:["preferences", "bus"],
-
-  mounted() {
-    this.bus.$on('showEditorPreferencesPanel', this.show);
-    this.bus.$on('hideEditorPreferencesPanel', this.hide);
-  },
+  props:["preferences"],
 
   methods:{
     save(){
