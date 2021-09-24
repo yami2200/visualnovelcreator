@@ -17,30 +17,30 @@
     > </vsm-contextmenu>
 
     <v-tabs
+        ref="tabs"
         v-model="tab"
         icon
         show-arrows
         height="5vh"
     >
-      <v-tabs-slider></v-tabs-slider>
 
-      <v-tab href="#tab-1">
+      <v-tab href="#tab-1" style="min-width: unset!important; width: 20%!important">
         <v-icon>mdi-account-multiple</v-icon>
       </v-tab>
 
-      <v-tab href="#tab-2">
+      <v-tab href="#tab-2" style="min-width: unset!important; width: 20%!important">
         <v-icon>mdi-home-city</v-icon>
       </v-tab>
 
-      <v-tab href="#tab-3">
+      <v-tab href="#tab-3" style="min-width: unset!important; width: 20%!important">
         <v-icon>mdi-archive</v-icon>
       </v-tab>
 
-      <v-tab href="#tab-4">
+      <v-tab href="#tab-4" style="min-width: unset!important; width: 20%!important">
         <v-icon>mdi-music-circle-outline</v-icon>
       </v-tab>
 
-      <v-tab href="#tab-5">
+      <v-tab href="#tab-5" style="min-width: unset!important; width: 20%!important">
         <v-icon>mdi-music-note-outline</v-icon>
       </v-tab>
 
@@ -154,9 +154,18 @@ export default {
     contextMenuIndex: 0,
     deleteIndex: 0,
     bus1: new Vue(),
+    ro: null,
+    timeoutUpdate: null,
   }),
 
+  mounted() {
+    this.bus.$on("updateAssetPanel", this.update);
+  },
+
   methods: {
+    update(){
+      this.$refs.tabs.callSlider();
+    },
     addShortcutPanelList(panel){
       this.$emit("initShortcut", panel);
     },

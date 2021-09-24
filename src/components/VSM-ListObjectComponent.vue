@@ -1,5 +1,5 @@
 <template>
-  <v-container ref="containerList" :style="{width: '100%', padding: '0px', height: height}">
+  <v-container ref="containerList" :style="{width: '100%', padding: '0px', height: height}" style="max-width: unset">
     <v-list shaped height="calc(100% - 50px)" width="100%" class="overflow-y-auto">
       <v-list-item-group
           :mandatory="mandatory !== undefined && mandatory && !searchMode"

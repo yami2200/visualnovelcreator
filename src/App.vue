@@ -53,8 +53,7 @@ const {dialog} = remote;
 var pathPreferences = remote.app.getPath('appData');
 const pathApp = remote.app.getPath("exe");
 
-
-function dragElement(element, direction, firstid, secondid)
+function dragElement(element, direction, firstid, secondid, fUpdate)
 {
   var   md; // remember mouse down info
   const first  = document.getElementById(firstid);
@@ -76,6 +75,7 @@ function dragElement(element, direction, firstid, secondid)
     document.onmousemove = onMouseMove;
     document.onmouseup = () => {
       document.onmousemove = document.onmouseup = null;
+      fUpdate();
     }
   }
 
@@ -137,8 +137,7 @@ export default {
     ipcRenderer.on("notifShouldUseDarkColor", (event, message) => {
       console.log(message);
     });
-    dragElement( document.getElementById("separator"), "H" , "dialoguemanager", "pageandassetmanager");
-    //dragElement( document.getElementById("separator2"), "V" , "page", "asset");
+    dragElement( document.getElementById("separator"), "H" , "dialoguemanager", "pageandassetmanager", () => {this.bus.$emit("updateAssetPanel")});
   },
 
   created() {
@@ -493,6 +492,8 @@ export default {
     editorPreferences : null,
     w: remote.getCurrentWindow(),
     listShortcutsPanel: [],
+    ro: null,
+    timeoutUpdate: null,
   }),
 
 
