@@ -38,11 +38,11 @@
                 alt="Default Image"
             ></v-img>
 
-            <img
-                v-else
-                :height="maxHeightImage"
-                :src="require('../../../assets/logo.png')"
-            >
+            <v-avatar v-else tile color="#CCCCCC" size="300" style="width: 100%!important;" class="ma-2">
+              <v-icon>
+                mdi-image
+              </v-icon>
+            </v-avatar>
 
             <v-spacer></v-spacer>
 
