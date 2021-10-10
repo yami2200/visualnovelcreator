@@ -224,6 +224,7 @@ export default {
       if(this.listDelete.length === undefined || this.listDelete.length === 0) return;
       let sortedList = this.listDelete.sort((a,b) => (a.index > b.index) ? -1 : ((b.index > a.index) ? 1 : 0));
       sortedList.forEach((e) => {
+        e.setSelect(false);
         e.fromActions.splice(e.index, 1);
       });
       this.listSelection = [];

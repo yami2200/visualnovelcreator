@@ -74,7 +74,7 @@ export const mix_scriptcomponent = {
         switchMouseHoverPart(dir, newClass, refID){
             this.mouseLeave();
             let ref = this;
-            this.timeoutMouseHover = setTimeout(function(){ ref.emitHoverDirection(); ref.$refs[refID].$el.classList.add(newClass); clearTimeout(ref.timeoutMouseHover); ref.timeoutMouseHover = null; }, 1000, ref);
+            this.timeoutMouseHover = setTimeout(function(){ ref.emitHoverDirection(); if(ref.$refs[refID] !== undefined) {ref.$refs[refID].$el.classList.add(newClass);} clearTimeout(ref.timeoutMouseHover); ref.timeoutMouseHover = null; }, 1000, ref);
             this.mouseDirection = dir;
         },
         deleteF(){
