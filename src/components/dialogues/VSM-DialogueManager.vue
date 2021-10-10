@@ -956,6 +956,7 @@ export default {
         if(this.listDialogues[d.index].type !== "transition"){
 
           var copy = JSON.parse(JSON.stringify(this.listDialogues[d.index]));
+          if(copy.initial) copy.initial = false;
 
           copy.previousDialogue.forEach((p) => {
             p.forEach((pp) => {
