@@ -168,6 +168,19 @@
           "type": "value",
           "value": "null"
         }
+      },
+      {
+        "type": {
+          "name" : "Float",
+          "icon" : "mdi-decimal",
+          "color" : "#4de396",
+          "defaultValue" : 1.0
+        },
+        "name": "Pitch",
+        "value": {
+          "type": "value",
+          "value": 1.0
+        }
       }
     ]
   },

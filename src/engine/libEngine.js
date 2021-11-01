@@ -75,6 +75,14 @@ function getVariableValue(variable, assets){
                     return input1 * input2;
                 case "÷":
                     return (variable.type.name === "Integer" ? Math.trunc(input1 / input2) : input1 / input2);
+                case "Random":
+                    let min = Math.min(input1, input2);
+                    let max = Math.max(input1, input2);
+                    return (variable.type.name === "Integer" ? Math.floor(Math.random() * (max - min) + min) : Math.random() * (max - min) + min);
+                case "Min" :
+                    return Math.min(input1, input2);
+                case "Max" :
+                    return Math.max(input1, input2);
             }
             return false;
         }
