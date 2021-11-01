@@ -227,6 +227,7 @@ export default {
         e.setSelect(false);
         e.fromActions.splice(e.index, 1);
       });
+      this.unselectAll();
       this.listSelection = [];
     },
     deleteSelectionRequest(list){

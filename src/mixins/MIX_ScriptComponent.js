@@ -78,7 +78,7 @@ export const mix_scriptcomponent = {
             this.mouseDirection = dir;
         },
         deleteF(){
-            this.$emit("deleteFunction", {index: this.index});
+            this.$emit("deleteFunction", {index: this.index, setSelect: this.setSelected});
         },
     },
 
