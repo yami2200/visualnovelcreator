@@ -37,6 +37,7 @@ body{
     opacity:0.75;
     height: 20vh;
     width:100%;
+    transition: transform 1s;
 }
 
 .unselectable {
