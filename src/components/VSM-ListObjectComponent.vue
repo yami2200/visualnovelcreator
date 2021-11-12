@@ -64,7 +64,7 @@ export default {
   computed: {
     listItems(){
       if(this.items === undefined) return [];
-      if(this.searchMode) return this.items.filter((item) => item[this.searchAttribrute].includes(this.search));
+      if(this.searchMode) return this.items.filter((item) => item[this.searchAttribrute].toLowerCase().includes(this.search.toLowerCase()));
       return this.items;
     },
     disableEditionButtons(){
