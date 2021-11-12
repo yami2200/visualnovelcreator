@@ -5,9 +5,10 @@
         :bus="bus"
         :item-context-menu="itemsMenu"
         @editpage="renameRequest(contextMenuIndex)"
-        @deletepage="deletePageRequest(contextMenuIndex)"
+        @deletepage="deletePageButton(contextMenuIndex)"
     > </vsm-contextmenu>
 
+    <vsm-confirmation @accept="deletePageRequest" :bus="bus1" headline="Do you really want to delete this page ?" :text="textCRM"></vsm-confirmation>
 
     <vsm-listobject
         height="30vh"
@@ -19,7 +20,7 @@
         @newObject="newPageRequest"
         @contextMenuClick="contextMenuClick"
         @editObject="renameRequest"
-        @deleteObject="deletePageRequest"
+        @deleteObject="deletePageButton"
         @changeItem="onChange">
 
       <template v-slot:default="slotProps">
@@ -34,6 +35,7 @@
 <script>
 import contextMenu from "@/components/VSM-ContextMenu";
 import ListObjectComp from "@/components/VSM-ListObjectComponent";
+import ConfirmationRequestModal from "@/components/modalrequest/VSM-ConfirmationRequestModal";
 import Vue from "vue";
 import ListObjectAssetIconComp from "@/components/listObject/VSM-ListObjectAssetIconComp";
 
@@ -46,20 +48,29 @@ export default {
     'vsm-contextmenu' : contextMenu,
     "vsm-listobject" : ListObjectComp,
     "vsm-listobjectasseticon" : ListObjectAssetIconComp,
+    "vsm-confirmation" : ConfirmationRequestModal,
   },
 
   data: () => ({
     itemsMenu: [],
     bus1: new Vue(),
     contextMenuIndex: -1,
+    deletedIndex: -1,
+    textCRM: ""
   }),
 
   methods:{
     newPageRequest(){
       this.$emit("requestPage", {index : 0, type : "new"});
     },
-    deletePageRequest(index){
-      this.$emit("requestPage", {index : index, type : "delete"});
+    deletePageButton(index){
+      this.deletedIndex = index;
+      this.textCRM = "You are trying to delete the page : "+this.listPage[index].title+", are you sure you want to continue ? ";
+      this.bus1.$emit('showConfirmationRequestModal');
+    },
+    deletePageRequest(){
+      if(this.deletedIndex === -1) return;
+      this.$emit("requestPage", {index : this.deletedIndex, type : "delete"});
     },
     renameRequest(index){
       this.$emit("requestPage", {index : index, type : "rename"});
