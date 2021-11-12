@@ -15,13 +15,14 @@
                 v-model="functionAction.inputs[0].value.value"
                 label="Choose a variable"
                 solo
+                @click.stop
                 @change="changeVar"
             ></v-select>
           </v-col>
 
-          <vsm-setter v-if="functionAction.inputs[0].value.value !== ''" :key="index" :initialval="false" :variable="functionAction.inputs[1]" :assets="assets" :listvar="assets[5].content" class="ml-2 mt-5" :showName="true"></vsm-setter>
+          <vsm-setter v-if="functionAction.inputs[0].value.value !== ''" :key="index" :initialval="false" :variable="functionAction.inputs[1]" :assets="assets" :listvar="assets[5].content" class="mt-5" :showName="true"></vsm-setter>
           <v-spacer></v-spacer>
-          <v-btn icon class="ml-5 mr-5 mt-5" @click="deleteF">
+          <v-btn icon class="ml-5 mr-5 mt-5" @click.stop="deleteF">
             <v-icon color="black">mdi-delete</v-icon>
           </v-btn>
         </v-row>
@@ -63,9 +64,6 @@ export default {
     click(){
       this.$emit("click", this.index);
     },
-    deleteF(){
-      this.$emit("delete", this.index);
-    }
   },
 
 }

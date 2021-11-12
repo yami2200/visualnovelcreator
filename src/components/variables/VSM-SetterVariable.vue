@@ -1,9 +1,9 @@
 <template>
-  <v-card height="40px">
+  <v-card height="40px" @click.stop="editVar" @mouseenter="hoverButton" @mouseleave="leaveButton">
 
     <vsm-tooltip
         :bus="bus1"
-        :text="variable.name"
+        :text="tooltipText"
     >
     </vsm-tooltip>
 
@@ -15,11 +15,11 @@
 
     <v-card-text>
       <v-row justify="center" align="center">
-        <p class="ml-5" style="float: left" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
-        <v-spacer></v-spacer>
+        <p class="ml-1 mr-1" style="float: left; margin-top: 5px" :style="{color: colorText}" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
+        <!--<v-spacer></v-spacer>
         <v-btn icon class="mb-3" @click="editVar" @mouseenter="hoverButton" @mouseleave="leaveButton">
           <v-icon>mdi-pencil-outline</v-icon>
-        </v-btn>
+        </v-btn>-->
       </v-row>
     </v-card-text>
 
@@ -45,8 +45,21 @@ export default {
 
   computed:{
     valueShow(){
+      if(this.variable.value.value === "") return "none";
       return this.variable.value.value;
-    }
+    },
+    colorText(){
+      if(this.valueShow === "null" || this.variable.value.value === ""){
+        return "#960000"
+      }
+      return this.$vuetify.theme.themes[this.theme].text;
+    },
+    theme(){
+      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
+    },
+    tooltipText(){
+      return "Edit "+this.variable.name;
+    },
   },
 
   components:{

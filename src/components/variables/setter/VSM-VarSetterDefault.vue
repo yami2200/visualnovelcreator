@@ -28,10 +28,11 @@
             ></v-radio>
           </v-radio-group>
 
-          <slot></slot>
+          <slot v-if="!disabledInputSpecific"></slot>
 
           <v-select
               class="mt-5 ml-3"
+              v-if="disabledInputSpecific"
               :disabled="!disabledInputSpecific"
               :items="listCompatibleVariables"
               item-text="name"
