@@ -24,25 +24,11 @@
         height="5vh"
     >
 
-      <v-tab href="#tab-1" style="min-width: unset!important; width: 20%!important">
-        <v-icon>mdi-account-multiple</v-icon>
-      </v-tab>
-
-      <v-tab href="#tab-2" style="min-width: unset!important; width: 20%!important">
-        <v-icon>mdi-home-city</v-icon>
-      </v-tab>
-
-      <v-tab href="#tab-3" style="min-width: unset!important; width: 20%!important">
-        <v-icon>mdi-archive</v-icon>
-      </v-tab>
-
-      <v-tab href="#tab-4" style="min-width: unset!important; width: 20%!important">
-        <v-icon>mdi-music-circle-outline</v-icon>
-      </v-tab>
-
-      <v-tab href="#tab-5" style="min-width: unset!important; width: 20%!important">
-        <v-icon>mdi-music-note-outline</v-icon>
-      </v-tab>
+      <vsm-tab href="#tab-1" icon="mdi-account-multiple" tooltip="Characters"></vsm-tab>
+      <vsm-tab href="#tab-2" icon="mdi-home-city" tooltip="Scenes"></vsm-tab>
+      <vsm-tab href="#tab-3" icon="mdi-archive" tooltip="Objects"></vsm-tab>
+      <vsm-tab href="#tab-4" icon="mdi-music-circle-outline" tooltip="Musics"></vsm-tab>
+      <vsm-tab href="#tab-5" icon="mdi-music-note-outline" tooltip="Sounds"></vsm-tab>
 
     </v-tabs>
 
@@ -105,6 +91,7 @@ import contextMenu from "@/components/VSM-ContextMenu";
 import ListObjectComp from "@/components/VSM-ListObjectComponent";
 import ListObjectAssetImageComp from "@/components/listObject/VSM-ListObjectAssetImageComp";
 import ListObjectAssetSoundComp from "@/components/listObject/VSM-ListObjectAssetIconComp";
+import Tab from "@/components/assetsmanagement/VSM-Tab-Asset";
 import Vue from "vue";
 
 export default {
@@ -129,6 +116,7 @@ export default {
     "vsm-listobject" : ListObjectComp,
     "vsm-listobjectassetimage" : ListObjectAssetImageComp,
     "vsm-listobjectassetsound" : ListObjectAssetSoundComp,
+    "vsm-tab": Tab,
   },
 
   computed: {
