@@ -1,11 +1,5 @@
 <template>
-  <v-card height="40px" @click.stop="editVar" @mouseenter="hoverButton" @mouseleave="leaveButton">
-
-    <vsm-tooltip
-        :bus="bus1"
-        :text="tooltipText"
-    >
-    </vsm-tooltip>
+  <v-card height="40px" @click.stop="editVar">
 
     <vsm-setter-integer @newval="setNewValue" :assets="assets" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-integer>
     <vsm-setter-string @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-string>
@@ -13,15 +7,16 @@
     <vsm-setter-boolean @newval="setNewValue" :assets="assets" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-boolean>
     <vsm-setter-asset @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :assets="assets" :onlyVariable="onlyVariable"> </vsm-setter-asset>
 
-    <v-card-text>
-      <v-row justify="center" align="center">
-        <p class="ml-1 mr-1" style="float: left; margin-top: 5px" :style="{color: colorText}" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
-        <!--<v-spacer></v-spacer>
-        <v-btn icon class="mb-3" @click="editVar" @mouseenter="hoverButton" @mouseleave="leaveButton">
-          <v-icon>mdi-pencil-outline</v-icon>
-        </v-btn>-->
-      </v-row>
-    </v-card-text>
+    <v-tooltip top :disabled="disableTooltip">
+      <template v-slot:activator="{ on }">
+        <v-card-text v-on="on">
+          <v-row justify="center" align="center">
+            <p class="ml-1 mr-1" style="float: left; margin-top: 5px" :style="{color: colorText}" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
+          </v-row>
+        </v-card-text>
+      </template>
+      <span>{{ tooltipText }}</span>
+    </v-tooltip>
 
   </v-card>
 </template>
@@ -34,7 +29,6 @@ import SetterBoolean from "./setter/VSM-VarSetterBoolean";
 import SetterAsset from "./setter/VSM-VarSetterAsset";
 
 import Vue from "vue";
-import tooltip from "@/components/VSM-Tooltip";
 
 export default {
   name: "VSM-SetterInteger",
@@ -60,6 +54,9 @@ export default {
     tooltipText(){
       return "Edit "+this.variable.name;
     },
+    disableTooltip(){
+      return this.showName === undefined || !this.showName;
+    },
   },
 
   components:{
@@ -68,22 +65,11 @@ export default {
     "vsm-setter-float" : SetterFloat,
     "vsm-setter-boolean" :SetterBoolean,
     "vsm-setter-asset" : SetterAsset,
-    'vsm-tooltip' : tooltip,
   },
 
   props:["variable", "listvar", "initialval", "assets", "onlyVariable", "showName"],
 
   methods:{
-    hoverButton(e){
-      if(this.showName !== undefined && this.showName){
-        this.bus1.$emit("showTooltip", e);
-      }
-    },
-    leaveButton(e){
-      if(this.showName !== undefined && this.showName){
-        this.bus1.$emit("hideTooltip", e);
-      }
-    },
     editVar(){
       this.bus1.$emit("showSetter"+this.variable.type.name);
     },

@@ -193,9 +193,7 @@ export default {
       }
 
       let v = this.listSelection.filter(c => c.index === data.index && c.fromActions === data.actions);
-      if(v.length>0){
-        console.log("already selected !");
-      } else {
+      if(!v.length>0) {
         this.unselectAll();
         this.addComponentToSelection({index : data.index, fromActions: data.actions, actions: data.actions, setSelect: data.setSelect});
       }

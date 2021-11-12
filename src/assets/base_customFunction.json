@@ -5,6 +5,7 @@
   "lightColor" : "",
   "darkColor" : "",
   "indentation" : 0,
+  "enable" : true,
   "inputs" : [],
   "code" : ""
 }
