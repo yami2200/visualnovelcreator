@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import libraries_files from "@/assets/library.json";
 import FileCustomFunction from "@/assets/base_customFunctionFile.json";
 import {clipboard} from "electron";
 const removeFilePart = dirname => path.parse(dirname).dir;
@@ -94,6 +95,8 @@ function createFileProject(directory, properties, assets){
     });
 
     fs.mkdirSync(propertiesWrite.directory+"Assets\\Properties\\", { recursive: true });
+    writeFile(propertiesWrite.directory+"Assets\\Properties\\vuejs.js", libraries_files.vue);
+    writeFile(propertiesWrite.directory+"Assets\\Properties\\howler.js", libraries_files.howler);
     writeFile(propertiesWrite.directory+properties.name+".vnc", JSON.stringify(propertiesWrite));
     writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
     writeFile(propertiesWrite.directory+"engine_assets.js", "var assets = "+JSON.stringify(assets)+";");
