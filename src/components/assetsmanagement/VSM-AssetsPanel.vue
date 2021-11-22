@@ -93,6 +93,7 @@ import ListObjectAssetImageComp from "@/components/listObject/VSM-ListObjectAsse
 import ListObjectAssetSoundComp from "@/components/listObject/VSM-ListObjectAssetIconComp";
 import Tab from "@/components/assetsmanagement/VSM-Tab-Asset";
 import Vue from "vue";
+import path from "path";
 
 export default {
   name: "VSM-AssetsPanel",
@@ -197,7 +198,7 @@ export default {
       }
     },
     deleteCharacterDependency(character) {
-      var dir = this.project_prop.directory + "Assets\\Characters\\";
+      var dir = path.normalize(this.project_prop.directory + "Assets\\Characters\\");
       deleteFile(dir + character.img);
       for(var i = 0; i<character.imgOthers.length; i++){
         deleteFile(dir + character.imgOthers[i].img);
@@ -205,19 +206,19 @@ export default {
       removeDependencyVariableAsset("Character", character.name, "null", this.assets, this.listPages);
     },
     deleteSceneDependency(scene){
-      deleteFile(this.project_prop.directory + "Assets\\Scenes\\" + scene.img);
+      deleteFile(path.normalize(this.project_prop.directory + "Assets\\Scenes\\" + scene.img));
       removeDependencyVariableAsset("Scene", scene.name, "null", this.assets, this.listPages);
     },
     deleteSoundDependency(sound){
-      deleteFile(this.project_prop.directory + "Assets\\Sounds\\" + sound.path);
+      deleteFile(path.normalize(this.project_prop.directory + "Assets\\Sounds\\" + sound.path));
       removeDependencyVariableAsset("Sound", sound.name, "null", this.assets, this.listPages);
     },
     deleteMusicDependency(music){
-      deleteFile(this.project_prop.directory + "Assets\\Musics\\" + music.path);
+      deleteFile(path.normalize(this.project_prop.directory + "Assets\\Musics\\" + music.path));
       removeDependencyVariableAsset("Music", music.name, "null", this.assets, this.listPages);
     },
     deleteObjectDependency(object){
-      deleteFile(this.project_prop.directory + "Assets\\Objects\\" + object.img);
+      deleteFile(path.normalize(this.project_prop.directory + "Assets\\Objects\\" + object.img));
       removeDependencyVariableAsset("Object", object.name, "null", this.assets, this.listPages);
     },
     editAssetRequest(index){

@@ -153,6 +153,7 @@ import {shell} from "electron";
 import Setter from "@/components/variables/VSM-SetterVariable";
 import {deleteFile, getDate, readFileSync, writeFile} from "../lib";
 import {mix_modal} from "@/mixins/MIX_Modal";
+import path from "path";
 
 export default {
   name: "VSM-EngineCodeEditPanel",
@@ -198,14 +199,14 @@ export default {
         deleteFile(this.currentProperties.directory + this.currentProperties.banner);
         let filename = "DefaultBanner" + getDate() + "." + this.banner.name.split('.').pop();
         let filedata = readFileSync(this.banner.path);
-        this.currentProperties.banner = "Assets\\Properties\\"+filename;
+        this.currentProperties.banner = path.normalize("Assets\\Properties\\"+filename);
         writeFile(this.currentProperties.directory + this.currentProperties.banner, filedata);
       }
       if(this.icon !== null && this.icon.path !== "" && this.currentProperties.directory + this.currentProperties.icon !== this.icon.path){
         deleteFile(this.currentProperties.directory + this.currentProperties.icon);
         let filename = "DefaultIcon" + getDate() + "." + this.icon.name.split('.').pop();
         let filedata = readFileSync(this.icon.path);
-        this.currentProperties.icon = "Assets\\Properties\\"+filename;
+        this.currentProperties.icon = path.normalize("Assets\\Properties\\"+filename);
         writeFile(this.currentProperties.directory + this.currentProperties.icon, filedata);
       }
       this.$emit("save", this.currentProperties);

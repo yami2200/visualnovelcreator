@@ -22,8 +22,6 @@
 </template>
 
 <script>
-//const remote = require('electron').remote;
-
 export default {
   name: "VSM-Dropdown-Menu",
 
@@ -36,29 +34,12 @@ export default {
     },
   },
 
-  /*created() {
-    remote.getCurrentWindow().addListener("resize", this.myEventHandler);
-  },
-
-  destroyed() {
-    remote.getCurrentWindow().removeListener("resize", this.myEventHandler);
-  },*/
-
-  /*methods: {
-    myEventHandler() {
-      this.height = window.innerHeight;
-    }
-  },*/
-
   computed: {
     sizeButton: function () {
       return (this.height * this.sizeHeight / 100)+"px";
     }
   },
 
-  /*data: () => ({
-    height: window.innerHeight,
-  }),*/
 }
 </script>
 

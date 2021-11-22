@@ -77,6 +77,7 @@ import Vue from "vue";
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 import helpButton from "@/components/VSM-HelpButton";
 import {mix_modal} from "@/mixins/MIX_Modal";
+import path from "path";
 
 const baseSound = jsonBaseSound;
 
@@ -99,7 +100,7 @@ export default {
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
-        existCharName: value => (this.assets[4].content.filter(e => e.name === value).length < 1 || this.previousName == value) || 'Already Exist',
+        existCharName: value => (this.assets[4].content.filter(e => e.name === value).length < 1 || this.previousName === value) || 'Already Exist',
       },
       oldSoundInput: {name: "", path: ""},
       audiobus: new Vue(),
@@ -109,12 +110,12 @@ export default {
 
   computed: {
     canSave: function () {
-      if(this.editionMode) return (this.currentSound!=null && this.currentSound.name != "" && (this.soundInputFile!=null) && ((!this.assets[4].content.some(a => a.name == this.currentSound.name)) || this.currentSound.name == this.previousName))
-      return (this.currentSound!=null && this.currentSound.name != "" && this.soundInputFile!=null && !this.assets[4].content.some(a => a.name == this.currentSound.name));
+      if(this.editionMode) return (this.currentSound!=null && this.currentSound.name !== "" && (this.soundInputFile!=null) && ((!this.assets[4].content.some(a => a.name === this.currentSound.name)) || this.currentSound.name === this.previousName))
+      return (this.currentSound!=null && this.currentSound.name !== "" && this.soundInputFile!=null && !this.assets[4].content.some(a => a.name === this.currentSound.name));
     },
     getUrl: function () {
       if(this.soundInputFile == null) return "";
-      if(this.soundInputFile.path != this.currentSound.path) return this.soundInputFile.path
+      if(this.soundInputFile.path !== this.currentSound.path) return this.soundInputFile.path
       return this.currentSound.path;
     }
   },
@@ -125,7 +126,7 @@ export default {
       if(this.editionMode){
         this.previousName = this.assets[4].content[this.indexEdition].name;
         this.currentSound = JSON.parse(JSON.stringify(this.assets[4].content[this.indexEdition]));
-        this.soundInputFile = { name: this.currentSound.path, path: this.projectProp.directory + "Assets\\Sounds\\"+this.currentSound.path};
+        this.soundInputFile = { name: this.currentSound.path, path: path.normalize(this.projectProp.directory + "Assets\\Sounds\\"+this.currentSound.path)};
         this.volume = this.currentSound.volume / 100;
         process.nextTick(this.onChangeSound);
       } else {
@@ -146,22 +147,22 @@ export default {
         var filename = "";
         var filedata = "";
         if(this.editionMode){
-          if(this.currentSound.name != this.previousName){
-            if(this.soundInputFile.name == this.currentSound.path){
+          if(this.currentSound.name !== this.previousName){
+            if(this.soundInputFile.name === this.currentSound.path){
               filename = this.currentSound.name + getDate() + "." + this.currentSound.path.split('.').pop();
-              renameFile(this.projectProp.directory + "Assets\\Sounds\\" + this.currentSound.path, this.projectProp.directory + "Assets\\Sounds\\" + filename);
+              renameFile(path.normalize(this.projectProp.directory + "Assets\\Sounds\\" + this.currentSound.path), path.normalize(this.projectProp.directory + "Assets\\Sounds\\" + filename));
             }
 
             removeDependencyVariableAsset("Sound", this.previousName, this.currentSound.name, this.assets, this.listPages);
           }
 
-          if(this.soundInputFile.name != this.currentSound.path){
-            deleteFile(this.projectProp.directory + "Assets\\Sounds\\" + this.currentSound.path);
+          if(this.soundInputFile.name !== this.currentSound.path){
+            deleteFile(path.normalize(this.projectProp.directory + "Assets\\Sounds\\" + this.currentSound.path));
             filename = this.currentSound.name + getDate() + "." + this.soundInputFile.name.split('.').pop();
             filedata = readFileSync(this.soundInputFile.path);
-            writeFile(this.projectProp.directory + "Assets\\Sounds\\" + filename, filedata);
+            writeFile(path.normalize(this.projectProp.directory + "Assets\\Sounds\\" + filename), filedata);
             this.currentSound.path = filename;
-          } else if (filename != "") {
+          } else if (filename !== "") {
             this.currentSound.path = filename;
           }
 
@@ -172,7 +173,7 @@ export default {
         } else {
           filename = this.currentSound.name + getDate() + "." + this.soundInputFile.name.split('.').pop();
           filedata = readFileSync(this.soundInputFile.path);
-          writeFile(this.projectProp.directory + "Assets\\Sounds\\" + filename, filedata);
+          writeFile(path.normalize(this.projectProp.directory + "Assets\\Sounds\\" + filename), filedata);
 
           this.currentSound.path = filename;
           this.currentSound.volume = this.volume*100;

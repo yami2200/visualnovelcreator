@@ -58,6 +58,7 @@
 <script>
 import {remote} from "electron";
 import {existFile} from "@/lib";
+import pathM from "path";
 const dialog = remote.dialog;
 
 export default {
@@ -102,7 +103,7 @@ export default {
       var path = dialog.showOpenDialogSync({
         properties: ['openDirectory']
       });
-      if(path === null || path === undefined || !existFile(path+"\\")) return;
+      if(path === null || path === undefined || !existFile(pathM.normalize(path+"\\"))) return;
       if(path.length>0) this.project.directory = path[0];
     },
   },

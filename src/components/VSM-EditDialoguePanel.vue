@@ -87,7 +87,6 @@ export default {
   },
 
   data: () => ({
-    //dialog: false,
     nameText: "EditDialoguePanel",
     current: null,
     listDialoguesTempo : null,

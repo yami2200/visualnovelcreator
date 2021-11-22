@@ -261,7 +261,7 @@ export default {
       this.assets = JSON.parse(JSON.stringify(jsonBaseAsset));
       createFileProject(data.directory, data, this.assets)
       this.project_properties = data;
-      this.project_properties.directory = data.directory+"\\"+data.name+"\\";
+      this.project_properties.directory = path.join(data.directory, data.name+"\\");
       this.assets[8].content = this.project_properties;
       this.assets[7].content.forEach((f) => {
         writeFile(this.project_properties.directory+f.title, f.value);
@@ -289,10 +289,11 @@ export default {
       if(path.length>0) file_properties = JSON.parse(readFileSync(path[0]));
       this.loadProjectFromProjectProperties(file_properties, path);
     },
-    loadProjectFromProjectProperties(file_properties, path){
+    loadProjectFromProjectProperties(file_properties, paths){
       if(file_properties!=null){
-        var realpath = path[0].substring(0, path[0].lastIndexOf("\\"));
-        file_properties.directory = realpath+"\\";
+        let realpath = paths[0].substring(0, paths[0].lastIndexOf("/"));
+        if(process.platform === "win32") realpath = paths[0].substring(0, paths[0].lastIndexOf("\\"));
+        file_properties.directory = path.normalize(realpath+"\\");
         var assetsTempo = JSON.parse(readFileSync(file_properties.directory+"assets.json"));
         if(assetsTempo!=null){
           this.project_properties = file_properties;
@@ -319,20 +320,20 @@ export default {
       this.endProcessing();
     },
     saveAsProjectButton(){
-      var path = dialog.showOpenDialogSync({
+      var pathP = dialog.showOpenDialogSync({
         properties: ["openDirectory"],
       });
-      if(path === null || path === undefined || path.length===0) return;
+      if(pathP === null || pathP === undefined || pathP.length===0) return;
 
       this.processing = true;
 
-      const realpath = path[0]+"\\";
+      const realpath = path.normalize(pathP[0]+"\\");
       var tempoProperties = JSON.parse(JSON.stringify(this.project_properties));
-      tempoProperties.directory = realpath+this.project_properties.name+"\\";
+      tempoProperties.directory = path.normalize(realpath+this.project_properties.name+"\\");
       createFileProject(realpath, tempoProperties, this.assets)
 
-      const srcDir = this.project_properties.directory + "Assets\\";
-      const destDir = tempoProperties.directory+"Assets\\";
+      const srcDir = path.normalize(this.project_properties.directory + "Assets\\");
+      const destDir = path.normalize(tempoProperties.directory+"Assets\\");
 
       fse.copySync(srcDir, destDir,{ overwrite: true });
 
@@ -375,7 +376,7 @@ export default {
     loadEditorPreferences(first = true){
       var preferences = null;
       try{
-        preferences = JSON.parse(readFileSync(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json"));
+        preferences = JSON.parse(readFileSync(path.normalize(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json")));
       }
       catch {
         console.log("An error occured when trying to read editor preferences ! \n The editor will load default preferences.");
@@ -391,7 +392,7 @@ export default {
           editorPreferencesNew.theme = "dark";
         }
 
-        writeFile(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json", JSON.stringify(editorPreferencesNew));
+        writeFile(path.normalize(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json"), JSON.stringify(editorPreferencesNew));
         this.loadEditorPreferences(false);
       } else {
         alert("An error occured when trying to read editor preferences ! \n The editor will load default preferences.");
@@ -415,7 +416,7 @@ export default {
     },
     saveEditorPreferences(pref){
       this.editorPreferences = pref;
-      writeFile(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json", JSON.stringify(this.editorPreferences));
+      writeFile(path.normalize(pathPreferences+"\\"+"visualnovelcreator"+"\\"+"preferences.json"), JSON.stringify(this.editorPreferences));
       this.updateEditorPreferences();
     },
     addProjectToRecentPreferences(){

@@ -31,7 +31,7 @@
             <v-spacer></v-spacer>
 
             <v-img
-                v-if="baseImage!=null && baseImage.path!=''"
+                v-if="baseImage!=null && baseImage.path !== ''"
                 :height="maxHeightImage"
                 :src="baseImage.path"
                 contain
@@ -80,6 +80,7 @@ import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependen
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 import helpButton from "@/components/VSM-HelpButton";
 import {mix_modal} from "@/mixins/MIX_Modal";
+import path from "path";
 
 const baseScene = jsonBaseCharacter;
 
@@ -105,7 +106,7 @@ export default {
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
-        existCharName: value => (this.assets[1].content.filter(e => e.name === value).length < 1 || this.previousName == value) || 'Already Exist',
+        existCharName: value => (this.assets[1].content.filter(e => e.name === value).length < 1 || this.previousName === value) || 'Already Exist',
       },
       oldimageinput: {name: "", path: ""},
       filesToDelete : [],
@@ -114,8 +115,8 @@ export default {
 
   computed: {
     canSave: function () {
-      if(this.editionMode) return (this.currentScene!=null && this.currentScene.name != "" && (this.baseImage!=null) && ((!this.assets[1].content.some(a => a.name == this.currentScene.name)) || this.currentScene.name == this.previousName))
-      return (this.currentScene!=null && this.currentScene.name != "" && this.baseImage!=null && !this.assets[1].content.some(a => a.name == this.currentScene.name));
+      if(this.editionMode) return (this.currentScene!=null && this.currentScene.name !== "" && (this.baseImage!=null) && ((!this.assets[1].content.some(a => a.name === this.currentScene.name)) || this.currentScene.name === this.previousName))
+      return (this.currentScene!=null && this.currentScene.name !== "" && this.baseImage!=null && !this.assets[1].content.some(a => a.name === this.currentScene.name));
     },
     maxHeightImage: function () {
       return this.height * 0.4;
@@ -129,7 +130,7 @@ export default {
       if(this.editionMode){
         this.previousName = this.assets[1].content[this.indexEdition].name;
         this.currentScene = JSON.parse(JSON.stringify(this.assets[1].content[this.indexEdition]));
-        this.baseImage = { name: this.currentScene.img, path: this.projectProp.directory + "Assets\\Scenes\\"+this.currentScene.img};
+        this.baseImage = { name: this.currentScene.img, path: path.normalize(this.projectProp.directory + "Assets\\Scenes\\"+this.currentScene.img)};
       } else {
         this.previousName = "";
         this.currentScene = JSON.parse(JSON.stringify(baseScene));
@@ -142,22 +143,22 @@ export default {
         var filename = "";
         var filedata = "";
         if(this.editionMode){
-          if(this.currentScene.name != this.previousName){
-            if(this.baseImage.name == this.currentScene.img){
+          if(this.currentScene.name !== this.previousName){
+            if(this.baseImage.name === this.currentScene.img){
               filename = this.currentScene.name + getDate() + "." + this.currentScene.img.split('.').pop();
-              renameFile(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img, this.projectProp.directory + "Assets\\Scenes\\" + filename);
+              renameFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img), path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + filename));
             }
 
             removeDependencyVariableAsset("Scene", this.previousName, this.currentScene.name, this.assets, this.listPages);
           }
 
-          if(this.baseImage.name != this.currentScene.img){
-            deleteFile(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img);
+          if(this.baseImage.name !== this.currentScene.img){
+            deleteFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img));
             filename = this.currentScene.name + getDate() + "." + this.baseImage.name.split('.').pop();
             filedata = readFileSync(this.baseImage.path);
-            writeFile(this.projectProp.directory + "Assets\\Scenes\\" + filename, filedata);
+            writeFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + filename), filedata);
             this.currentScene.img = filename;
-          } else if (filename != "") {
+          } else if (filename !== "") {
             this.currentScene.img = filename;
           }
 
@@ -166,7 +167,7 @@ export default {
         } else {
           filename = this.currentScene.name + getDate() + "." + this.baseImage.name.split('.').pop();
           filedata = readFileSync(this.baseImage.path);
-          writeFile(this.projectProp.directory + "Assets\\Scenes\\" + filename, filedata);
+          writeFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + filename), filedata);
 
           this.currentScene.img = filename;
 

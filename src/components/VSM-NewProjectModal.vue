@@ -59,6 +59,8 @@
 import baseProject from './../assets/base_projectproperties.json'
 import {remote} from "electron";
 import {existFile} from "@/lib";
+import pathM from "path";
+
 const dialog = remote.dialog;
 
 export default {
@@ -71,7 +73,7 @@ export default {
       dialog: false,
       rules: {
         required: value => !!value || 'Required.',
-        counter: value => value.length <= 20 || 'Max 20 characters',
+        counter: value => value.length <= 40 || 'Max 40 characters',
       },
       project: null,
     };
@@ -106,7 +108,7 @@ export default {
       var path = dialog.showOpenDialogSync({
         properties: ['openDirectory']
       });
-      if(path === null || path === undefined || !existFile(path+"\\")) return;
+      if(path === null || path === undefined || !existFile(pathM.normalize(path+"\\"))) return;
       if(path.length>0) this.project.directory = path[0];
     },
   },
