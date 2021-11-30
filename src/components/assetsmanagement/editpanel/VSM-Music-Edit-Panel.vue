@@ -126,7 +126,7 @@ export default {
       if(this.editionMode){
         this.previousName = this.assets[3].content[this.indexEdition].name;
         this.currentMusic = JSON.parse(JSON.stringify(this.assets[3].content[this.indexEdition]));
-        this.soundInputFile = { name: this.currentMusic.path, path: path.normalize(this.projectProp.directory + "Assets\\Musics\\"+this.currentMusic.path)};
+        this.soundInputFile = { name: this.currentMusic.path, path: path.join(this.projectProp.directory, "Assets", "Musics", this.currentMusic.path)};
         this.volume = this.currentMusic.volume / 100;
         process.nextTick(this.onChangeMusic);
       } else {
@@ -150,17 +150,17 @@ export default {
           if(this.currentMusic.name !== this.previousName){
             if(this.soundInputFile.name === this.currentMusic.path){
               filename = this.currentMusic.name + getDate() + "." + this.currentMusic.path.split('.').pop();
-              renameFile(path.normalize(this.projectProp.directory + "Assets\\Musics\\" + this.currentMusic.path), path.normalize(this.projectProp.directory + "Assets\\Musics\\" + filename));
+              renameFile(path.join(this.projectProp.directory, "Assets", "Musics", this.currentMusic.path), path.join(this.projectProp.directory, "Assets", "Musics", filename));
             }
 
             removeDependencyVariableAsset("Music", this.previousName, this.currentMusic.name, this.assets, this.listPages);
           }
 
           if(this.soundInputFile.name !== this.currentMusic.path){
-            deleteFile(path.normalize(this.projectProp.directory + "Assets\\Musics\\" + this.currentMusic.path));
+            deleteFile(path.join(this.projectProp.directory, "Assets", "Musics", this.currentMusic.path));
             filename = this.currentMusic.name + getDate() + "." + this.soundInputFile.name.split('.').pop();
             filedata = readFileSync(this.soundInputFile.path);
-            writeFile(path.normalize(this.projectProp.directory + "Assets\\Musics\\" + filename), filedata);
+            writeFile(path.join(this.projectProp.directory, "Assets", "Musics", filename), filedata);
             this.currentMusic.path = filename;
           } else if (filename !== "") {
             this.currentMusic.path = filename;
@@ -173,7 +173,7 @@ export default {
         } else {
           filename = this.currentMusic.name + getDate() + "." + this.soundInputFile.name.split('.').pop();
           filedata = readFileSync(this.soundInputFile.path);
-          writeFile(path.normalize(this.projectProp.directory + "Assets\\Musics\\" + filename), filedata);
+          writeFile(path.join(this.projectProp.directory, "Assets", "Musics", filename), filedata);
 
           this.currentMusic.path = filename;
           this.currentMusic.volume = this.volume*100;

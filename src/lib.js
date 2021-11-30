@@ -82,21 +82,21 @@ function sizeChoiceNode(numberChoice){
 function createFileProject(directory, properties, assets){
     if(!fs.existsSync(directory)) return;
     var propertiesWrite = JSON.parse(JSON.stringify(properties));
-    propertiesWrite.directory = path.normalize(directory+"\\"+properties.name+"\\");
+    propertiesWrite.directory = path.join(directory, properties.name, "/");
 
     var folderAssets = ["Characters","Musics","Objects","Scenes","Sounds"];
 
     folderAssets.forEach((dir) => {
         try {
-            fs.mkdirSync(path.normalize(propertiesWrite.directory+"Assets\\"+dir+"\\"), { recursive: true });
+            fs.mkdirSync(path.join(propertiesWrite.directory, "Assets", dir, "/"), { recursive: true });
         } catch (err) {
             if (err.code !== 'EEXIST') throw err
         }
     });
 
-    fs.mkdirSync(path.normalize(propertiesWrite.directory+"Assets\\Properties\\"), { recursive: true });
-    writeFile(path.normalize(propertiesWrite.directory+"Assets\\Properties\\vuejs.js"), libraries_files.vue);
-    writeFile(path.normalize(propertiesWrite.directory+"Assets\\Properties\\howler.js"), libraries_files.howler);
+    fs.mkdirSync(path.join(propertiesWrite.directory, "Assets", "Properties", "/"), { recursive: true });
+    writeFile(path.join(propertiesWrite.directory, "Assets", "Properties", "vuejs.js"), libraries_files.vue);
+    writeFile(path.join(propertiesWrite.directory, "Assets", "Properties", "howler.js"), libraries_files.howler);
     writeFile(propertiesWrite.directory+properties.name+".vnc", JSON.stringify(propertiesWrite));
     writeFile(propertiesWrite.directory+"assets.json", JSON.stringify(assets));
     writeFile(propertiesWrite.directory+"engine_assets.js", "var assets = "+JSON.stringify(assets)+";");
@@ -105,17 +105,17 @@ function createFileProject(directory, properties, assets){
 
 function createPackageWeb(directory, assets){
     if(!fs.existsSync(directory)) return;
-    fs.mkdirSync(path.normalize(directory+"\\"+assets[8].content.displayname+"\\"), { recursive: true });
+    fs.mkdirSync(path.join(directory, assets[8].content.displayname, "/"), { recursive: true });
     copyFolderRecursiveSync(assets[8].content.directory, directory);
-    deleteFile(path.normalize(directory+"\\"+assets[8].content.name+"\\"+assets[8].content.name+".vnc"));
+    deleteFile(path.join(directory, assets[8].content.name, assets[8].content.name+".vnc"));
 }
 
 function createPackageWindows(directory, assets, devMode, packagePath = ""){
     if(!fs.existsSync(directory)) return;
-    fs.mkdirSync(path.normalize(directory+"\\"+assets[8].content.displayname+"\\"), { recursive: true });
-    copyFolderRecursiveSync(assets[8].content.directory, path.normalize(directory+"\\"+assets[8].content.displayname+"\\"));
-    renamePath(path.normalize(directory+"\\"+assets[8].content.displayname+"\\"+assets[8].content.name), path.normalize(directory+"\\"+assets[8].content.displayname+"\\game"));
-    deleteFile(path.normalize(directory+"\\"+assets[8].content.displayname+"\\game\\"+assets[8].content.name+".vnc"));
+    fs.mkdirSync(path.join(directory, assets[8].content.displayname, "/"), { recursive: true });
+    copyFolderRecursiveSync(assets[8].content.directory, path.join(directory, assets[8].content.displayname, "/"));
+    renamePath(path.join(directory, assets[8].content.displayname, assets[8].content.name), path.join(directory, assets[8].content.displayname, "game"));
+    deleteFile(path.join(directory, assets[8].content.displayname, "game", assets[8].content.name+".vnc"));
     let listPackage = [];
     let directoryFilesPackage = "public/packageWindows/";
     if(!devMode){
@@ -126,18 +126,18 @@ function createPackageWindows(directory, assets, devMode, packagePath = ""){
     listPackage.forEach((filepath) => {
         let fileData = readFileSync(filepath);
         if(fileData !== null){
-            let pathFolder = removeFilePart(path.normalize(directory+"\\"+assets[8].content.displayname+"\\"+filepath.substring(directoryFilesPackage.length)));
+            let pathFolder = removeFilePart(path.join(directory, assets[8].content.displayname, filepath.substring(directoryFilesPackage.length)));
             if(!existFile(pathFolder)){
                 fs.mkdirSync(pathFolder, { recursive: true });
             }
-            writeFile(path.normalize(directory+"\\"+assets[8].content.displayname+"\\"+filepath.substring(directoryFilesPackage.length)), fileData)
+            writeFile(path.join(directory, assets[8].content.displayname, filepath.substring(directoryFilesPackage.length)), fileData)
         }
     });
-    renamePath(path.normalize(directory+"\\"+assets[8].content.displayname+"\\visualnovelexecutable.exe"), path.normalize(directory+"\\"+assets[8].content.displayname+"\\"+assets[8].content.displayname+".exe"));
+    renamePath(path.join(directory, assets[8].content.displayname, "visualnovelexecutable.exe"), path.join(directory, assets[8].content.displayname, assets[8].content.displayname+".exe"));
     if(assets[8].content.icon !== ""){
-        let iconData = readFileSync(path.join(directory+"\\"+assets[8].content.displayname+"\\game\\",assets[8].content.icon));
+        let iconData = readFileSync(path.join(directory, assets[8].content.displayname, "game", assets[8].content.icon));
         if(iconData!==null){
-            writeFile(path.normalize(directory+"\\"+assets[8].content.displayname+"\\game\\Assets\\defaultIcon.ico"), iconData);
+            writeFile(path.join(directory, assets[8].content.displayname, "game", "Assets", "defaultIcon.ico"), iconData);
         }
     }
 }

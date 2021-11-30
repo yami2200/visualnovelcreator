@@ -140,7 +140,7 @@
 
 <script>
 import jsonBaseCharacter from '../../../assets/base_characters.json';
-import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '../../../lib.js';
+import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '@/lib';
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 import helpButton from "@/components/VSM-HelpButton.vue";
 import {mix_modal} from "@/mixins/MIX_Modal";
@@ -202,9 +202,9 @@ export default {
       if(this.editionMode){
         this.previousName = this.assets[0].content[this.indexEdition].name;
         this.currentCharacter = JSON.parse(JSON.stringify(this.assets[0].content[this.indexEdition]));
-        this.baseImage = { name: this.currentCharacter.img, path: path.normalize(this.projectProp.directory + "Assets\\Characters\\"+this.currentCharacter.img)};
+        this.baseImage = { name: this.currentCharacter.img, path: path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.img)};
         this.currentCharacter.imgOthers.forEach(element => {
-          this.imageImportList.push({name: element.img, path: path.normalize(this.projectProp.directory + "Assets\\Characters\\"+element.img) });
+          this.imageImportList.push({name: element.img, path: path.join(this.projectProp.directory, "Assets", "Characters", element.img) });
         });
       } else {
         this.previousName = "";
@@ -230,16 +230,16 @@ export default {
             // change image name or delete the old one
             if (this.baseImage.name === this.currentCharacter.img) {
               filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.currentCharacter.img.split('.').pop();
-              renameFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.img), path.normalize(this.projectProp.directory + "Assets\\Characters\\" + filename));
+              renameFile(path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.img), path.join(this.projectProp.directory, "Assets", "Characters", filename));
             }
 
             // change others image
             for (i = 0; i < this.currentCharacter.imgOthers.length; i++) {
               if (this.currentCharacter.imgOthers[i].img !== "") {
                 if (this.imageImportList[i].name !== this.currentCharacter.imgOthers[i].img) {
-                  deleteFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img));
+                  deleteFile(path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.imgOthers[i].img));
                 } else {
-                  renameFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img), path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + new Date() + "." + this.currentCharacter.imgOthers[i].img.split('.').pop()));
+                  renameFile(path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.imgOthers[i].img), path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + new Date() + "." + this.currentCharacter.imgOthers[i].img.split('.').pop()));
                 }
               }
             }
@@ -249,10 +249,10 @@ export default {
 
             // Case change the image
             if (this.baseImage.name !== this.currentCharacter.img) {
-              deleteFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.img));
+              deleteFile(path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.img));
               filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.baseImage.name.split('.').pop();
               filedata = readFileSync(this.baseImage.path);
-              writeFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + filename), filedata);
+              writeFile(path.join(this.projectProp.directory, "Assets", "Characters", filename), filedata);
               this.currentCharacter.img = filename;
             } else if (filename !== "") {
               this.currentCharacter.img = filename;
@@ -262,17 +262,17 @@ export default {
             for (i = 0; i < this.currentCharacter.imgOthers.length; i++) {
               if (this.imageImportList[i].name !== this.currentCharacter.imgOthers[i].img) {
                 if (this.currentCharacter.imgOthers[i].img !== "") {
-                  deleteFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img));
+                  deleteFile(path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.imgOthers[i].img));
                 }
                 imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.imageImportList[i].name.split('.').pop();
                 imgdata = readFileSync(this.imageImportList[i].path);
-                writeFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + imgName), imgdata);
+                writeFile(path.join(this.projectProp.directory, "Assets", "Characters", imgName), imgdata);
                 this.currentCharacter.imgOthers[i].img = imgName;
               } else if(!this.currentCharacter.imgOthers[i].img.includes(this.currentCharacter.name+"_"+this.currentCharacter.imgOthers[i].name+"_")){
                 imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.currentCharacter.imgOthers[i].img.split('.').pop();
-                var oldDir = path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.currentCharacter.imgOthers[i].img);
+                var oldDir = path.join(this.projectProp.directory, "Assets", "Characters", this.currentCharacter.imgOthers[i].img);
                 imgdata = readFileSync(oldDir);
-                writeFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + imgName), imgdata);
+                writeFile(path.join(this.projectProp.directory, "Assets", "Characters", imgName), imgdata);
                 deleteFile(oldDir);
                 this.currentCharacter.imgOthers[i].img = imgName;
               }
@@ -280,7 +280,7 @@ export default {
 
             // deletes local files from deleted assets
             for(i = 0; i < this.filesToDelete.length ; i++){
-              deleteFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + this.filesToDelete[i]));
+              deleteFile(path.join(this.projectProp.directory, "Assets", "Characters", this.filesToDelete[i]));
             }
 
             this.assets[0].content[this.indexEdition] = this.currentCharacter;
@@ -289,12 +289,12 @@ export default {
             // Copy Image Character in directory
             filename = this.currentCharacter.name + "_Normal_" + getDate() + "." + this.baseImage.name.split('.').pop();
             filedata = readFileSync(this.baseImage.path);
-            writeFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + filename), filedata);
+            writeFile(path.join(this.projectProp.directory, "Assets", "Characters", filename), filedata);
 
             for (i = 0; i < this.currentCharacter.imgOthers.length; i++) {
               imgName = this.currentCharacter.name + "_" + this.currentCharacter.imgOthers[i].name + "_" + getDate() + "." + this.imageImportList[i].name.split('.').pop();
               imgdata = readFileSync(this.imageImportList[i].path);
-              writeFile(path.normalize(this.projectProp.directory + "Assets\\Characters\\" + imgName), imgdata);
+              writeFile(path.join(this.projectProp.directory, "Assets", "Characters", imgName), imgdata);
               this.currentCharacter.imgOthers[i].img = imgName;
             }
 
@@ -319,7 +319,7 @@ export default {
       this.currentCharacter.imgOthers.splice(index, 1);
     },
     onChangeImage(index){
-      if(index==-1){
+      if(index === -1){
         if(this.baseImage === undefined || this.baseImage.path === ""){
           this.baseImage = this.oldimageinput;
         }

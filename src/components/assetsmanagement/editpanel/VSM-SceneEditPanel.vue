@@ -76,7 +76,7 @@
 
 <script>
 import jsonBaseCharacter from '../../../assets/base_characters.json';
-import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '../../../lib.js';
+import {readFileSync, writeFile, renameFile, deleteFile, getDate, removeDependencyVariableAsset} from '@/lib';
 import {mix_editassetpanel} from "@/mixins/MIX_EditAssetPanel";
 import helpButton from "@/components/VSM-HelpButton";
 import {mix_modal} from "@/mixins/MIX_Modal";
@@ -130,7 +130,7 @@ export default {
       if(this.editionMode){
         this.previousName = this.assets[1].content[this.indexEdition].name;
         this.currentScene = JSON.parse(JSON.stringify(this.assets[1].content[this.indexEdition]));
-        this.baseImage = { name: this.currentScene.img, path: path.normalize(this.projectProp.directory + "Assets\\Scenes\\"+this.currentScene.img)};
+        this.baseImage = { name: this.currentScene.img, path: path.join(this.projectProp.directory, "Assets", "Scenes", this.currentScene.img)};
       } else {
         this.previousName = "";
         this.currentScene = JSON.parse(JSON.stringify(baseScene));
@@ -146,17 +146,17 @@ export default {
           if(this.currentScene.name !== this.previousName){
             if(this.baseImage.name === this.currentScene.img){
               filename = this.currentScene.name + getDate() + "." + this.currentScene.img.split('.').pop();
-              renameFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img), path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + filename));
+              renameFile(path.join(this.projectProp.directory, "Assets", "Scenes", this.currentScene.img), path.join(this.projectProp.directory, "Assets", "Scenes", filename));
             }
 
             removeDependencyVariableAsset("Scene", this.previousName, this.currentScene.name, this.assets, this.listPages);
           }
 
           if(this.baseImage.name !== this.currentScene.img){
-            deleteFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + this.currentScene.img));
+            deleteFile(path.join(this.projectProp.directory, "Assets", "Scenes", this.currentScene.img));
             filename = this.currentScene.name + getDate() + "." + this.baseImage.name.split('.').pop();
             filedata = readFileSync(this.baseImage.path);
-            writeFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + filename), filedata);
+            writeFile(path.join(this.projectProp.directory, "Assets", "Scenes", filename), filedata);
             this.currentScene.img = filename;
           } else if (filename !== "") {
             this.currentScene.img = filename;
@@ -167,7 +167,7 @@ export default {
         } else {
           filename = this.currentScene.name + getDate() + "." + this.baseImage.name.split('.').pop();
           filedata = readFileSync(this.baseImage.path);
-          writeFile(path.normalize(this.projectProp.directory + "Assets\\Scenes\\" + filename), filedata);
+          writeFile(path.join(this.projectProp.directory, "Assets", "Scenes", filename), filedata);
 
           this.currentScene.img = filename;
 

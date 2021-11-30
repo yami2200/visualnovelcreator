@@ -125,7 +125,7 @@ export default {
       if(this.editionMode){
         this.previousName = this.assets[2].content[this.indexEdition].name;
         this.currentObject = JSON.parse(JSON.stringify(this.assets[2].content[this.indexEdition]));
-        this.baseImage = { name: this.currentObject.img, path: path.normalize(this.projectProp.directory + "Assets\\Objects\\"+this.currentObject.img)};
+        this.baseImage = { name: this.currentObject.img, path: path.join(this.projectProp.directory, "Assets", "Objects", this.currentObject.img)};
       } else {
         this.previousName = "";
         this.currentObject = JSON.parse(JSON.stringify(baseObject));
@@ -141,17 +141,17 @@ export default {
           if(this.currentObject.name !== this.previousName){
             if(this.baseImage.name === this.currentObject.img){
               filename = this.currentObject.name + getDate() + "." + this.currentObject.img.split('.').pop();
-              renameFile(path.normalize(this.projectProp.directory + "Assets\\Objects\\" + this.currentObject.img), path.normalize(this.projectProp.directory + "Assets\\Objects\\" + filename));
+              renameFile(path.join(this.projectProp.directory, "Assets", "Objects", this.currentObject.img), path.join(this.projectProp.directory, "Assets", "Objects", filename));
             }
 
             removeDependencyVariableAsset("Object", this.previousName, this.currentObject.name, this.assets, this.listPages);
           }
 
           if(this.baseImage.name !== this.currentObject.img){
-            deleteFile(path.normalize(this.projectProp.directory + "Assets\\Objects\\" + this.currentObject.img));
+            deleteFile(path.join(this.projectProp.directory, "Assets", "Objects", this.currentObject.img));
             filename = this.currentObject.name + getDate() + "." + this.baseImage.name.split('.').pop();
             filedata = readFileSync(this.baseImage.path);
-            writeFile(path.normalize(this.projectProp.directory + "Assets\\Objects\\" + filename), filedata);
+            writeFile(path.join(this.projectProp.directory, "Assets", "Objects", filename), filedata);
             this.currentObject.img = filename;
           } else if (filename !== "") {
             this.currentObject.img = filename;
@@ -162,7 +162,7 @@ export default {
         } else {
           filename = this.currentObject.name + getDate() + "." + this.baseImage.name.split('.').pop();
           filedata = readFileSync(this.baseImage.path);
-          writeFile(path.normalize(this.projectProp.directory + "Assets\\Objects\\" + filename), filedata);
+          writeFile(path.join(this.projectProp.directory, "Assets", "Objects", filename), filedata);
 
           this.currentObject.img = filename;
 

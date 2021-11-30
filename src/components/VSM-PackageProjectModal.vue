@@ -103,7 +103,7 @@ export default {
       var path = dialog.showOpenDialogSync({
         properties: ['openDirectory']
       });
-      if(path === null || path === undefined || !existFile(pathM.normalize(path+"\\"))) return;
+      if(path === null || path === undefined ||  path.length === 0 || !existFile(pathM.join(path[0], "/"))) return;
       if(path.length>0) this.project.directory = path[0];
     },
   },
