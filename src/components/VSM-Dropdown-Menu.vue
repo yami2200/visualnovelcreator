@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ on }">
-      <v-btn :max-height="sizeButton" min-height="20px"
+      <v-btn :height="sizeButton" :max-height="sizeButton" :min-height="sizeButton"
              v-on="on"
       >
         {{ name }}
@@ -27,8 +27,6 @@ export default {
 
   props: {
     name: { required: true, type: String },
-    sizeHeight : {required: true},
-    height : {required: true},
     items: {
       required: true,
     },
@@ -36,7 +34,7 @@ export default {
 
   computed: {
     sizeButton: function () {
-      return (this.height * this.sizeHeight / 100)+"px";
+      return "100%";
     }
   },
 

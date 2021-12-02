@@ -1,6 +1,6 @@
 <template>
   <v-card
-      :height="height+'px'"
+      height="100vh"
       width="100%"
       class="overflow-hidden justify-center"
       @mouseleave="leaveDialogueManager"
@@ -257,7 +257,7 @@ export default {
     'vsm-editdialoguepanel' : EditDialogue,
   },
 
-  props: ['height', 'width', 'listDialogues', "assets", "listPages", "busEntry", "projectproperties", "currentpage"],
+  props: ['width', 'listDialogues', "assets", "listPages", "busEntry", "projectproperties", "currentpage"],
 
   data : () => ({
     color: "red",

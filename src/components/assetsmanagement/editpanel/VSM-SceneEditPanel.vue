@@ -87,10 +87,6 @@ const baseScene = jsonBaseCharacter;
 export default {
   name: "VSM-SceneEditPanel",
 
-  props: {
-    height: {required: true},
-  },
-
   components:{
     "vsm-help-button" : helpButton,
   },
@@ -119,7 +115,7 @@ export default {
       return (this.currentScene!=null && this.currentScene.name !== "" && this.baseImage!=null && !this.assets[1].content.some(a => a.name === this.currentScene.name));
     },
     maxHeightImage: function () {
-      return this.height * 0.4;
+      return '40vh';
     }
   },
 

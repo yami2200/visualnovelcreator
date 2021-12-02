@@ -1,7 +1,7 @@
 <template>
   <v-app style="width: 100%">
     <v-main style="width: 100%">
-      <vsm-menu-bar :loading="processing" :bus="bus" :height="height" @package="packageProjectRequest" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel" @customfunction="openCustomFunctionsPanel"></vsm-menu-bar>
+      <vsm-menu-bar :loading="processing" :bus="bus" @package="packageProjectRequest" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel" @customfunction="openCustomFunctionsPanel"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-packageproject :bus="bus" @save="packageProject"></vsm-packageproject>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
@@ -12,11 +12,11 @@
       <vsm-projectproperties @initShortcut="addListPanelShortcut" :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
       <vsm-projectopening :bus="bus" :preferences="editorPreferences" @newProject="newProjectButton" @openProject="openProjectButton" @openRecent="loadProjectFromProjectProperties"></vsm-projectopening>
       <div class="mainWindow" id="mainWindow">
-        <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @initShortcut="addListPanelShortcut($event, true)" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :height="sizeDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
+        <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @initShortcut="addListPanelShortcut($event, true)" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
         <div id="separator"></div>
         <div id="pageandassetmanager">
           <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
-          <vsm-assets-panel @initShortcut="addListPanelShortcut" @saveAssets="saveProjectButton" :project_prop="project_properties" :size-height="height" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
+          <vsm-assets-panel @initShortcut="addListPanelShortcut" @saveAssets="saveProjectButton" :project_prop="project_properties" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
         </div>
       </div>
     </v-main>
@@ -141,8 +141,6 @@ export default {
   },
 
   created() {
-    remote.getCurrentWindow().removeAllListeners("resize");
-    remote.getCurrentWindow().addListener("resize", this.resizeWindow);
     document.documentElement.style.overflow = 'hidden';
     window.document.title = "Visual Novel Creator";
     this.loadEditorPreferences();
@@ -156,23 +154,6 @@ export default {
   },
 
   methods: {
-    resizeWindow() {
-      process.nextTick((data = this) => {
-        if(!remote.getCurrentWindow().isMinimized()) {
-          data.width = window.innerWidth;
-          if(this.minimized){
-            this.minimized = false;
-            data.height = window.innerHeight;
-          } else if(remote.getCurrentWindow().isMaximized()){
-            data.height = window.outerHeight-20;
-          } else {
-            data.height = window.outerHeight-37;
-          }
-        } else {
-          this.minimized = true;
-        }
-      });
-    },
     print() {
       console.log("text parent");
     },
@@ -463,9 +444,6 @@ export default {
   },
 
   computed: {
-    sizeDialogPanel: function(){
-      return (this.height * 0.97);
-    },
     widthDialogPanel: function(){
       return this.width*2/3;
     },
@@ -479,7 +457,6 @@ export default {
   },
 
   data: () => ({
-    height: window.innerHeight,
     width: window.innerWidth,
     processing : false,
     assets : JSON.parse(JSON.stringify(jsonAssets)),

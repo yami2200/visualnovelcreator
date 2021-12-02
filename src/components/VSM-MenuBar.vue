@@ -1,11 +1,9 @@
 <template>
-  <v-app-bar max-height="3%" min-height="20px">
+  <v-app-bar height="30vh"> <!-- max-height="3%" min-height="20px" -->
     <v-toolbar-items>
       <vsm-dropdown-menu
           :items="FileItems"
           name="File"
-          :height="height"
-          sizeHeight=3
           @newproject="bus.$emit('newproject')"
           @openproject="bus.$emit('openproject')"
           @save="bus.$emit('save')"
@@ -15,9 +13,7 @@
       </vsm-dropdown-menu>
       <vsm-dropdown-menu
           :items="EditItems"
-          :height="height"
           name="Edit"
-          sizeHeight=3
           @variablespanel="bus.$emit('variables')"
           @enginecode="$emit('enginecode')"
           @functionspanel="$emit('customfunction')"
@@ -26,9 +22,7 @@
       </vsm-dropdown-menu>
       <vsm-dropdown-menu
           :items="HelpItems"
-          :height="height"
           name="Help"
-          sizeHeight=3
           @github="githublink"
           @websiteauthor="authorwebsiteLink"
           @bugsuggestion="bugsuggestionlink">
@@ -52,7 +46,6 @@
             striped
             height="10"
             color="lime"
-            class="mb-8"
             :indeterminate="loading"
             :active="loading"
         ></v-progress-linear>
@@ -72,7 +65,7 @@ export default {
     'vsm-dropdown-menu' : Dropdown
   },
 
-  props : ['height', 'bus','loading'],
+  props : ['bus','loading'],
 
   data: () => ({
     FileItems: [

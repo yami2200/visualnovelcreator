@@ -3,7 +3,7 @@
     <vsm-confirmation-request-modal @accept="deleteAsset" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
 
     <vsm-character-edition-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-character-edition-modal>
-    <vsm-scene-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :height="sizeHeight" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages">  </vsm-scene-edit-modal>
+    <vsm-scene-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages">  </vsm-scene-edit-modal>
     <vsm-object-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-object-edit-modal>
     <vsm-sound-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-sound-edit-modal>
     <vsm-music-edit-modal @accept="saveEdit" @initShortcut="addShortcutPanelList" :project-prop="project_prop" :assets="assets" :bus="bus" :listPages="listPages"></vsm-music-edit-modal>
@@ -99,7 +99,6 @@ export default {
   name: "VSM-AssetsPanel",
 
   props: {
-    sizeHeight : {required: true},
     assets : {required: true},
     project_prop: {required: true},
     bus : {required: true},
@@ -118,18 +117,6 @@ export default {
     "vsm-listobjectassetimage" : ListObjectAssetImageComp,
     "vsm-listobjectassetsound" : ListObjectAssetSoundComp,
     "vsm-tab": Tab,
-  },
-
-  computed: {
-    sizeTabsPannel: function () {
-      return (this.sizeHeight * 0.67)+"px";
-    },
-    sizeList: function () {
-      return (this.sizeHeight * 0.57)+"px";
-    },
-    sizeTabs: function () {
-      return (this.sizeHeight * 0.05)+"px";
-    },
   },
 
   data: () => ({
