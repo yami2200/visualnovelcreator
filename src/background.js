@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -109,4 +109,9 @@ if (isDevelopment) {
 
 ipcMain.on("getNativeThemeDarkColor", (event) => {
   event.returnValue = nativeTheme.shouldUseDarkColors;
+});
+
+ipcMain.on("openPathFront", (event, path) => {
+  shell.openPath(path);
+  event.returnValue = 1;
 });

@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import {shell} from "electron";
+import {ipcRenderer} from "electron";
 import Setter from "@/components/variables/VSM-SetterVariable";
 import {deleteFile, getDate, readFileSync, writeFile} from "@/lib";
 import {mix_modal} from "@/mixins/MIX_Modal";
@@ -225,7 +225,7 @@ export default {
       this.dialog = false;
     },
     goDirectory(){
-      shell.openPath(this.currentProperties.directory);
+      ipcRenderer.sendSync("openPathFront", this.currentProperties.directory);
     },
   },
 }

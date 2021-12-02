@@ -25,7 +25,7 @@
 
 <script>
 import Vue from "vue";
-import {remote, ipcRenderer, shell} from "electron";
+import {remote, ipcRenderer} from "electron";
 import MenuBar from './components/VSM-MenuBar.vue';
 import AssetsPanel from './components/assetsmanagement/VSM-AssetsPanel.vue';
 import DialogueManager from './components/dialogues/VSM-DialogueManager.vue';
@@ -357,7 +357,7 @@ export default {
           createPackageWeb(project.directory, this.assets);
           break;
       }
-      shell.openPath(project.directory);
+      ipcRenderer.sendSync("openPathFront", project.directory);
       this.endProcessing();
     },
     exitButton(){
