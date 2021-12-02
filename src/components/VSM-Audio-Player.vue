@@ -146,7 +146,7 @@ export default {
       if(data != null) {
         const ref = this;
         this.howlPlayer = new Howl({
-          src: [data.path],
+          src: ['file://'+data.path],
           autoplay: false,
           loop: false,
           volume: data.volume,

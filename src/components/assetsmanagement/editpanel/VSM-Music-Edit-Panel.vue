@@ -115,7 +115,7 @@ export default {
     },
     getUrl: function () {
       if(this.soundInputFile == null) return "";
-      if(this.soundInputFile.path !== this.currentMusic.path) return this.soundInputFile.path
+      if(this.soundInputFile.path !== this.currentMusic.path) return this.soundInputFile.path;
       return this.currentMusic.path;
     }
   },
