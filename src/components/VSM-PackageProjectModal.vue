@@ -48,7 +48,7 @@
             text
             @click="save"
         >
-          New Project
+          Package Project
         </v-btn>
       </v-card-actions>
     </v-card>
