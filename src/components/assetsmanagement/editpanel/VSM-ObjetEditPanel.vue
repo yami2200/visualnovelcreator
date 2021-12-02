@@ -36,7 +36,7 @@
               <v-avatar size="300" v-if="baseImage!=null && baseImage.path !== ''">
                 <img
                     width="100%"
-                    :src="baseImage.path"
+                    :src="'file://'+baseImage.path"
                     alt="Default Image"
                 >
               </v-avatar>

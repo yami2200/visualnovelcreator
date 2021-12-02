@@ -66,7 +66,7 @@
 
                       <v-avatar v-if="icon!=null" size="100">
                         <img
-                            :src="icon.path"
+                            :src="'file://'+icon.path"
                             alt="Default Icon"
                         >
                       </v-avatar>
@@ -93,7 +93,7 @@
 
                       <v-avatar v-if="banner!=null" size="100">
                         <img
-                            :src="banner.path"
+                            :src="'file://'+banner.path"
                             alt="Default Icon"
                         >
                       </v-avatar>

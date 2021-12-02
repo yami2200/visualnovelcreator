@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-list-item-avatar>
-      <v-img :src="img"></v-img>
+      <v-img :src="'file://'+img"></v-img>
     </v-list-item-avatar>
 
     <v-list-item-content>

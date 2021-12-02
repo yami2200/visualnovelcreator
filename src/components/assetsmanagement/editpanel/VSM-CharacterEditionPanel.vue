@@ -47,7 +47,7 @@
 
                 <v-avatar v-if="baseImage!=null" size="100">
                   <img
-                      :src="baseImage.path"
+                      :src="'file://'+baseImage.path"
                       alt="Default Image"
                   >
                 </v-avatar>
@@ -71,8 +71,8 @@
                       :key="index"
                   >
                     <v-list-item-avatar v-if="imgo.img !== '' || imageImportList[index].path !== ''">
-                      <v-img v-if="imageImportList[index].path !== ''" :src="imageImportList[index].path"></v-img>
-                      <v-img v-else :src="projectProp.directory + 'Assets\\Characters\\' +imgo.img" @click="print(projectProp.directory + 'Assets\\Characters\\' +imgo.img)"></v-img>
+                      <v-img v-if="imageImportList[index].path !== ''" :src="'file://'+imageImportList[index].path"></v-img>
+                      <v-img v-else :src="pathImage+imgo.img"></v-img>
                     </v-list-item-avatar>
 
                     <v-list-item-content>
@@ -176,6 +176,9 @@ export default {
   },
 
   computed: {
+    pathImage: function () {
+      return 'file://'+path.join(this.projectProp.directory, "Assets", "Characters", "/" );
+    },
     canSave: function () {
       if(this.editionMode) return (this.currentCharacter!=null && this.currentCharacter.name !== "" && (this.baseImage!=null || this.currentCharacter.img !== "") && ((!this.assets[0].content.some(a => a.name === this.currentCharacter.name)) || this.currentCharacter.name === this.previousName) && this.listOthersImagesValid)
       return (this.currentCharacter!=null && this.currentCharacter.name !== "" && this.baseImage!=null && !this.assets[0].content.some(a => a.name === this.currentCharacter.name) && this.listOthersImagesValid);
