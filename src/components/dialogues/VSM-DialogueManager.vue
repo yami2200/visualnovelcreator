@@ -3,6 +3,7 @@
       height="100vh"
       width="100%"
       class="overflow-hidden justify-center"
+      :style="{backgroundColor: backgroundColorSVG}"
       @mouseleave="leaveDialogueManager"
       @mousemove="trackMouse"
       @keyup.delete="deletePress"
@@ -261,6 +262,7 @@ export default {
 
   data : () => ({
     color: "red",
+    manualMove: false,
 
     itemsMenu: [{title : "yes", action : "test1"}, {title : "no", action : "test2"}],
     contextMenuSelection: null,
