@@ -34,8 +34,16 @@
         <v-icon>mdi-delete</v-icon>
       </v-btn>
 
-      <v-btn icon @click="editObject" :disabled=disableEditionButtons>
+      <v-btn v-if="isEditable" icon @click="editObject" :disabled=disableEditionButtons>
         <v-icon>mdi-pencil-outline</v-icon>
+      </v-btn>
+
+      <v-btn v-if="isMovable" icon @click="move('down')" :disabled=disableEditionButtons>
+        <v-icon>mdi-arrow-down-drop-circle</v-icon>
+      </v-btn>
+
+      <v-btn v-if="isMovable" icon @click="move('up')" :disabled=disableEditionButtons>
+        <v-icon>mdi-arrow-up-drop-circle</v-icon>
       </v-btn>
 
       <v-btn icon @click="newObject">
@@ -51,7 +59,7 @@
 export default {
   name: "VSM-ListObjectComponent",
 
-  props:["height", "items", "bus", "canSearch", "searchAttribrute", "mandatory"],
+  props:["height", "items", "bus", "canSearch", "searchAttribrute", "mandatory", "movable", "editable"],
 
   mounted() {
     if(this.bus !== undefined){
@@ -69,6 +77,12 @@ export default {
     },
     disableEditionButtons(){
       return this.selectedItem === null || this.selectedItem === undefined || this.selectedItem === -1;
+    },
+    isMovable(){
+      return this.movable !== undefined && this.movable;
+    },
+    isEditable(){
+      return this.editable === undefined || this.editable;
     },
   },
 
@@ -115,6 +129,13 @@ export default {
       let index = i;
       if(this.searchMode) index = this.items.indexOf(this.listItems[i]);
       this.$emit('changeItem', index);
+    },
+    move(direction){
+      if(this.disableEditionButtons) return;
+      let index = this.selectedItem;
+      if(this.searchMode) index = this.items.indexOf(this.listItems[this.selectedItem]);
+      if(index === -1) return;
+      this.$emit("moveObject", index, direction);
     },
   },
 

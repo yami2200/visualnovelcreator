@@ -23,8 +23,11 @@
             :items="value.values"
             :bus="bus1"
             :canSearch="false"
+            :editable="false"
+            :movable="true"
             @newObject="newObject"
-            @deleteObject="deleteObject">
+            @deleteObject="deleteObject"
+            @moveObject="moveObject">
           <template v-slot:default="slotProps">
             <vsm-list-item :index="slotProps.index" :variable="slotProps.itemList" :assets="assets" :listvariables="listvariables" :initialval="!refEnabled"></vsm-list-item>
           </template>
@@ -116,12 +119,21 @@ export default {
       obj.type = this.value.type;
       this.value.values.push(obj);
     },
-    deleteObject(){
-      console.log("delete");
+    deleteObject(e){
+      this.value.values.splice(e, 1);
     },
     changeChoice(c){
       this.choice = c;
       this.select = this.value.type;
+    },
+    moveObject(index, direction){
+      if((direction === "up" && index === 0) || (direction === "down" && index === this.value.values.length - 1)) return;
+      let obj = this.value.values[index];
+      if(obj === undefined || obj === null) return;
+      this.value.values.splice(index, 1);
+      let newIndex = index + (direction === "up" ? -1 : 1);
+      this.value.values.splice(newIndex, 0, obj);
+      this.bus1.$emit("setSelectItem", newIndex);
     },
   },
 
