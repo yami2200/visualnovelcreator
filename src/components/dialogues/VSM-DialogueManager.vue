@@ -4,6 +4,7 @@
       width="100%"
       class="overflow-hidden justify-center"
       :style="{backgroundColor: backgroundColorSVG}"
+      ref="dialoguepanel"
       @mouseleave="leaveDialogueManager"
       @mousemove="trackMouse"
       @keyup.delete="deletePress"
@@ -258,7 +259,7 @@ export default {
     'vsm-editdialoguepanel' : EditDialogue,
   },
 
-  props: ['width', 'listDialogues', "assets", "listPages", "busEntry", "projectproperties", "currentpage"],
+  props: ['listDialogues', "assets", "listPages", "busEntry", "projectproperties", "currentpage"],
 
   data : () => ({
     color: "red",
@@ -588,7 +589,7 @@ export default {
       if(e.x < 50) {
         if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [1, this.scrollDirLinking[1]];
-      } else if(e.x > this.width-50) {
+      } else if(e.x > this.$refs["dialoguepanel"].$el.offsetWidth-50) {
         if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [-1, this.scrollDirLinking[1]];
       } else if(this.scrollDirLinking[0] !== 0){
@@ -601,7 +602,7 @@ export default {
       if(e.y < 100) {
         if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [this.scrollDirLinking[0], 1];
-      } else if(e.y > this.height-50) {
+      } else if(e.y > this.$refs["dialoguepanel"].$el.offsetHeight-50) {
         if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
         this.scrollDirLinking = [this.scrollDirLinking[0], -1];
       } else if(this.scrollDirLinking[1] !== 0){
@@ -615,8 +616,8 @@ export default {
     addScrollInterval(){
       this.updateScroll = setInterval(() => {
         this.panzoom.moveTo(this.panzoom.getTransform().x + this.scrollDirLinking[0]*10, this.panzoom.getTransform().y + this.scrollDirLinking[1]*10);
-        if(this.panzoom.getTransform().x !== 0 && this.panzoom.getTransform().x > (-1)*this.width*(this.panzoom.getTransform().scale-1) + 10) this.xMouse -= this.scrollDirLinking[0] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
-        if(this.panzoom.getTransform().y !== 0 && this.panzoom.getTransform().y > (-1)*this.height*(this.panzoom.getTransform().scale-1) + 10) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+        if(this.panzoom.getTransform().x !== 0 && this.panzoom.getTransform().x > (-1)*this.$refs["dialoguepanel"].$el.offsetWidth*(this.panzoom.getTransform().scale-1) + 10) this.xMouse -= this.scrollDirLinking[0] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+        if(this.panzoom.getTransform().y !== 0 && this.panzoom.getTransform().y > (-1)*this.$refs["dialoguepanel"].$el.offsetHeight*(this.panzoom.getTransform().scale-1) + 10) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
       }, 20)
     },
     leaveDialogueManager(e){

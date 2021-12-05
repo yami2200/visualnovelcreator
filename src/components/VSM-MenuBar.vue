@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar height="30vh"> <!-- max-height="3%" min-height="20px" -->
+  <v-app-bar height="30vh" style="z-index:100!important; position: fixed!important; top: 0!important;" elevation="1"> <!-- max-height="3%" min-height="20px" -->
     <v-toolbar-items>
       <vsm-dropdown-menu
           :items="FileItems"

@@ -1,8 +1,9 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ on }">
-      <v-btn :height="sizeButton" :max-height="sizeButton" :min-height="sizeButton"
+      <v-btn :height="sizeButton"
              v-on="on"
+             elevation="0"
       >
         {{ name }}
       </v-btn>
@@ -34,7 +35,7 @@ export default {
 
   computed: {
     sizeButton: function () {
-      return "100%";
+      return "5vh";
     }
   },
 
@@ -42,8 +43,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .listBtn {
+/*::v-deep .listBtn {
   max-height: 5px !important;
-}
+}*/
 
 </style>

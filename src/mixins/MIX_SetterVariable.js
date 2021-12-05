@@ -11,7 +11,7 @@ export const mix_settervariable = {
 
     computed:{
         refEnabled(){
-            return this.refEnable!=undefined && this.refEnable && this.listCompatibleVariables.length > 0;
+            return this.refEnable !== undefined && this.refEnable && this.listCompatibleVariables.length > 0;
         },
         listCompatibleVariables(){
             return this.listvariables.filter((v) => v.type.name === this.type && v.name !== this.variable.name);

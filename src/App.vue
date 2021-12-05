@@ -12,7 +12,7 @@
       <vsm-projectproperties @initShortcut="addListPanelShortcut" :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
       <vsm-projectopening :bus="bus" :preferences="editorPreferences" @newProject="newProjectButton" @openProject="openProjectButton" @openRecent="loadProjectFromProjectProperties"></vsm-projectopening>
       <div class="mainWindow" id="mainWindow">
-        <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @initShortcut="addListPanelShortcut($event, true)" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :width="widthDialogPanel" :listDialogues="listDialogues">  </vsm-dialogue-manager>
+        <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @initShortcut="addListPanelShortcut($event, true)" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :listDialogues="listDialogues">  </vsm-dialogue-manager>
         <div id="separator"></div>
         <div id="pageandassetmanager">
           <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
@@ -120,7 +120,7 @@ export default {
     'vsm-projectproperties' : ProjectPropertiesComp,
     "vsm-customfunctions" : CustomFunctionComp,
     'vsm-projectopening' : OpenProjectModal,
-    "vsm-packageproject" : packageProject
+    "vsm-packageproject" : packageProject,
   },
 
   mounted() {
@@ -147,10 +147,6 @@ export default {
     process.nextTick(() => {
       this.bus.$emit("showOpeningAppProject");
     });
-  },
-
-  destroyed() {
-    remote.getCurrentWindow().removeListener("resize", this.resizeWindow);
   },
 
   methods: {
@@ -444,9 +440,6 @@ export default {
   },
 
   computed: {
-    widthDialogPanel: function(){
-      return this.width*2/3;
-    },
     listDialogues: function(){
       this.refresh;
       return this.listPage[this.selectedDialoguePage].listDialogues;
@@ -504,20 +497,6 @@ body{
   user-select: none;
 }
 
-#separator2 {
-  cursor: row-resize;
-  background-color: #aaa;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='30'><path d='M2 0 v30 M5 0 v30 M8 0 v30' fill='none' stroke='black'/></svg>");
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 100%;
-  height: 5px;
-
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
 #dialoguemanager {
   width: 65%;
   height: 100%;
@@ -525,6 +504,7 @@ body{
 }
 
 #pageandassetmanager {
+  margin-top: 3vh;
   width: 35%;
   height: 100vh;
   min-width: 200px;

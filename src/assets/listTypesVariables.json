@@ -24,6 +24,20 @@
     "defaultValue" : true
   },
   {
+    "name" : "Array",
+    "icon" : "mdi-table-large",
+    "color" : "#633a0e",
+    "defaultValue" : {
+      "type" : {
+        "name" : "Integer",
+        "icon" : "mdi-numeric",
+        "color" : "#22c74e",
+        "defaultValue" : 0
+      },
+      "values": []
+    }
+  },
+  {
     "name" : "Character",
     "icon" : "mdi-account-multiple",
     "color" : "#1f18b5",

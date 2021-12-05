@@ -13,7 +13,7 @@
             @click="clickItem(i)"
         >
 
-          <slot :itemList="itemList"></slot>
+          <slot :itemList="itemList" :index="i"></slot>
 
         </v-list-item>
       </v-list-item-group>

@@ -6,6 +6,7 @@
     <vsm-setter-float @newval="setNewValue" :assets="assets" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-float>
     <vsm-setter-boolean @newval="setNewValue" :assets="assets" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :onlyVariable="onlyVariable"> </vsm-setter-boolean>
     <vsm-setter-asset @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :assets="assets" :onlyVariable="onlyVariable"> </vsm-setter-asset>
+    <vsm-setter-array @newval="setNewValue" :bus="bus1" :variable="variable" :listvariables="listvar" :refEnable="!initialval" :assets="assets" :onlyVariable="onlyVariable"></vsm-setter-array>
 
     <v-tooltip top :disabled="disableTooltip">
       <template v-slot:activator="{ on }">
@@ -27,6 +28,7 @@ import SetterString from "./setter/VSM-VarSetterString";
 import SetterFloat from "./setter/VSM-VarSetterFloat";
 import SetterBoolean from "./setter/VSM-VarSetterBoolean";
 import SetterAsset from "./setter/VSM-VarSetterAsset";
+import SetterArray from "./setter/VSM-VarSetterArray";
 
 import Vue from "vue";
 
@@ -40,11 +42,12 @@ export default {
   computed:{
     valueShow(){
       if(this.variable.value.value === "") return "none";
+      if(this.variable.type.name === "Array" && this.variable.value.type === "value") return "[" +this.variable.value.value.values.length+ "]";
       return this.variable.value.value;
     },
     colorText(){
       if(this.valueShow === "null" || this.variable.value.value === ""){
-        return "#960000"
+        return "#960000";
       }
       return this.$vuetify.theme.themes[this.theme].text;
     },
@@ -65,6 +68,7 @@ export default {
     "vsm-setter-float" : SetterFloat,
     "vsm-setter-boolean" :SetterBoolean,
     "vsm-setter-asset" : SetterAsset,
+    "vsm-setter-array" : SetterArray,
   },
 
   props:["variable", "listvar", "initialval", "assets", "onlyVariable", "showName"],
