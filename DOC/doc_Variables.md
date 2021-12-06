@@ -63,3 +63,7 @@
 > ### Show a variable value in a text dialogue :
 > You can show the value of a variable in a text by adding this text format in your dialogue : ${variable_name}
 > - Example : You have ${money} $ -> You have 10 $. (if money = 10)
+> 
+> You can also show the value stored in an array :
+> - Example : You have ${moneyBank[0]} $ -> You have 10 $. 
+> - Example 2 :You have ${moneyBank[walletIndex]} $ -> You have 10 $.

@@ -144,7 +144,7 @@ export default {
       this.variable.type = this.select;
       this.variable.value = {
         type: "value",
-        value: this.select.defaultValue
+        value: JSON.parse(JSON.stringify(this.select.defaultValue))
       };
     },
   },

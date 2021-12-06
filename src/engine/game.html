@@ -308,13 +308,30 @@
             showText(text, character){
                 this.currentText = "";
                 this.allText = text;
-                let regex = /\${((\w|\s)+)}/g;
+                let regex = /\${((\w|\s|d|\[|\])+)}/g;
 
                 const listMatch = [...text.matchAll(regex)];
                 listMatch.forEach((m) => {
-                    const value = getVariableValueByName(m[1], this.assets);
-                    if(value === "null" || value === null) this.allText = this.allText.replace(m[0], "");
-                    else this.allText = this.allText.replace(m[0], value);
+                    const text_var = m[1];
+                    let value = "";
+
+                    let regex_array = /((\w|\d|\s)+)\[((\w|\d\s)+)\]/g;
+                    const listMatchArray = [...text_var.matchAll(regex_array)];
+                    if(listMatchArray.length > 0 && listMatchArray[0].length > 1){
+                        const array = getVariableValueByName(listMatchArray[0][1], this.assets);
+                        if(array === null || array === undefined) value = "";
+                        else {
+                            let index = parseInt(listMatchArray[0][3]);
+                            if(isNaN(index)) index = getVariableValueByName(listMatchArray[0][3], this.assets);
+                            if(isNaN(index)) index = -1;
+                            value = getArrayElement(array, index, this.assets);
+                        }
+                    } else {
+                        value = getVariableValueByName(text_var, this.assets);
+                    }
+
+                    if(value === "null" || value === null) value = "";
+                    this.allText = this.allText.replace(m[0], value);
                 });
 
                 this.currentCharacter = character;

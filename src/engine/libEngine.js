@@ -94,6 +94,13 @@ function getVariableValue(variable, assets){
     }
 }
 
+function getArrayElement(array, index, assets){
+    if(array.values !== undefined && array.values.length > 0 && array.values.length > index && index >= 0){
+        let int_index = Math.trunc(index);
+        return getVariableValue(array.values[int_index], assets);
+    } else {return null}
+}
+
 function getAssetIndex(index, name, assets){
     var asset = assets[index].content.filter((c) => c.name === name);
     if(asset.length === 0) return null;
