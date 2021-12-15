@@ -56,6 +56,7 @@ import Vue from "vue";
 import helpButton from "@/components/VSM-HelpButton";
 import ListObjectComp from "@/components/VSM-ListObjectComponent";
 import ListObjectCustomFunctionComp from "@/components/listObject/VSM-ListObjectCustomFunctionComp";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 export default {
   name: "VSM-EngineCodeEditPanel",
@@ -70,17 +71,19 @@ export default {
 
   data () {
     return {
-      dialog: false,
       headlineCRM: "Delete Custom Function",
       textCRM: "Are you sure you want to delete this function : ",
       bus1: new Vue(),
       currentFunctions : [],
       deleteIndex: 0,
       editIndex:0,
+      nameText: "CustomFunctionPanel",
     };
   },
 
-  props:["assets", "bus"],
+  mixins:[mix_modal],
+
+  props:["assets"],
 
   mounted() {
     this.bus.$on('showCustomFunctionEditPanel', this.show);
@@ -88,6 +91,9 @@ export default {
   },
 
   methods:{
+    save(){
+      this.close();
+    },
     newFunction(){
       this.bus1.$emit('showEditCustomFunction', {edit : false});
     },
@@ -126,9 +132,6 @@ export default {
       return listAction;
     },
 
-    hide(){
-      this.dialog = false;
-    },
     close(){
       this.$emit("save");
       this.hide();

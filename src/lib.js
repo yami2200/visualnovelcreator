@@ -286,10 +286,12 @@ function checkVariableForAssetDependency(i, oldname, newname, type){
     if(i.type.name === "Boolean" && i.value.type === "value"){
         checkConditionForAssetDependency({condition : i}, oldname, newname);
     } else if(i.type.name === "Array"){
-        if(i.value.value.type.name === type || i.value.value.type.name === "Boolean"){
-            i.value.value.values.forEach((varArray) => {
-                checkVariableForAssetDependency(varArray, oldname, newname, type);
-            })
+        if(i.value.type === "value"){
+            if((i.value.value.type.name === type || i.value.value.type.name === "Boolean")){
+                i.value.value.values.forEach((varArray) => {
+                    checkVariableForAssetDependency(varArray, oldname, newname, type);
+                })
+            }
         }
     }
 }
@@ -394,7 +396,7 @@ function checkInputsVariableDependencyFromAction(action, oldname, newname, type)
 }
 
 function checkVariableForVariableDependency(i, oldname, newname, type){
-    if((i.type.name === type || i.type.name === "variable") && i.value.type === "variable" && i.value.value === oldname){
+    if((i.type.name === type || i.type.name === "variable" || ((type === "Integer" || type === "Float") && (i.type.name === "Integer" || i.type.name === "Float"))) && i.value.type === "variable" && i.value.value === oldname){
         if(newname === "null"){
             if(i.onlyvar !== undefined && i.onlyvar){
                 i.value.value = "";
@@ -408,13 +410,20 @@ function checkVariableForVariableDependency(i, oldname, newname, type){
     } else if((type === "Integer" || type === "Float") && (i.type.name === "Integer" || i.type.name === "Float") && i.value.type === "value" && i.value.operation !== undefined && i.value.operation !== "value"){
         checkNumberForVariableDependency(i, oldname, newname, type, i.type.defaultValue);
     } else if(i.type.name === "Array"){
-        if( (i.value.value.type.name === type || i.value.value.type.name === "variable") ||
-            ((type === "Integer" || type === "Float") && (i.value.value.type.name === "Integer" || i.value.value.type.name === "Float")) ||
-            (i.value.value.type.name === "Boolean")){
-            i.value.value.values.forEach((varArray) => {
-                checkVariableForVariableDependency(varArray, oldname, newname, type);
-            });
+        if(i.value.type === "value"){
+            if((i.value.value.type.name === type || i.value.value.type.name === "variable") ||
+                ((type === "Integer" || type === "Float") && (i.value.value.type.name === "Integer" || i.value.value.type.name === "Float")) ||
+                (i.value.value.type.name === "Boolean")){
+                i.value.value.values.forEach((varArray) => {
+                    checkVariableForVariableDependency(varArray, oldname, newname, type);
+                });
+            }
         }
+    }
+
+    if(i.value.type === "arrayElement"){
+        if(i.value.value.array !== undefined) checkVariableForVariableDependency(i.value.value.array, oldname, newname, type);
+        if(i.value.value.index !== undefined) checkVariableForVariableDependency(i.value.value.index, oldname, newname, type);
     }
 
     if(i.type.name === "variable" && i.value.value === oldname){

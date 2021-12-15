@@ -1,21 +1,24 @@
 <template>
-  <vsm-setterdefault  @changeVarSelecting="changeVarSelecting" @changeChoice="changeChoice" @save="save" @cancel="cancel" :bus="bus" :dialog="dialog" :disable-save-button="disableSaveButton" :disabled-input-specific="disabledInputSpecific" :list-compatible-variables="listCompatibleVariables" :ref-enabled="refEnabled" :onlyVariable="onlyVariable">
+  <vsm-setterdefault  @changeVarSelecting="changeVarSelecting" @changeChoice="changeChoice" @save="save" @cancel="cancel" :bus="bus" :dialog="dialog" :disable-save-button="disableSaveButton" :list-compatible-variables="listCompatibleVariables" :ref-enabled="refEnabled" :onlyVariable="onlyVariable" :refEnabledArray="refEnabledArray" :assets="assets" :listvariables="listvariables">
     <v-container
         class="px-0"
         fluid
     >
       <vsm-confirmation-request-modal @accept="changeTypeAccepted" @cancel="cancelChangeType" :bus="bus" :headline="headlineCRM" :text="textCRM"></vsm-confirmation-request-modal>
+      <v-row>
+        <v-icon v-if="selectArray!=null" :color="selectArray.color" large class="mb-5"> {{ selectArray.icon }} </v-icon>
+        <v-select
+            class="mt-2 ml-3"
+            :items="listTypeVar"
+            item-text="name"
+            v-model="selectArray"
+            return-object
+            label="Choose type of object in Array"
+            @change="changeType"
+            solo
+        ></v-select>
+      </v-row>
 
-      <v-select
-          class="mt-2 ml-3"
-          :items="listTypeVar"
-          item-text="name"
-          v-model="select"
-          return-object
-          label="Choose type of object in Array"
-          @change="changeType"
-          solo
-      ></v-select>
 
       <v-card>
         <vsm-list-object
@@ -54,6 +57,8 @@ export default {
 
   mixins: [mix_settervariable],
 
+  props: ["preferVariable"],
+
   components: {
     'vsm-confirmation-request-modal' : ConfirmationRequest,
     "vsm-setterdefault" : VarSetterDefault,
@@ -77,6 +82,7 @@ export default {
       },
       values: []
     },
+    selectArray: null,
   }),
 
   methods: {
@@ -90,11 +96,11 @@ export default {
         },
         values: []
       };
-      this.select = this.value.type;
+      this.selectArray = this.value.type;
     },
     showVar(){
-      this.show();
-      this.select = this.variable.value.value.type;
+      this.show(this.preferVariable);
+      this.selectArray = this.variable.value.value.type;
     },
     changeType(e){
       if(e.name !== this.value.type.name && this.value.values.length > 0){
@@ -107,11 +113,11 @@ export default {
       }
     },
     changeTypeAccepted(){
-      this.value.type = this.select;
+      this.value.type = this.selectArray;
       this.value.values = [];
     },
     cancelChangeType(){
-      this.select = this.value.type;
+      this.selectArray = this.value.type;
     },
     newObject(){
       let obj = JSON.parse(JSON.stringify(baseVariable));
@@ -124,7 +130,7 @@ export default {
     },
     changeChoice(c){
       this.choice = c;
-      this.select = this.value.type;
+      this.selectArray = this.value.type;
     },
     moveObject(index, direction){
       if((direction === "up" && index === 0) || (direction === "down" && index === this.value.values.length - 1)) return;
@@ -136,8 +142,6 @@ export default {
       this.bus1.$emit("setSelectItem", newIndex);
     },
   },
-
-  props:["assets"],
 
   mounted() {
     this.bus.$on('showSetterArray', this.showVar);

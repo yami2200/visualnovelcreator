@@ -1,5 +1,5 @@
 <template>
-  <vsm-setterdefault  @changeVarSelecting="changeVarSelecting" @changeChoice="changeChoice" @save="save" @cancel="cancel" :bus="bus" :dialog="dialog" :disable-save-button="disableSaveButton" :disabled-input-specific="disabledInputSpecific" :list-compatible-variables="listCompatibleVariables" :ref-enabled="refEnabled" :onlyVariable="onlyVariable">
+  <vsm-setterdefault  @changeVarSelecting="changeVarSelecting" @changeChoice="changeChoice" @save="save" @cancel="cancel" :bus="bus" :dialog="dialog" :disable-save-button="disableSaveButton" :list-compatible-variables="listCompatibleVariables" :ref-enabled="refEnabled" :onlyVariable="onlyVariable" :refEnabledArray="refEnabledArray" :assets="assets" :listvariables="listvariables">
     <v-container
         class="px-0"
         fluid
@@ -7,7 +7,7 @@
       <v-row>
         <v-col>
           <v-checkbox
-              v-if="operationSelected == 'value'"
+              v-if="operationSelected === 'value'"
               v-model="value"
               :label="`Value Boolean : ${value.toString()}`"
               :disabled="disabledInputSpecific"
@@ -25,7 +25,7 @@
               @change="changeOperation"
           ></v-select>
             <v-select
-                v-if="operationSelected == '=='"
+                v-if="operationSelected === '=='"
                 :disabled="choice === '2'"
                 class="mt-5 ml-3"
                 :items="listTypeVar"
@@ -37,7 +37,7 @@
                 solo
             ></v-select>
         </v-col>
-        <v-col v-if="operationSelected != 'value'">
+        <v-col v-if="operationSelected !== 'value'">
           <vsm-settervariable :assets="assets" :variable="input2" :listvar="listvariables" :initialval="!refEnabledInput2"></vsm-settervariable>
         </v-col>
       </v-row>
@@ -56,8 +56,6 @@ export default {
   name: "VSM-VarSetterBoolean",
 
   mixins: [mix_settervariable],
-
-  props:["assets"],
 
   computed:{
     disableOperation(){
@@ -134,7 +132,7 @@ export default {
         this.selectTypeVar = this.input1.type;
       }
     },
-    save(){
+    save(valueArray){
       if(this.disableSaveButton) return;
       if(this.choice === "1") {
         let valText = this.value;
@@ -142,16 +140,19 @@ export default {
           valText = this.input1.value.value + " " + this.operationSelected + " " +this.input2.value.value;
         }
         this.$emit("newval", {type: "value", operation: this.operationSelected ,value: valText, input1 : this.input1, input2: this.input2});
-      } else {
+      } else if (this.choice === "2") {
         if(this.select == null) return;
         if(this.select.name === undefined) this.$emit("newval", {type: "variable", value: this.select});
         else this.$emit("newval", {type: "variable", value: this.select.name});
+      } else {
+        this.$emit("newval", {type: "arrayElement", value: valueArray});
       }
       this.hide();
     },
     show() {
       this.dialog = true;
       this.resetDefault();
+      let array_value = null;
       if(this.variable.value.type === "value") {
         this.choice = "1";
         if(this.variable.value.operation === undefined || this.variable.value.operation === "value"){
@@ -173,11 +174,14 @@ export default {
           this.choice = "2";
           this.select = val[0].name;
         }
+      } else if (this.variable.value.type === "arrayElement" && this.refEnabledArray){
+        if(this.variable.value.value.array !== undefined && this.variable.value.value.index !== undefined){ array_value = JSON.parse(JSON.stringify(this.variable.value.value)); }
+        this.choice = "3";
       } else {
         this.choice = "1";
         this.value = this.variable.type.defaultValue;
       }
-      this.bus.$emit("setVarSetterInitial", {choice: this.choice, select: this.select});
+      this.bus.$emit("setVarSetterInitial", {choice: this.choice, select: this.select, arrayvalue: array_value});
       this.$forceUpdate();
     },
   },

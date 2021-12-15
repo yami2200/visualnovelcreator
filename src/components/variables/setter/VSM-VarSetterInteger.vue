@@ -1,10 +1,10 @@
 <template>
 
-  <vsm-setterdefault  @changeVarSelecting="changeVarSelecting" @changeChoice="changeChoice" @save="save" @cancel="cancel" :bus="bus" :dialog="dialog" :disable-save-button="disableSaveButton" :disabled-input-specific="disabledInputSpecific" :list-compatible-variables="listCompatibleVariables" :ref-enabled="refEnabled" :onlyVariable="onlyVariable">
+  <vsm-setterdefault  @changeVarSelecting="changeVarSelecting" @changeChoice="changeChoice" @save="save" @cancel="cancel" :bus="bus" :dialog="dialog" :disable-save-button="disableSaveButton" :list-compatible-variables="listCompatibleVariables" :ref-enabled="refEnabled" :onlyVariable="onlyVariable" :refEnabledArray="refEnabledArray" :assets="assets" :listvariables="listvariables">
     <v-row>
       <v-col>
         <v-text-field
-            v-if="operationSelected == 'value'"
+            v-if="operationSelected === 'value'"
             v-model.number="value"
             :disabled="disabledInputSpecific"
             label="Number"
@@ -29,7 +29,7 @@
             @change="changeTypeOperator"
         ></v-select>
       </v-col>
-      <v-col v-if="operationSelected != 'value'">
+      <v-col v-if="operationSelected !== 'value'">
         <vsm-settervariable :assets="assets" :variable="input2" :listvar="listvariables" :initialval="!refEnabledInput2"></vsm-settervariable>
       </v-col>
     </v-row>

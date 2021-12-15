@@ -6,8 +6,8 @@
       <vsm-packageproject :bus="bus" @save="packageProject"></vsm-packageproject>
       <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
       <vsm-variables-panel v-if="assets!=null && assets.length>5" @save="saveProjectButton" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
-      <vsm-enginecode-panel :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
-      <vsm-customfunctions :assets="assets" :bus="bus" @save="saveCustomFunctions"></vsm-customfunctions>
+      <vsm-enginecode-panel @initShortcut="addListPanelShortcut" :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
+      <vsm-customfunctions @initShortcut="addListPanelShortcut" :assets="assets" :bus="bus" @save="saveCustomFunctions"></vsm-customfunctions>
       <vsm-editorpreferences @initShortcut="addListPanelShortcut" :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
       <vsm-projectproperties @initShortcut="addListPanelShortcut" :bus="bus" :properties="project_properties" :assets="assets" @save="saveProjectProperties"></vsm-projectproperties>
       <vsm-projectopening :bus="bus" :preferences="editorPreferences" @newProject="newProjectButton" @openProject="openProjectButton" @openRecent="loadProjectFromProjectProperties"></vsm-projectopening>

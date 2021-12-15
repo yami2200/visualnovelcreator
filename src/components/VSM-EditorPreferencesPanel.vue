@@ -66,7 +66,7 @@ import {remote} from "electron";
 import {mix_modal} from "@/mixins/MIX_Modal";
 
 export default {
-  name: "VSM-EngineCodeEditPanel",
+  name: "VSM-EditorPreferencesPanel",
 
   data () {
     return {

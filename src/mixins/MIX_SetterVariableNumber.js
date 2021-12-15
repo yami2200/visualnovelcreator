@@ -2,8 +2,6 @@ import {getTextOperationNumberVariable} from "@/lib";
 
 export const mix_settervariablenumber = {
 
-    props:["assets"],
-
     data: () => ({
         listOperator : ["value" , "+", "-", "x", "÷", "Random", "Min", "Max"],
         operationSelected : "value",
@@ -57,6 +55,7 @@ export const mix_settervariablenumber = {
         show(){
             this.dialog = true;
             this.resetDefault();
+            let array_value = null;
             if(this.onlyVariable){
                 this.choice = "2";
                 let val = this.listCompatibleVariables.filter((v) => v.name === this.variable.value.value);
@@ -85,14 +84,17 @@ export const mix_settervariablenumber = {
                     this.choice = "2";
                     this.select = val[0].name;
                 }
+            } else if (this.variable.value.type === "arrayElement" && this.refEnabled){
+                if(this.variable.value.value.array !== undefined && this.variable.value.value.index !== undefined){ array_value = JSON.parse(JSON.stringify(this.variable.value.value)); }
+                this.choice = "3";
             } else {
                 this.choice = "1";
                 this.value = this.variable.type.defaultValue;
             }
-            this.bus.$emit("setVarSetterInitial", {choice: this.choice, select: this.select});
+            this.bus.$emit("setVarSetterInitial", {choice: this.choice, select: this.select, arrayvalue: array_value});
             this.$forceUpdate();
         },
-        save(){
+        save(valueArray){
             if(this.disableSaveButton) return;
             if(this.choice === "1") {
                 let valText = this.value;
@@ -101,6 +103,9 @@ export const mix_settervariablenumber = {
                     valText = getTextOperationNumberVariable(this.input1, this.input2, this.operationSelected);
                 }
                 this.$emit("newval", {type: "value", operation: this.operationSelected ,value: valText, input1 : this.input1, input2: this.input2});
+            } else if(this.choice === "3"){
+                if(valueArray === undefined || valueArray === null || valueArray.array === undefined || valueArray.index === undefined) return;
+                this.$emit("newval", {type: "arrayElement", value: valueArray});
             } else {
                 if(this.select == null) return;
                 if(this.select.name === undefined) this.$emit("newval", {type: "variable", value: this.select});
