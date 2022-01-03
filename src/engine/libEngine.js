@@ -47,7 +47,14 @@ function getVariableValueByName(name, assets){
     return getVariableValue(variable, assets);
 }
 
-function getVariableValue(variable, assets){
+function getVariableObjectByName(name, assets){
+    var varA = assets[5].content.filter((p) => p.name === name);
+    if(varA.length === 0) return null;
+    var variable = varA[0];
+    return variable;
+}
+
+function getVariableValue(variable, assets, type = "none"){
     if(variable.value.type === "value" || variable.type.name === "Variable"){
         if(variable.type.name === "Boolean" && (variable.value.operation !== undefined && variable.value.operation !== "value")){
             switch (variable.value.operation) {
@@ -92,12 +99,32 @@ function getVariableValue(variable, assets){
         if(variable.type.name === "Integer") return Math.trunc(getVariableValueByName(variable.value.value, assets));
         return getVariableValueByName(variable.value.value, assets);
     }
+    if(variable.value.type === "arrayElement"){
+        if(variable.value.value.index === undefined || variable.value.value.array === undefined) return null;
+        let index = getVariableValue(variable.value.value.index, assets);
+        let array = getVariableValue(variable.value.value.array, assets);
+        if(isNaN(index)) return null;
+        if(type === "none") return getArrayElement(array, index, assets);
+        let arrayElement = getArrayElement(array, index, assets, true);
+        if(arrayElement === null) return null;
+        let value = getVariableValue(arrayElement, assets);
+        if(arrayElement.type.name !== type){
+            if((arrayElement.type.name === "Integer" || arrayElement.type.name === "Float") && (type === "Integer" || type === "Float") && value !== null){
+                if(type === "Integer") return Math.trunc(value);
+                return value;
+            }
+            return null;
+        } else {
+            return value;
+        }
+    }
 }
 
-function getArrayElement(array, index, assets){
+function getArrayElement(array, index, assets, getObj = false){
     if(array.values !== undefined && array.values.length > 0 && array.values.length > index && index >= 0){
         let int_index = Math.trunc(index);
-        return getVariableValue(array.values[int_index], assets);
+        if(!getObj) return getVariableValue(array.values[int_index], assets);
+        else return array.values[int_index];
     } else {return null}
 }
 

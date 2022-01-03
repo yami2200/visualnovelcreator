@@ -15,7 +15,7 @@
       </v-card-title>
       <v-card-text height="100%">
         <v-card height="100%" width="100%">
-          <v-container v-if="assets[7] !== undefined" class="ml-0 mr-0">
+          <v-container v-if="assets[7] !== undefined" class="ml-0 mr-0" style="margin-right: 0!important; width: 100%!important;max-width: none">
 
             <v-tabs v-model="tab" vertical height="63vh" @change="changeTab">
               <v-tab v-for="(file,index) in  currentFiles" :key="index+file.title">
@@ -25,13 +25,14 @@
                   <v-icon color="red lighten-1">mdi-file-refresh</v-icon>
                 </v-btn>
               </v-tab>
-              <v-tabs-items v-model="tab">
+              <v-tabs-items v-model="tab" style="width: 100%!important">
                 <v-tab-item
                     v-for="(tab,indexT) in currentFiles"
                     :key="indexT"
+                    style="width: 100%!important"
                 >
 
-                  <MonacoEditor style="width: 100%; height: 60vh" v-model="tab.value" :language="tab.language" theme="vs-dark"/>
+                  <MonacoEditor width="100%" style="width: inherit!important; height: 60vh" v-model="tab.value" :language="tab.language" theme="vs-dark"/>
 
                 </v-tab-item>
               </v-tabs-items>

@@ -94,6 +94,8 @@ export default {
     pressKey(e){
       if(e.key === "Enter"){
         this.accept();
+      } else if(e.key === "Escape"){
+        this.cancel();
       }
     },
   },

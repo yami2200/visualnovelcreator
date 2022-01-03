@@ -1,0 +1,48 @@
+[
+  {
+    "name" : "Toggle Debug mode",
+    "component" : "Basic",
+    "lightColor" : "#751812",
+    "darkColor" : "#470703",
+    "enable" : true,
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Boolean",
+          "icon" : "mdi-order-bool-descending-variant",
+          "color" : "#94000a",
+          "defaultValue" : true
+        },
+        "name": "Enabled",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Alert",
+    "component" : "Basic",
+    "lightColor" : "#126110",
+    "darkColor" : "#126110",
+    "enable" : true,
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "String",
+          "icon" : "mdi-format-letter-case",
+          "color" : "#e34dd7",
+          "defaultValue" : ""
+        },
+        "name": "Text",
+        "value": {
+          "type": "value",
+          "value": "Alert text !"
+        }
+      }
+    ]
+  }
+]

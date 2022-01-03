@@ -110,6 +110,7 @@
             canGoNext : false, // When true, the player can skip to the next dialogue (false when executing script that are not skippable for example)
             textSoundID : 0, // ID of the text sound, use to get it / stop it
             choicePanelRef: null, // Reference of choice panel DOM element
+            debugMode : false, // if true, when errors happend, it will show an alert dialog box
         }),
 
         mounted() {
@@ -127,7 +128,6 @@
 
             // Starting the game
             this.playInitialDialogue();
-
             this.choicePanelRef = this.$refs.choicePanel;
         },
 
@@ -208,13 +208,13 @@
                     let actions = JSON.parse(JSON.stringify(dialogue.action));
                     if(actions.length > 0) {
                         let callbackAction = () => {
-                            if(actions.length > 0) this.executeActionScript(actions.shift(),callbackAction);
+                            if(actions.length > 0) this.executeActionScript(actions.shift(), callbackAction, dialogue);
                             else{
                                 if(dialogue.type === "function" && !this.canGoNext) this.playNextDialogue(0);
                                 this.canGoNext = true;
                             }
                         };
-                        this.executeActionScript(actions.shift(),callbackAction);
+                        this.executeActionScript(actions.shift(), callbackAction, dialogue);
                     }
                 }
 
@@ -319,28 +319,39 @@
                     const listMatchArray = [...text_var.matchAll(regex_array)];
                     if(listMatchArray.length > 0 && listMatchArray[0].length > 1){
                         const array = getVariableValueByName(listMatchArray[0][1], this.assets);
-                        if(array === null || array === undefined) value = "";
+                        if(array === null || array === undefined){
+                            this.errorAlert("Display Variable value in dialogue text", "002", "Can't access array variable value");
+                            value = "";
+                        }
                         else {
                             let index = parseInt(listMatchArray[0][3]);
                             if(isNaN(index)) index = getVariableValueByName(listMatchArray[0][3], this.assets);
                             if(isNaN(index)) index = -1;
                             value = getArrayElement(array, index, this.assets);
+                            if(value === null){
+                                this.errorAlert("Display Variable value in dialogue text", "002", "Can't access variable value from array at index "+index);
+                                value = "";
+                            }
                         }
                     } else {
                         value = getVariableValueByName(text_var, this.assets);
                     }
 
-                    if(value === "null" || value === null) value = "";
+                    if(value === null){
+                        this.errorAlert("Display Variable value in dialogue text", "002", "Can't access variable {"+text_var+"} value");
+                        value = "";
+                    }
                     this.allText = this.allText.replace(m[0], value);
                 });
 
                 this.currentCharacter = character;
                 const charList = this.allText.split("");
 
-                let sound = getVariableValue(this.assets[8].content.defaultTextSound, this.assets);
-                if(sound !== "null" && sound !== null){
+                let sound = getVariableValue(this.assets[8].content.defaultTextSound, this.assets, "Sound");
+                if(sound === null) this.errorAlert("Reading Text Sound", "002", "Can't access variable value or the value is not the correct type of object");
+                else if(sound !== "null"){
                     let soundAsset = getSound(sound, this.assets);
-                    if(soundAsset !== null){
+                    if(!this.errorHandlingReadingAsset("Global Issue", "Text Sound Playing", 0, soundAsset, "Sound", sound)){
                         this.textSoundID = this.playSound(soundAsset, sound, true);
                     }
                 }
@@ -364,9 +375,10 @@
             },
             clickText(){
                 let sound = getVariableValue(this.assets[8].content.defaultClickSound, this.assets);
-                if(sound !== "null" && sound !== null){
+                if(sound === null) this.errorAlert("Reading Click Sound", "002", "Can't access variable value or the value is not the correct type of object");
+                else if(sound !== "null"){
                     let soundAsset = getSound(sound, this.assets);
-                    if(soundAsset !== null){
+                    if(!this.errorHandlingReadingAsset("Global Issue", "Click Sound Playing", 0, soundAsset, "Sound", sound)){
                         this.playSound(soundAsset, sound);
                     }
                 }
@@ -472,7 +484,7 @@
                 const list = this.listObjectChoice.filter((o) => o.object === this.inventory[index].name);
                 if(list.length > 0) {
                     this.playNextDialogue(list[0].index, true);
-                }
+                } else this.errorAlert("Click Inventory Item", "015", "You tried to use an item which is not usable in this choice");
             },
             amountItemInventoryText(item){
                 return  (item.amount > 1 ? 'x'+item.amount : '');
@@ -522,7 +534,7 @@
             },
 
             // ################### SCRIPT MANAGEMENT ######################################
-            executeActionScript(action, callback){
+            executeActionScript(action, callback, dialogue){
                 let execCallback = true;
                 if(action.code !== undefined && action.code !== ""){
                     this[action.name](action.inputs);
@@ -534,18 +546,19 @@
                 switch(action.name){
                     case "Change Background":
                         let scene = getVariableValue(action.inputs[0], this.assets);
-                        if(scene === "null" || scene === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, scene, true, "Background")) break;
                         let sceneObject = getScene(scene, this.assets);
-                        if(sceneObject === null) break;
+                        if(this.errorHandlingReadingAsset(dialogue.title, action.name, 0, sceneObject, "Background")) break;
                         document.body.style.backgroundImage = "url('Assets/Scenes/"+ sceneObject.img +"')";
                         break;
                     case "Give Object":
                         let object = getVariableValue(action.inputs[0], this.assets);
-                        if(object === "null" || object === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, object, true, "Object")) break;
                         let amount = getVariableValue(action.inputs[1], this.assets);
-                        if(amount === "null" || amount === null || amount === 0) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 1, amount, false, "Integer")) break;
+                        if(amount === 0) { this.alertError(dialogue.title, action.name, "005", "the amount is set to 0", 1); break;}
                         let objectAsset = getObject(object, this.assets);
-                        if(objectAsset === null) break;
+                        if(this.errorHandlingReadingAsset(dialogue.title, action.name, 0, objectAsset, "Object")) break;
                         let sameItemInventory = this.inventory.filter((i) => i.name === object);
                         if(sameItemInventory.length>0){
                             sameItemInventory[0].amount += amount;
@@ -555,9 +568,10 @@
                         break;
                     case "Remove Object":
                         let objectToRemove = getVariableValue(action.inputs[0], this.assets);
-                        if(objectToRemove === "null" || objectToRemove === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, objectToRemove, true, "Object")) break;
                         let amountToRemove = getVariableValue(action.inputs[1], this.assets);
-                        if(amountToRemove === "null" || amountToRemove === null || amountToRemove === 0) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 1, amountToRemove, false, "Integer")) break;
+                        if(amountToRemove === 0) { this.alertError(dialogue.title, action.name, "005", "the amount is set to 0", 1); break;}
                         let index = this.inventory.findIndex((i) => i.name === objectToRemove);
                         if(index !== -1){
                             this.inventory[index].amount -= amountToRemove;
@@ -567,71 +581,70 @@
                         }
                         break;
                     case "If":
-                        let condition = getVariableValue(action.inputs[0], this.assets);
-                        if(condition === "null" || condition === null || !condition || action.action === undefined) break;
+                        let condition = getVariableValue(action.inputs[0], this.assets, "Boolean");
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, condition, false, "Boolean")) break;
+                        if(action.action === undefined) { this.alertError(dialogue.title, action.name, "006", "Invalid {if} function, corrupted function", 0); break;}
+                        if(!condition) break;
 
                         let actions = JSON.parse(JSON.stringify(action.action));
                         if(actions.length>0){
                             execCallback = false;
                             let callbackAction = () => {
-                                if(actions.length > 0) this.executeActionScript(actions.shift(),callbackAction);
+                                if(actions.length > 0) this.executeActionScript(actions.shift(), callbackAction, dialogue);
                                 else callback();
                             };
-                            this.executeActionScript(actions.shift(),callbackAction);
+                            this.executeActionScript(actions.shift(), callbackAction, dialogue);
                         }
                         break;
                     case "If Else":
-                        let conditionIf = getVariableValue(action.inputs[0], this.assets);
-                        if(conditionIf === "null" || conditionIf === null) break;
+                        let conditionIf = getVariableValue(action.inputs[0], this.assets, "Boolean");
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, conditionIf, false, "Boolean")) break;
 
                         let actionsIfElse = [];
                         let callbackActionIfElse = () => {
-                            if(actionsIfElse.length > 0) this.executeActionScript(actionsIfElse.shift(),callbackActionIfElse);
+                            if(actionsIfElse.length > 0) this.executeActionScript(actionsIfElse.shift(), callbackActionIfElse, dialogue);
                             else callback();
                         };
 
                         if(conditionIf){
-                            if(action.actionif === undefined) break;
+                            if(action.actionif === undefined) { this.alertError(dialogue.title, action.name, "006", "Invalid {ifElse} function, corrupted function", 0); break; }
                             actionsIfElse = JSON.parse(JSON.stringify(action.actionif));
                         } else {
-                            if(action.actionelse === undefined) break;
+                            if(action.actionelse === undefined) { this.alertError(dialogue.title, action.name, "006", "Invalid {ifElse} function, corrupted function", 0); break; }
                             actionsIfElse = JSON.parse(JSON.stringify(action.actionelse));
                         }
                         if(actionsIfElse.length>0){
                             execCallback = false;
-                            this.executeActionScript(actionsIfElse.shift(),callbackActionIfElse);
+                            this.executeActionScript(actionsIfElse.shift(), callbackActionIfElse, dialogue);
                         }
                         break;
                     case "Delay":
                         let delay = getVariableValue(action.inputs[0], this.assets);
-                        if(delay === "null" || delay === null || delay === 0.0) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, delay, false, "Float")) break;
+                        if(delay <= 0.0) { this.alertError(dialogue.title, action.name, "007", "The delay is <= 0", 0); break; }
                         execCallback = false;
                         setTimeout(() => {callback();}, delay*1000);
                         break;
                     case "Set":
                         let variable = getVariableValue(action.inputs[0], this.assets);
-                        if(variable === "null" || variable === null) break;
-                        let value = getVariableValue(action.inputs[1], this.assets);
-                        if(value === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, variable, false, "")) break;
+                        let variableValue = getVariableObjectByName(variable, this.assets);
+                        if(variableValue === "null" || variableValue === null) { this.alertError(dialogue.title, action.name, "008", "Can't access variable with name : "+variable, 0); break; }
+                        if(variableValue.type === undefined || variableValue.type.name === undefined) { this.alertError(dialogue.title, action.name, "009", "Accessing variable {"+variable+"} with corrupted structure", 0); break; }
+                        let value = getVariableValue(action.inputs[1], this.assets, variableValue.type.name);
+                        if(value === null) {
+                            if(variableValue.type.defaultValue !== undefined){
+                                value = variableValue.type.defaultValue;
+                            }
+                        }
+                        if(value === null) { this.alertError(dialogue.title, action.name, "002", "can't access variable input value", 0); break;}
                         setValueVariableByName(variable, value, this.assets);
-                        break;
-                    case "Set Random Integer":
-                    case "Set Random Float":
-                        let variableRI = action.inputs[0].value.value
-                        if(variableRI === "null" || variableRI === null || variableRI === "") break;
-                        let minInt = getVariableValue(action.inputs[1], this.assets);
-                        if(minInt === "null" || minInt === null) break
-                        let maxInt = getVariableValue(action.inputs[2], this.assets);
-                        if(maxInt === "null" || maxInt === null) break
-                        let newRandomInt = Math.random() * (maxInt - minInt) + minInt;
-                        if(action.name === "Set Random Integer") newRandomInt = Math.floor(newRandomInt);
-                        setValueVariableByName(variableRI, newRandomInt, this.assets);
                         break;
                     case "Add Character":
                         let character = getVariableValue(action.inputs[0], this.assets);
-                        if(character === "null" || character === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, character, true, "Character")) break;
                         let characterAsset = getCharacter(character, this.assets);
-                        if(characterAsset === null) break;
+                        if(this.errorHandlingReadingAsset(dialogue.title, action.name, 0, characterAsset, "Character")) break;
                         if(this.listCharactersInScene.filter((c) => c.name === characterAsset.name).length === 0){
                             this.listCharactersInScene.push({name : characterAsset.name, size : characterAsset.size, img : characterAsset.img, gridColumn:{}});
                             this.resetCharactersLocation();
@@ -639,34 +652,35 @@
                         break;
                     case "Set Character State":
                         let characterS = getVariableValue(action.inputs[0], this.assets);
-                        if(characterS === "null" || characterS === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, characterS, true, "Character")) break;
                         let charList = this.listCharactersInScene.filter((c) => c.name === characterS);
-                        if(charList.length===0) return;
+                        if(charList.length===0) { this.alertError(dialogue.title, action.name, "010", "Can't change state of character {"+characterS+"}, the character is not in the scene", 0); break; }
                         let characterAssetS = getCharacter(characterS, this.assets);
-                        if(characterAssetS === null) break;
+                        if(this.errorHandlingReadingAsset(dialogue.title, action.name, 0, characterAssetS, "Character")) break;
                         let nameState = getVariableValue(action.inputs[1], this.assets);
-                        if(nameState === "null" || nameState === null || nameState === "") break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 1, nameState, false, "String")) break;
+                        if(nameState === "") { this.alertError(dialogue.title, action.name, "011", "Can't change state of character {"+characterS+"}, the state name is not specified", 1); break; }
                         let listState = characterAssetS.imgOthers.filter((i) => i.name === nameState);
                         if(listState.length>0){
                             charList[0].img = listState[0].img;
-                        }
+                        } else this.alertError(dialogue.title, action.name, "012", "The state {"+nameState+"} of character {"+characterS+"} is unknown", 1);
                         break;
                     case "Remove Character":
                         let characterTR = getVariableValue(action.inputs[0], this.assets);
-                        if(characterTR === "null" || characterTR === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, characterTR, true, "Character")) break;
                         let characterAssetTR = getCharacter(characterTR, this.assets);
-                        if(characterAssetTR === null) break;
+                        if(this.errorHandlingReadingAsset(dialogue.title, action.name, 0, characterAssetTR, "Character")) break;
                         const indexTR = this.listCharactersInScene.findIndex((c) => c.name === characterAssetTR.name);
                         if(indexTR !== -1){
                             this.listCharactersInScene.splice(indexTR, 1);
                             this.resetCharactersLocation();
-                        }
+                        } else this.alertError(dialogue.title, action.name, "013", "Can't remove the character {"+characterTR+"} from the scene because the character is not currently in the scene", 0);
                         break;
                     case "Play Music":
                         let music = getVariableValue(action.inputs[0], this.assets);
-                        if(music === "null" || music === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, music, true, "Music")) break;
                         let musicAsset = getMusic(music, this.assets);
-                        if(musicAsset === null) break;
+                        if(this.errorHandlingReadingAsset(dialogue.title, action.name, 0, musicAsset, "Music")) break;
                         const indexM = this.listMusics.findIndex((m) => m.name === music);
                         if(indexM === -1){
                             this.listMusics.push(
@@ -686,29 +700,39 @@
                         break;
                     case "Stop Music":
                         let musicTR = getVariableValue(action.inputs[0], this.assets);
-                        if(musicTR === "null" || musicTR === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, music, true, "Music")) break;
                         const indexMTR = this.listMusics.findIndex((m) => m.name === musicTR);
                         if(indexMTR !== -1){
                             this.listMusics[indexMTR].howl.stop();
                             this.listMusics[indexMTR].howl = null;
                             this.listMusics.splice(indexMTR, 1);
-                        }
+                        } this.alertError(dialogue.title, action.name, "014", "Can't stop the music {"+musicTR+"} because it is not currently played", 0);
                         break;
                     case "Play Sound":
                         let sound = getVariableValue(action.inputs[0], this.assets);
-                        if(sound === "null" || sound === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, sound, true, "Sound")) break;
                         let soundAsset = getSound(sound, this.assets);
-                        if(soundAsset === null) break;
+                        if(this.errorHandlingReadingAsset(dialogue.title, action.name, 0, soundAsset, "Sound")) break;
                         this.playSound(soundAsset, sound);
                         break;
                     case "Stop Sound":
                         let soundTR = getVariableValue(action.inputs[0], this.assets);
-                        if(soundTR === "null" || soundTR === null) break;
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, soundTR, true, "Sound")) break;
                         this.listSounds.filter((s) => s.name === soundTR).forEach((s) => {
                             s.howl.stop();
                             s.howl = null;
                         });
                         this.listSounds = this.listSounds.filter((s) => s.name !== soundTR);
+                        break;
+                    case "Toggle Debug mode":
+                        let enbabled = getVariableValue(action.inputs[0], this.assets, "Boolean");
+                        if(this.errorHandlingReadingVariable(dialogue.title, action.name, 0, enbabled, false, "Boolean")) break;
+                        this.debugMode = enbabled;
+                        break;
+                    case "Alert":
+                        let text = getVariableValue(action.inputs[0], this.assets);
+                        if(text === null) { this.alertError(dialogue.title, action.name, "002", "can't access variable value or the value is not the correct type of object", 0); break;}
+                        this.alertText(text);
                         break;
                 }
                 if(execCallback) callback();
@@ -718,6 +742,44 @@
             getInputValue(input){
                 return getVariableValue(input, this.assets);
             },
+
+            //#################### DEBUG ###################################################
+            alertError(dialogue, func, error, text, input = ""){
+                if(this.debugMode){
+                    let texta = "";
+                    if(dialogue !== "") texta += "[" +dialogue+ "]";
+                    if(func !== "") texta += "[" +func+ "]";
+                    if(input !== "") texta += "[" +input+ "]";
+                    texta += " Error #"+error+(text !== "" ? " : "+text : "");
+                    alert(texta);
+                }
+            },
+            alertText(text){
+                if(this.debugMode) alert(text);
+            },
+            errorAlert(func, error, text){
+                const dialogue = getDialogue(this.page, this.currentDialogueIndex, this.assets);
+                if(dialogue !== null && dialogue.title !== undefined) this.alertError(dialogue.title, func, error, text);
+            },
+            errorHandlingReadingVariable(dialogue, func, input, variableValue, isAssetVar, varType){
+                if(variableValue === "null") {
+                    if(isAssetVar) this.alertError(dialogue, func, "001", varType+" asset input is set to null", input);
+                    else this.alertError(dialogue, func, "004", varType+" variable input return a null value", input);
+                    return true;
+                }
+                if(variableValue === null) {
+                    this.alertError(dialogue, func, "002", "can't access variable value or the value is not the correct type of object", input);
+                    return true;
+                }
+                return false;
+            },
+            errorHandlingReadingAsset(dialogue, func, input, assetValue, assetType, name=""){
+                if(assetValue === null) {
+                    this.alertError(dialogue, func, "003", "can't find "+assetType+" asset"+(name !== "" ? " {"+name+"}" : ""), input);
+                    return true;
+                }
+                return false;
+            }
         }
     });
 

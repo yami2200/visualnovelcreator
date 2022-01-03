@@ -13,6 +13,8 @@
           <v-col cols="12" sm="6" md="6" xl="6">
             <h2 class="mt-2 mb-2 mx-auto"> Action : </h2>
             <v-btn class="mt-1 mb-1" v-for="t in listVarAction" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
+            <h2 class="mt-2 mb-2 mx-auto"> Debug : </h2>
+            <v-btn class="mt-1 mb-1" v-for="t in listFuncDebug" :key="t.name" width="100%" @click="selectFunction(t)"> {{ t.name }}</v-btn>
           </v-col>
           <v-col cols="12" sm="6" md="6" xl="6">
             <h2 class="mt-2 mb-2 mx-auto"> Variables : </h2>
@@ -46,6 +48,7 @@
 import listVarFunction from "@/assets/listFunctionsVariables.json";
 import listVarAction from "@/assets/listFunctionsAction.json";
 import listVarControl from "@/assets/listFunctionsControl.json";
+import listFunctionDebug from "@/assets/listFunctionsDebug.json";
 import helpButton from "@/components/VSM-HelpButton";
 
 export default {
@@ -69,7 +72,8 @@ export default {
     indentation : 0,
     listVarFunction : listVarFunction,
     listVarAction : listVarAction,
-    listVarControl : listVarControl
+    listVarControl : listVarControl,
+    listFuncDebug: listFunctionDebug,
   }),
 
   methods:{
