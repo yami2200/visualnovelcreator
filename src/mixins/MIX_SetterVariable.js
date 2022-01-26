@@ -38,7 +38,12 @@ export const mix_settervariable = {
             let array_value = null;
             this.resetDefault();
             this.refreshComputed = !this.refreshComputed;
-            if(this.onlyVariable){
+            if (this.variable.value.type === "arrayElement" && this.refEnabledArray) {
+                if (this.variable.value.value.array !== undefined && this.variable.value.value.index !== undefined) {
+                    array_value = JSON.parse(JSON.stringify(this.variable.value.value));
+                }
+                this.choice = "3";
+            } else if(this.onlyVariable){
                 this.choice = "2";
                 let val = this.listCompatibleVariables.filter((v) => v.name === this.variable.value.value);
                 if(val.length === 0){
@@ -58,9 +63,6 @@ export const mix_settervariable = {
             } else if(this.variable.value.type === "value") {
                 this.choice = "1";
                 this.value = this.variable.value.value;
-            } else if (this.variable.value.type === "arrayElement" && this.refEnabledArray){
-                if(this.variable.value.value.array !== undefined && this.variable.value.value.index !== undefined){ array_value = JSON.parse(JSON.stringify(this.variable.value.value)); }
-                this.choice = "3";
             } else {
                 this.choice = "1";
                 this.value = this.variable.type.defaultValue;

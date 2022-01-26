@@ -121,8 +121,8 @@ export default {
     },
     newObject(){
       let obj = JSON.parse(JSON.stringify(baseVariable));
-      obj.value.value = this.value.type.defaultValue;
-      obj.type = this.value.type;
+      obj.value.value = JSON.parse(JSON.stringify(this.value.type.defaultValue));
+      obj.type = JSON.parse(JSON.stringify(this.value.type));
       this.value.values.push(obj);
     },
     deleteObject(e){

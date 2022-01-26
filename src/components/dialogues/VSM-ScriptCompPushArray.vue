@@ -5,22 +5,24 @@
         <v-row>
           <h2 class="ml-6 mr-1 mt-7"> {{ functionAction.name }} {{ functionAction.inputs.length>0  ? ':' : ''}} </h2>
 
+          <vsm-setter :initialval="false" :variable="functionAction.inputs[0]" :assets="assets" :listvar="assets[5].content" class="mt-5 ml-2" :onlyVariable="functionAction.inputs[0].onlyvar !== undefined && functionAction.inputs[0].onlyvar" :showName="true"></vsm-setter>
+
           <v-col cols="12" xl="4" sm="4">
             <v-select
                 class="mt-2"
                 dense
-                :items="listVariables"
+                :items="listTypeVariables"
                 item-text="name"
                 item-value="name"
-                v-model="functionAction.inputs[0].value.value"
-                label="Choose a variable"
+                v-model="functionAction.inputs[1].value.value"
+                label="Choose a type to push"
                 solo
                 @click.stop
                 @change="changeVar"
             ></v-select>
           </v-col>
 
-          <vsm-setter v-if="functionAction.inputs[0].value.value !== ''" :initialval="false" :variable="functionAction.inputs[1]" :assets="assets" :listvar="assets[5].content" class="mt-5" :showName="true"></vsm-setter>
+          <vsm-setter v-if="functionAction.inputs[1].value.value !== ''" :initialval="false" :variable="functionAction.inputs[2]" :assets="assets" :listvar="assets[5].content" class="mt-5" :showName="true"></vsm-setter>
           <v-spacer></v-spacer>
           <v-btn icon class="ml-5 mr-5 mt-5" @click.stop="deleteF">
             <v-icon color="black">mdi-delete</v-icon>
@@ -34,6 +36,7 @@
 <script>
 import {mix_scriptcomponent} from "@/mixins/MIX_ScriptComponent";
 import setter from "@/components/variables/VSM-SetterVariable";
+import listTypeVariables from "@/assets/listTypesVariables.json";
 
 export default {
   name: "VSM-ScriptCompBasic",
@@ -41,8 +44,8 @@ export default {
   mixins: [mix_scriptcomponent],
 
   computed:{
-    listVariables(){
-      return this.assets[5].content;
+    listTypeVariables(){
+      return listTypeVariables;
     },
   },
 
@@ -52,13 +55,13 @@ export default {
 
   methods:{
     changeVar(){
-      var list = this.assets[5].content.filter((v) => v.name === this.functionAction.inputs[0].value.value);
+      var list = listTypeVariables.filter((v) => v.name === this.functionAction.inputs[1].value.value);
       if(list.length===0) return;
       var variableSelected = list[0];
-      this.functionAction.inputs[1].type = variableSelected.type;
-      this.functionAction.inputs[1].value = {
+      this.functionAction.inputs[2].type = variableSelected;
+      this.functionAction.inputs[2].value = {
         type: "value",
-        value: variableSelected.type.defaultValue
+        value: variableSelected.defaultValue
       };
     },
     click(){

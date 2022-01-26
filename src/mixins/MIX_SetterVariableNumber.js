@@ -56,7 +56,12 @@ export const mix_settervariablenumber = {
             this.dialog = true;
             this.resetDefault();
             let array_value = null;
-            if(this.onlyVariable){
+            if (this.variable.value.type === "arrayElement" && this.refEnabledArray) {
+                if (this.variable.value.value.array !== undefined && this.variable.value.value.index !== undefined) {
+                    array_value = JSON.parse(JSON.stringify(this.variable.value.value));
+                }
+                this.choice = "3";
+            } else if(this.onlyVariable){
                 this.choice = "2";
                 let val = this.listCompatibleVariables.filter((v) => v.name === this.variable.value.value);
                 if(val.length === 0){
@@ -84,9 +89,6 @@ export const mix_settervariablenumber = {
                     this.choice = "2";
                     this.select = val[0].name;
                 }
-            } else if (this.variable.value.type === "arrayElement" && this.refEnabled){
-                if(this.variable.value.value.array !== undefined && this.variable.value.value.index !== undefined){ array_value = JSON.parse(JSON.stringify(this.variable.value.value)); }
-                this.choice = "3";
             } else {
                 this.choice = "1";
                 this.value = this.variable.type.defaultValue;

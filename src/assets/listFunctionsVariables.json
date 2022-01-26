@@ -31,7 +31,136 @@
         "name": "Value",
         "value": {
           "type": "value",
-          "value": 3
+          "value": 0
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Array Push",
+    "component" : "CompArrayPush",
+    "lightColor" : "#d7a1e3",
+    "darkColor" : "#e08ff2",
+    "enable" : true,
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type" : {
+          "name" : "Array",
+          "icon" : "mdi-table-large",
+          "color" : "#633a0e",
+          "defaultValue" : {
+            "type" : {
+              "name" : "Integer",
+              "icon" : "mdi-numeric",
+              "color" : "#22c74e",
+              "defaultValue" : 0
+            },
+            "values": []
+          }
+        },
+        "onlyvar" : true,
+        "name" : "Array",
+        "value": {
+          "type": "value",
+          "value": ""
+        }
+      },
+      {
+        "type": {
+          "name" : "String",
+          "icon" : "mdi-format-letter-case",
+          "color" : "#e34dd7",
+          "defaultValue" : ""
+        },
+        "name": "Type Value",
+        "value": {
+          "type": "value",
+          "value": "Integer"
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "New Value",
+        "value": {
+          "type": "value",
+          "value": 0
+        }
+      }
+    ]
+  },
+  {
+    "name" : "Array Set Index",
+    "component" : "CompArraySetIndex",
+    "lightColor" : "#d7a1e3",
+    "darkColor" : "#e08ff2",
+    "enable" : true,
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type" : {
+          "name" : "Array",
+          "icon" : "mdi-table-large",
+          "color" : "#633a0e",
+          "defaultValue" : {
+            "type" : {
+              "name" : "Integer",
+              "icon" : "mdi-numeric",
+              "color" : "#22c74e",
+              "defaultValue" : 0
+            },
+            "values": []
+          }
+        },
+        "onlyvar" : true,
+        "name" : "Array",
+        "value": {
+          "type": "value",
+          "value": ""
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "Index",
+        "value": {
+          "type": "value",
+          "value": 0
+        }
+      },
+      {
+        "type": {
+          "name" : "String",
+          "icon" : "mdi-format-letter-case",
+          "color" : "#e34dd7",
+          "defaultValue" : ""
+        },
+        "name": "Type Value",
+        "value": {
+          "type": "value",
+          "value": "Integer"
+        }
+      },
+      {
+        "type": {
+          "name": "Integer",
+          "icon": "mdi-numeric",
+          "color": "#22c74e",
+          "defaultValue": 0
+        },
+        "name": "New Value",
+        "value": {
+          "type": "value",
+          "value": 0
         }
       }
     ]
