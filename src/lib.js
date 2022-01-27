@@ -492,8 +492,18 @@ function checkNumberForVariableDependency(v, oldname, newname, type, defaultValu
 }
 
 function getTextOperationNumberVariable(input1, input2, operation){
-    if(operation === "Random" || operation === "Min" || operation === "Max"){
-        return operation + "(" + input1.value.value + ", " + input2.value.value +")";
+    console.log("test");
+    if(operation === "Random" || operation === "Min" || operation === "Max") {
+        return operation + "(" + input1.value.value + ", " + input2.value.value + ")";
+    } else if(operation === "array length") {
+        if (input2.value.type === "value") return "length(static_array)";
+        if (input2.value.type === "variable") return "length(" + input2.value.value + ")";
+        if (input2.value.value.array !== undefined && input2.value.value.index !== undefined) return "length(" + (input2.value.value.array.value.type === "variable" ? input2.value.value.array.value.value : "staticArray") + "[" + input2.value.value.index.value.value + "])";
+        return "length(?)";
+    } else if(operation === "exp"){
+        return "e^"+input2.value.value;
+    } else if(operation === "power"){
+        return input1.value.value+"^"+input2.value.value;
     } else {
         return input1.value.value + " " + operation + " " + input2.value.value;
     }

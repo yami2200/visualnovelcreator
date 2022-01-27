@@ -3,7 +3,7 @@ import {getTextOperationNumberVariable} from "@/lib";
 export const mix_settervariablenumber = {
 
     data: () => ({
-        listOperator : ["value" , "+", "-", "x", "÷", "Random", "Min", "Max"],
+        listOperator : ["value" , "+", "-", "x", "÷", "Random", "Min", "Max", "power", "exp", "array length"],
         operationSelected : "value",
         rules: {
             required: value => !!value || 'Not Correct.',
@@ -28,6 +28,7 @@ export const mix_settervariablenumber = {
                 color : "#4de396",
                 defaultValue : 1.0
             },
+            onlyvar: false,
             name: "input2",
             value: {
                 type: "value",
@@ -38,19 +39,59 @@ export const mix_settervariablenumber = {
 
     computed:{
         disableOperation(){
-            return !(this.refEnable!=undefined && this.refEnable);
+            return !(this.refEnable!==undefined && this.refEnable);
         },
         refEnabledInput1() {
-            return this.refEnable!=undefined && this.refEnable && this.listvariables.filter((v) => v.type.name === this.input1.type.name).length > 0;
+            return this.refEnable!==undefined && this.refEnable; //&& this.listvariables.filter((v) => v.type.name === this.input1.type.name).length > 0;
         },
         refEnabledInput2() {
-            return this.refEnable!=undefined && this.refEnable && this.listvariables.filter((v) => v.type.name === this.input2.type.name).length > 0;
+            return this.refEnable!==undefined && this.refEnable; //&& this.listvariables.filter((v) => v.type.name === this.input2.type.name).length > 0;
         }
     },
 
     methods:{
         changeTypeOperator(){
-
+            if(this.operationSelected === "array length"){
+                this.input2.type = {
+                    name : "Array",
+                    icon : "mdi-table-large",
+                    color : "#633a0e",
+                    defaultValue : {
+                        type : {
+                            name : "Integer",
+                            icon : "mdi-numeric",
+                            color : "#22c74e",
+                            defaultValue : 0
+                        },
+                        values: []
+                    }
+                };
+                this.input2.value = {
+                    type: "value",
+                    value: {
+                        type : {
+                            name : "Integer",
+                            icon : "mdi-numeric",
+                            color : "#22c74e",
+                            defaultValue : 0
+                        },
+                        values: []
+                    }
+                };
+                this.input2.onlyvar = true;
+            } else if(this.input2.type.name === "Array"){
+                this.input2.type = {
+                    name : "Float",
+                    icon : "mdi-decimal",
+                    color : "#4de396",
+                    defaultValue : 1.0
+                };
+                this.input2.value = {
+                    type: "value",
+                    value: 0.0
+                };
+                this.input2.onlyvar = false;
+            }
         },
         show(){
             this.dialog = true;
@@ -104,7 +145,7 @@ export const mix_settervariablenumber = {
                 if(this.operationSelected !== "value"){
                     valText = getTextOperationNumberVariable(this.input1, this.input2, this.operationSelected);
                 }
-                this.$emit("newval", {type: "value", operation: this.operationSelected ,value: valText, input1 : this.input1, input2: this.input2});
+                this.$emit("newval", {type: "value", operation: this.operationSelected, value: valText, input1 : this.input1, input2: this.input2});
             } else if(this.choice === "3"){
                 if(valueArray === undefined || valueArray === null || valueArray.array === undefined || valueArray.index === undefined) return;
                 this.$emit("newval", {type: "arrayElement", value: valueArray});

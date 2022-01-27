@@ -2,7 +2,7 @@
 
   <vsm-setterdefault  @changeVarSelecting="changeVarSelecting" @changeChoice="changeChoice" @save="save" @cancel="cancel" :bus="bus" :dialog="dialog" :disable-save-button="disableSaveButton" :list-compatible-variables="listCompatibleVariables" :ref-enabled="refEnabled" :onlyVariable="onlyVariable" :refEnabledArray="refEnabledArray" :assets="assets" :listvariables="listvariables">
     <v-row>
-      <v-col>
+      <v-col v-if="operationSelected !== 'exp' && operationSelected !== 'array length'">
         <v-text-field
             v-if="operationSelected === 'value'"
             v-model.number="value"
