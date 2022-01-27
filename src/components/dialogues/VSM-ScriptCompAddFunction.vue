@@ -1,6 +1,6 @@
 <template>
   <v-list-item>
-    <v-btn @click="click" @contextmenu="$emit('contextmenu', $event)" :width="getWidth" :style="{marginLeft : getIndentation}" :color="getColor"> </v-btn>
+    <v-btn @click="click" @mouseover="hover" @contextmenu="$emit('contextmenu', $event)" :width="getWidth" :style="{marginLeft : getIndentation}" :color="getColor"> </v-btn>
   </v-list-item>
 </template>
 
@@ -20,6 +20,17 @@ export default {
   methods:{
     click(){
       this.$emit("click", this.index, this.indentation);
+    },
+    hover(){
+      this.switchMouseHoverPart("top", "", "", 0);
+    },
+    getInfoInsertHovering(direction){
+      switch(direction){
+        case "top":
+        case "bottom":
+          return {index: Math.max(this.index, 0), stopHover: this.mouseLeave, indentation: this.indentation};
+      }
+      return null;
     },
   },
 

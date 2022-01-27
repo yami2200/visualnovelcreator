@@ -9,7 +9,7 @@
         <vsm-scriptcomppusharray v-else-if="f.component === 'CompArrayPush'" @deleteFunction="deleteFunction" @hoverInsertComp="hoverCompInsert" @selectComp="toggleSelectionComp" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcomppusharray>
         <vsm-scriptcompsetarrayindex v-else-if="f.component === 'CompArraySetIndex'" @deleteFunction="deleteFunction" @hoverInsertComp="hoverCompInsert" @selectComp="toggleSelectionComp" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcompsetarrayindex>
       </div>
-      <vsm-scriptcompadd @click="addScriptFunctionRequest" @contextmenu="rightClickAdd" :indentation="indentation" :index="action.length" :functionAction="scriptCompAdd" :lightcolormode="action.length%2===0"></vsm-scriptcompadd>
+      <vsm-scriptcompadd @click="addScriptFunctionRequest" @contextmenu="rightClickAdd" @hoverInsertComp="hoverCompInsert" :indentation="indentation" :index="action.length" :functionAction="scriptCompAdd" :lightcolormode="action.length%2===0"></vsm-scriptcompadd>
   </div>
 </template>
 
