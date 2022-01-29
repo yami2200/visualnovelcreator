@@ -55,11 +55,13 @@ export default {
       var list = this.assets[5].content.filter((v) => v.name === this.functionAction.inputs[0].value.value);
       if(list.length===0) return;
       var variableSelected = list[0];
-      this.functionAction.inputs[1].type = variableSelected.type;
-      this.functionAction.inputs[1].value = {
-        type: "value",
-        value: variableSelected.type.defaultValue
-      };
+      if(this.functionAction.inputs[1].type.name !== variableSelected.type.name){
+        this.functionAction.inputs[1].type = variableSelected.type;
+        this.functionAction.inputs[1].value = {
+          type: "value",
+          value: variableSelected.type.defaultValue
+        };
+      }
     },
     click(){
       this.$emit("click", this.index);

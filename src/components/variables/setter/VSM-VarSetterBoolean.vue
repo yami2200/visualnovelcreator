@@ -62,10 +62,10 @@ export default {
       return !(this.refEnable !== undefined && this.refEnable);
     },
     refEnabledInput1() {
-      return this.refEnable !== undefined && this.refEnable && this.listvariables.filter((v) => v.type.name === this.input1.type.name).length > 0;
+      return this.refEnable !== undefined && this.refEnable;// && this.listvariables.filter((v) => v.type.name === this.input1.type.name).length > 0;
     },
     refEnabledInput2() {
-      return this.refEnable !== undefined && this.refEnable && this.listvariables.filter((v) => v.type.name === this.input2.type.name).length > 0;
+      return this.refEnable !== undefined && this.refEnable;// && this.listvariables.filter((v) => v.type.name === this.input2.type.name).length > 0;
     }
   },
 
