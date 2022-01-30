@@ -81,7 +81,7 @@ export default {
   computed:{
     editorVersion(){
       if(remote.app.getVersion() !== undefined) return remote.app.getVersion();
-      return "1.0.x";
+      return "1.1.x";
     },
   },
 

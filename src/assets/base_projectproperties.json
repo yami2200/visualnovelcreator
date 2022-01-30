@@ -6,6 +6,7 @@
   "description" : "",
   "icon" : "",
   "banner" : "",
+  "editorVersion" : "",
   "defaultClickSound" : {
     "type": {
       "name" : "Sound",

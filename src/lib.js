@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import libraries_files from "@/assets/library.json";
 import FileCustomFunction from "@/assets/base_customFunctionFile.json";
-import {clipboard} from "electron";
+import {clipboard, remote} from "electron";
 const removeFilePart = dirname => path.parse(dirname).dir;
 
 function readFileSync(path) {
@@ -16,24 +16,24 @@ function readFileSync(path) {
 function writeFile(path, data){
     try{
         fs.writeFileSync(path, data);
-    } catch {
-        return;
+    } catch(err) {
+        console.log(err);
     }
 }
 
 function renameFile(oldPath, newPath){
     try{
         fs.renameSync(oldPath, newPath);
-    } catch {
-        return;
+    } catch(err) {
+        console.log(err);
     }
 }
 
 function deleteFile(path){
     try{
         fs.unlinkSync(path);
-    } catch {
-        return;
+    } catch(err) {
+        console.log(err);
     }
 }
 
@@ -43,6 +43,19 @@ function renamePath(oldPath, newPath){
     } catch(err) {
         console.log(err)
     }
+}
+
+function replaceFileLine(path, dataToReplace, dataReplacement){
+    fs.readFile(path, 'utf8', function (err,data) {
+        if (err) {
+            return console.log(err);
+        }
+        var result = data.replace(dataToReplace, dataReplacement);
+
+        fs.writeFile(path, result, 'utf8', function (err) {
+            if (err) return console.log(err);
+        });
+    });
 }
 
 function existFile(path){
@@ -83,6 +96,7 @@ function createFileProject(directory, properties, assets){
     if(!fs.existsSync(directory)) return;
     var propertiesWrite = JSON.parse(JSON.stringify(properties));
     propertiesWrite.directory = path.join(directory, properties.name, "/");
+    propertiesWrite.editorVersion = (remote.app.getVersion() !== undefined ? remote.app.getVersion() : "1.1.x");
 
     var folderAssets = ["Characters","Musics","Objects","Scenes","Sounds"];
 
@@ -108,6 +122,7 @@ function createPackageWeb(directory, assets){
     fs.mkdirSync(path.join(directory, assets[8].content.displayname, "/"), { recursive: true });
     copyFolderRecursiveSync(assets[8].content.directory, directory);
     deleteFile(path.join(directory, assets[8].content.name, assets[8].content.name+".vnc"));
+    replaceFileLine(path.join(directory, assets[8].content.displayname, "/game.html"), "var packaged = false; // DO NOT EDIT THE LINE", "var packaged = true;");
 }
 
 function createPackageWindows(directory, assets, devMode, packagePath = ""){
@@ -115,6 +130,7 @@ function createPackageWindows(directory, assets, devMode, packagePath = ""){
     fs.mkdirSync(path.join(directory, assets[8].content.displayname, "/"), { recursive: true });
     copyFolderRecursiveSync(assets[8].content.directory, path.join(directory, assets[8].content.displayname, "/"));
     renamePath(path.join(directory, assets[8].content.displayname, assets[8].content.name), path.join(directory, assets[8].content.displayname, "game"));
+    replaceFileLine(path.join(directory, assets[8].content.displayname, "game", "/game.html"), "var packaged = false; // DO NOT EDIT THE LINE", "var packaged = true;");
     deleteFile(path.join(directory, assets[8].content.displayname, "game", assets[8].content.name+".vnc"));
     let listPackage = [];
     let directoryFilesPackage = "public/packageWindows/";
@@ -549,5 +565,6 @@ export {
     getAllFilesPathAtDirectory,
     getTextOperationNumberVariable,
     sizeChoiceNode,
-    checkValidClipboard
+    checkValidClipboard,
+    replaceFileLine
 };
