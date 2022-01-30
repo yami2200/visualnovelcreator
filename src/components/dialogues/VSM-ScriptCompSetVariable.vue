@@ -15,6 +15,7 @@
                 item-value="name"
                 v-model="functionAction.inputs[0].value.value"
                 label="Choose a variable"
+
                 solo
                 @click.stop
                 @change="changeVar"
@@ -60,7 +61,7 @@ export default {
         this.functionAction.inputs[1].type = variableSelected.type;
         this.functionAction.inputs[1].value = {
           type: "value",
-          value: variableSelected.type.defaultValue
+          value: JSON.parse(JSON.stringify(variableSelected.type.defaultValue))
         };
       }
     },

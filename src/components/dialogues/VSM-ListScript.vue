@@ -8,6 +8,7 @@
         <vsm-scriptcompset v-else-if="f.component === 'CompSet'" @deleteFunction="deleteFunction" @hoverInsertComp="hoverCompInsert" @selectComp="toggleSelectionComp" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"> </vsm-scriptcompset>
         <vsm-scriptcomppusharray v-else-if="f.component === 'CompArrayPush'" @deleteFunction="deleteFunction" @hoverInsertComp="hoverCompInsert" @selectComp="toggleSelectionComp" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcomppusharray>
         <vsm-scriptcompsetarrayindex v-else-if="f.component === 'CompArraySetIndex'" @deleteFunction="deleteFunction" @hoverInsertComp="hoverCompInsert" @selectComp="toggleSelectionComp" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcompsetarrayindex>
+        <vsm-scriptcompforloop v-else-if="f.component === 'ForLoop'" @deleteFunction="deleteFunction" @hoverInsertComp="hoverCompInsert" @selectComp="toggleSelectionComp" @rightClickComp="rightClickFunctionComponent" :index="index" @delete="deleteFunction" :indentation="f.indentation" :functionAction="f" :key="f.name" :lightcolormode="index%2===0" :assets="assets"></vsm-scriptcompforloop>
       </div>
       <vsm-scriptcompadd @click="addScriptFunctionRequest" @contextmenu="rightClickAdd" @hoverInsertComp="hoverCompInsert" :indentation="indentation" :index="action.length" :functionAction="scriptCompAdd" :lightcolormode="action.length%2===0"></vsm-scriptcompadd>
   </div>
@@ -22,6 +23,7 @@ import scriptCompIfElse from "@/components/dialogues/VSM-ScriptCompIfElse";
 import scriptCompSet from "@/components/dialogues/VSM-ScriptCompSetVariable"
 import scriptCompPushArray from "@/components/dialogues/VSM-ScriptCompPushArray";
 import scriptCompSetArrayIndex from "@/components/dialogues/VSM-ScriptCompSetArrayIndex";
+import scriptCompForLoop from "@/components/dialogues/VSM-ScriptCompForLoop";
 import Vue from "vue";
 
 export default {
@@ -37,6 +39,7 @@ export default {
     "vsm-scriptcompset" : scriptCompSet,
     "vsm-scriptcomppusharray" : scriptCompPushArray,
     "vsm-scriptcompsetarrayindex" : scriptCompSetArrayIndex,
+    "vsm-scriptcompforloop" : scriptCompForLoop,
     "vsm-scriptselector" : () => import("@/components/dialogues/VSM-FunctionScriptSelector"),
   },
 

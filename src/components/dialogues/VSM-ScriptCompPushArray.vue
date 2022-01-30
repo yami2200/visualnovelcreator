@@ -7,10 +7,9 @@
 
           <vsm-setter :initialval="false" :variable="functionAction.inputs[0]" :assets="assets" :listvar="assets[5].content" class="mt-5 ml-2" :onlyVariable="functionAction.inputs[0].onlyvar !== undefined && functionAction.inputs[0].onlyvar" :showName="true"></vsm-setter>
 
-          <v-col cols="12" xl="4" sm="4">
             <v-select
-                style="user-select: none;"
-                class="mt-2"
+                style="user-select: none; width: 120px;"
+                class="mt-5 ml-1 mr-1"
                 dense
                 :items="listTypeVariables"
                 item-text="name"
@@ -21,7 +20,6 @@
                 @click.stop
                 @change="changeVar"
             ></v-select>
-          </v-col>
 
           <vsm-setter v-if="functionAction.inputs[1].value.value !== ''" :initialval="false" :variable="functionAction.inputs[2]" :assets="assets" :listvar="assets[5].content" class="mt-5" :showName="true"></vsm-setter>
           <v-spacer></v-spacer>
@@ -62,7 +60,7 @@ export default {
       this.functionAction.inputs[2].type = variableSelected;
       this.functionAction.inputs[2].value = {
         type: "value",
-        value: variableSelected.defaultValue
+        value: JSON.parse(JSON.stringify(variableSelected.type.defaultValue))
       };
     },
     click(){

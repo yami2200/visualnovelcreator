@@ -13,7 +13,7 @@ export const mix_scriptcomponent = {
             return this.indentation + "%";
         },
         getWidth(){
-            if(this.indentation > 30) return 70+"%";
+            if(this.indentation > 10) return 90+"%";
             return (100 - this.indentation) +"%";
         },
         getWidthFunctionContainer(){
@@ -37,7 +37,8 @@ export const mix_scriptcomponent = {
             return {
                 '--bg-color-insert': this.$vuetify.theme.themes[this.theme].background,
                 "margin-left" : this.getIndentation,
-                "box-shadow" : this.getBorder
+                "box-shadow" : this.getBorder,
+                "overflow" : 'hidden'
             }
         }
     },

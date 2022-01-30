@@ -70,5 +70,56 @@
         }
       }
     ]
+  },
+  {
+    "name" : "For Loop",
+    "component" : "ForLoop",
+    "lightColor" : "#eb3434",
+    "darkColor" : "#eb3434",
+    "enable" : true,
+    "indentation" : 0,
+    "inputs" : [
+      {
+        "type": {
+          "name" : "Integer",
+          "icon" : "mdi-numeric",
+          "color" : "#22c74e",
+          "defaultValue" : 0
+        },
+        "onlyvar" : true,
+        "name": "Variable",
+        "value": {
+          "type": "variable",
+          "value": ""
+        }
+      },
+      {
+        "type": {
+          "name" : "Integer",
+          "icon" : "mdi-numeric",
+          "color" : "#22c74e",
+          "defaultValue" : 0
+        },
+        "name": "Initial Value",
+        "value": {
+          "type": "value",
+          "value": 0
+        }
+      },
+      {
+        "type": {
+          "name" : "Integer",
+          "icon" : "mdi-numeric",
+          "color" : "#22c74e",
+          "defaultValue" : 0
+        },
+        "name": "End Value",
+        "value": {
+          "type": "value",
+          "value": 5
+        }
+      }
+    ],
+    "action" : []
   }
 ]
