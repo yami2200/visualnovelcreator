@@ -12,7 +12,7 @@
       <template v-slot:activator="{ on }">
         <v-card-text v-on="on">
           <v-row justify="center" align="center">
-            <p class="ml-1 mr-1" style="float: left; margin-top: 5px" :style="{color: colorText}" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
+            <p class="ml-1 mr-1" style="float: left; margin-top: 5px; user-select: none;" :style="{color: colorText}" v-if="variable!==undefined"> <strong> {{ valueShow }} </strong> </p>
           </v-row>
         </v-card-text>
       </template>

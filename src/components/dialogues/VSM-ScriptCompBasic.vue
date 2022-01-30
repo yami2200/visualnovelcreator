@@ -3,7 +3,7 @@
     <v-list-item two-line>
       <v-card ref="card" @mousemove="mouseHover" @mouseleave="mouseLeave" :width="getWidth" :min-width="getWidth" :style="cssVars" :color="getColor" height="55px" @contextmenu="contextMenuDM" @click="select">
         <v-row align="center" align-content="center" class="mt-2">
-          <h2 class="ml-6 mr-5" :class="{'mt-2' : functionAction.inputs.length === 0}"> {{ functionAction.name }} {{ functionAction.inputs.length>0  ? ':' : ''}} </h2>
+          <h2 class="ml-6 mr-5" style="user-select: none;" :class="{'mt-2' : functionAction.inputs.length === 0}"> {{ functionAction.name }} {{ functionAction.inputs.length>0  ? ':' : ''}} </h2>
           <vsm-setter v-for="(setInput, index) in functionAction.inputs" :key="index" :initialval="false" :variable="setInput" :assets="assets" :listvar="assets[5].content" class="ml-2" :onlyVariable="setInput.onlyvar !== undefined && setInput.onlyvar" :showName="true"></vsm-setter>
           <v-spacer></v-spacer>
           <h2 v-if="!functionAction.enable" :class="{'mt-2' : functionAction.inputs.length === 0}" style="color: darkred;"> Disabled </h2>
@@ -30,12 +30,6 @@ export default {
   },
 
   methods:{
-    mouseLeaverRemoveHoverEffect(){
-      if(this.$refs["card"] !== undefined){
-        this.$refs["card"].$el.classList.remove("borderTop");
-        this.$refs["card"].$el.classList.remove("borderBottom");
-      }
-    },
     mouseHover(e){
       if(e.offsetY<15) {
         if(this.mouseDirection !== "top"){
@@ -50,15 +44,6 @@ export default {
           this.mouseLeave();
         }
       }
-    },
-    getInfoInsertHovering(direction){
-      switch(direction){
-        case "top":
-          return {index: Math.max(this.index, 0), stopHover: this.mouseLeave, indentation: this.indentation};
-        case "bottom":
-          return {index: this.index+1, stopHover: this.mouseLeave, indentation: this.indentation};
-      }
-      return null;
     },
   },
 

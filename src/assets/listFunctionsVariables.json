@@ -96,7 +96,7 @@
   },
   {
     "name" : "Array Set Index",
-    "component" : "CompArraySetIndexBasic",
+    "component" : "CompArraySetIndex",
     "lightColor" : "#d7a1e3",
     "darkColor" : "#e08ff2",
     "enable" : true,

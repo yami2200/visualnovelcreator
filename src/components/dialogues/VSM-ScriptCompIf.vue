@@ -3,7 +3,7 @@
     <v-list-item two-line>
       <v-card ref="card" @mouseleave="mouseLeave" @mousemove="mouseHover('start', $event)" :width="getWidthFunctionContainer" :min-width="getWidthFunctionContainer" :style="cssVars" :color="getColor" height="55px" @contextmenu="contextMenuDM" @click="select">
         <v-row align="center" align-content="center" class="mt-2">
-          <h2 class="ml-6 mr-5"> {{ functionAction.name }} {{ functionAction.inputs.length>0  ? ':' : ''}} </h2>
+          <h2 class="ml-6 mr-5" style="user-select: none;"> {{ functionAction.name }} {{ functionAction.inputs.length>0  ? ':' : ''}} </h2>
           <vsm-setter v-for="(setInput, index) in functionAction.inputs" :key="index" :initialval="false" :variable="setInput" :assets="assets" :listvar="assets[5].content"></vsm-setter>
           <v-spacer></v-spacer>
           <v-btn icon class="ml-5 mr-5" @click.stop="deleteF">
@@ -17,7 +17,7 @@
 
     <v-list-item>
       <v-card ref="cardEnd" @mouseleave="mouseLeave" @mousemove="mouseHover('end', $event)" :width="getWidthFunctionContainer" :min-width="getWidthFunctionContainer" :style="cssVars" :color="getColor" height="30px" @contextmenu="contextMenuDM" @click="select">
-        <h2 class="ml-2 mr-5 mt-1"> End if </h2>
+        <h2 class="ml-2 mr-5 mt-1" style="user-select: none;"> End if </h2>
       </v-card>
     </v-list-item>
   </div>

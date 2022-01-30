@@ -59,7 +59,13 @@ export const mix_scriptcomponent = {
             this.$emit("hoverInsertComp", obj);
         },
         getInfoInsertHovering(direction){
-            return (direction ? null: null);
+            switch(direction){
+                case "top":
+                    return {index: Math.max(this.index, 0), stopHover: this.mouseLeave, indentation: this.indentation};
+                case "bottom":
+                    return {index: this.index+1, stopHover: this.mouseLeave, indentation: this.indentation};
+            }
+            return null;
         },
         mouseLeave(){
             this.mouseDirection = "null";
@@ -69,7 +75,10 @@ export const mix_scriptcomponent = {
             this.emitHoverDirection();
         },
         mouseLeaverRemoveHoverEffect(){
-          //empty
+            if(this.$refs["card"] !== undefined){
+                this.$refs["card"].$el.classList.remove("borderTop");
+                this.$refs["card"].$el.classList.remove("borderBottom");
+            }
         },
         switchMouseHoverPart(dir, newClass, refID, timeout = 1000){
             this.mouseLeave();
