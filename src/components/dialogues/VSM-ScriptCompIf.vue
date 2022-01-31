@@ -17,7 +17,7 @@
 
     <v-list-item>
       <v-card ref="cardEnd" @mouseleave="mouseLeave" @mousemove="mouseHover('end', $event)" :width="getWidthFunctionContainer" :min-width="getWidthFunctionContainer" :style="cssVars" :color="getColor" height="30px" @contextmenu="contextMenuDM" @click="select">
-        <h2 class="ml-2 mr-5 mt-1" style="user-select: none;"> End if </h2>
+        <h2 class="ml-2 mr-5 mt-1" style="user-select: none;"> End {{ functionAction.name }} </h2>
       </v-card>
     </v-list-item>
   </div>
