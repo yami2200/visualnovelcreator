@@ -114,11 +114,11 @@
                   <v-col cols="12" sm="12" md="6" xl="6" class="ml-5 mr-5" v-if="currentProperties!==null">
                     <v-row>
                       <span class="mt-2 mr-4"> Text Sound : </span>
-                      <vsm-setter :variable="assets[8].content.defaultTextSound" :listvar="assets[5].content" :initialval="false" :assets="assets"> </vsm-setter>
+                      <vsm-setter :variable="currentProperties.defaultTextSound" :listvar="assets[5].content" :initialval="false" :assets="assets"> </vsm-setter>
                     </v-row>
                     <v-row class="mt-7">
                       <span class="mt-2 mr-4"> Click Sound : </span>
-                      <vsm-setter :variable="assets[8].content.defaultClickSound" :listvar="assets[5].content" :initialval="false" :assets="assets"> </vsm-setter>
+                      <vsm-setter :variable="currentProperties.defaultClickSound" :listvar="assets[5].content" :initialval="false" :assets="assets"> </vsm-setter>
                     </v-row>
                   </v-col>
               </v-card>
@@ -213,8 +213,8 @@ export default {
       this.hide();
     },
     show(){
-      if(this.properties=== null) return;
-      this.currentProperties = JSON.parse(JSON.stringify(this.properties));
+      if(this.assets[8].content === null) return;
+      this.currentProperties = JSON.parse(JSON.stringify(this.assets[8].content));
       if(this.currentProperties.banner !== "") this.banner = {path : this.currentProperties.directory + this.currentProperties.banner};
       else this.banner = null;
       if(this.currentProperties.icon !== "") this.icon = {path : this.currentProperties.directory + this.currentProperties.icon};
