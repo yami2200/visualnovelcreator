@@ -126,10 +126,6 @@ export default {
       if(this.disableSaveButton) return;
       if(this.choice === "1") {
         let valText = this.value;
-        if(this.operationSelected !== "value"){
-          if(this.operationSelected === "Concat") valText = this.input1.value.value + " + " +this.input2.value.value;
-          if(this.operationSelected === "to String") valText = "toString(" + this.input2.value.value + ")";
-        }
         this.$emit("newval", {type: "value", operation: this.operationSelected ,value: valText, input1 : this.input1, input2: this.input2});
       } else if (this.choice === "2") {
         if(this.select == null) return;

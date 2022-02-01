@@ -164,7 +164,7 @@ export default {
         } else if(e.key === "Escape"){
           this.cancel();
         } else {
-          if(this.tab !== null){
+          if(this.tab !== null && this.$refs[this.current.tabs[this.tab].toLowerCase()][0] !== undefined){
             this.$refs[this.current.tabs[this.tab].toLowerCase()][0].handleShortcut(e);
           }
         }

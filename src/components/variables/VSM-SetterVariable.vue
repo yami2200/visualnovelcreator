@@ -29,6 +29,7 @@ import SetterFloat from "./setter/VSM-VarSetterFloat";
 import SetterBoolean from "./setter/VSM-VarSetterBoolean";
 import SetterAsset from "./setter/VSM-VarSetterAsset";
 import SetterArray from "./setter/VSM-VarSetterArray";
+import {getDisplayNameVariable} from "@/lib";
 
 import Vue from "vue";
 
@@ -42,12 +43,7 @@ export default {
   computed:{
     valueShow(){
       if(this.variable.value.value === "") return "none";
-      if(this.variable.type.name === "Array" && this.variable.value.type === "value") return "array of [" +this.variable.value.value.values.length+ "]";
-      if(this.variable.value.type === "arrayElement"){
-        if(this.variable.value.value.array !== undefined && this.variable.value.value.index !== undefined) return (this.variable.value.value.array.value.type === "variable" ? this.variable.value.value.array.value.value : "staticArray") + "[" + this.variable.value.value.index.value.value + "]";
-        return "none";
-      }
-      return this.variable.value.value;
+      return getDisplayNameVariable(this.variable);
     },
     colorText(){
       if(this.valueShow === "null" || this.variable.value.value === ""){

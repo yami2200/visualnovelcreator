@@ -222,6 +222,8 @@ function saveAssets(properties, assets){
     writeFile(properties.directory+"engine_assets.js", "var assets = "+JSON.stringify(assets)+";");
 }
 
+// ############################ ASSET DEPENDENCY #############
+
 function removeDependencyVariableAsset(type, oldname, newname, assets, listPages = []){
     assets[5].content.forEach((v) => {
         if(v.type.name === type){
@@ -237,29 +239,23 @@ function removeDependencyVariableAsset(type, oldname, newname, assets, listPages
         p.listDialogues.forEach((d) => {
 
             // ########################## CASE CHARACTER IN DIALOGUE NODE
-            if(type === "Character" && d.speaker !== undefined && d.speaker.value.type === "value"){
-                if(d.speaker.value.value !== "null" && d.speaker.value.value === oldname){
-                    d.speaker.value.value = newname;
-                }
+            if(d.speaker !== undefined){
+                checkVariableForAssetDependency(d.speaker, oldname, newname, type);
             }
 
             // ########################## CASE ASSET FOR CONDITIONNAL DIALOGUE
             if(d.condition !== undefined){
-                if(d.condition.value.type === "value") {
-                    checkConditionForAssetDependency(d, oldname, newname);
-                }
+                checkVariableForAssetDependency(d.condition, oldname, newname, type);
             }
 
             // ########################### CASE ASSET FOR CHOICE DIALOGUE
             if(d.choices !== undefined){
                 d.choices.forEach((c) => {
-                    if(c.condition !== undefined && c.condition.value.type === "value"){
-                        checkConditionForAssetDependency(c, oldname, newname);
+                    if(c.condition !== undefined){
+                        checkVariableForAssetDependency(c.condition, oldname, newname, type);
                     }
-                    if(c.object !== undefined && type === "Object" && c.object.value.type === "value"){
-                        if(c.object.value.value !== "null" && c.object.value.value === oldname){
-                            c.object.value.value = newname;
-                        }
+                    if(c.object !== undefined){
+                        checkVariableForAssetDependency(c.object, oldname, newname, type);
                     }
                 });
             }
@@ -275,12 +271,8 @@ function removeDependencyVariableAsset(type, oldname, newname, assets, listPages
     });
 
     // Project preferences
-    if(type === "Sound" && assets[8].content.defaultClickSound.value.type === "value" && assets[8].content.defaultClickSound.value.value === oldname){
-        assets[8].content.defaultClickSound.value.value = newname;
-    }
-    if(type === "Sound" && assets[8].content.defaultTextSound.value.type === "value" && assets[8].content.defaultTextSound.value.value === oldname){
-        assets[8].content.defaultTextSound.value.value = newname;
-    }
+    if(assets[8].content.defaultClickSound !== undefined) checkVariableForAssetDependency(assets[8].content.defaultClickSound, oldname, newname, type);
+    if(assets[8].content.defaultTextSound !== undefined) checkVariableForAssetDependency(assets[8].content.defaultTextSound, oldname, newname, type);
 }
 
 function checkInputsAssetDependencyFromAction(action, oldname, newname, type){
@@ -296,29 +288,30 @@ function checkInputsAssetDependencyFromAction(action, oldname, newname, type){
 }
 
 function checkVariableForAssetDependency(i, oldname, newname, type){
-    if(i.type.name === type && i.value.type === "value" && i.value.value !== "null" && i.value.value === oldname){
-        i.value.value = newname;
-    }
-    if(i.type.name === "Boolean" && i.value.type === "value"){
-        checkConditionForAssetDependency({condition : i}, oldname, newname);
-    } else if(i.type.name === "Array"){
-        if(i.value.type === "value"){
-            if((i.value.value.type.name === type || i.value.value.type.name === "Boolean")){
-                i.value.value.values.forEach((varArray) => {
-                    checkVariableForAssetDependency(varArray, oldname, newname, type);
-                })
-            }
+    if(i.value.type === "arrayElement"){
+        if(i.value.value.array !== undefined) checkVariableForAssetDependency(i.value.value.array, oldname, newname, type);
+        if(i.value.value.index !== undefined) checkVariableForAssetDependency(i.value.value.index, oldname, newname, type);
+        return;
+    } else if(i.value.type === "value"){
+        if(i.type.name === type && i.value.value === oldname){
+            i.value.value = newname;
+        } else if(i.type.name === "Array"){
+            i.value.value.values.forEach((varArray) => {
+                checkVariableForAssetDependency(varArray, oldname, newname, type);
+            });
+            return;
+        } else if(i.value.input1 !== undefined || i.value.input2 !== undefined){
+            if(i.value.input1 !== undefined) checkVariableForAssetDependency(i.value.input1, oldname, newname, type);
+            if(i.value.input2 !== undefined) checkVariableForAssetDependency(i.value.input2, oldname, newname, type);
+            return;
         }
     }
+    return false;
 }
 
-function checkConditionForAssetDependency(d, oldname, newname){
-    if(d.condition.value.operation !== undefined && d.condition.value.operation !== "value"){
-        if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "value" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
-        if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "value" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
-        d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
-    }
-}
+// ################################################################
+
+// ############################ VARIABLE DEPENDENCY #############
 
 function removeDependencyVariable(type, oldname, newname, listPages, assets) {
     listPages.forEach((p) => {
@@ -326,45 +319,27 @@ function removeDependencyVariable(type, oldname, newname, listPages, assets) {
 
             // ######################### CASE CONDITIONNAL DIALOGUE
             if (d.condition !== undefined) {
-                checkConditionForVariableDependency(d, oldname, newname, type);
+                checkVariableForVariableDependency(d.condition, oldname, newname, type);
             }
 
             // ######################### CASE DIALOGUE
-            if(type === "Character" && d.speaker !== undefined && d.speaker.value.type === "variable"){
-                if(d.speaker.value.value === oldname){
-                    if(newname==="null"){
-                        d.speaker.value.type = "value";
-                        d.speaker.value.value = d.speaker.type.defaultValue;
-                    } else {
-                        d.speaker.value.value = newname;
-                    }
-                }
+            if(d.speaker !== undefined){
+                checkVariableForVariableDependency(d.speaker, oldname, newname, type);
             }
 
             // ############################## CASE INPUT DIALOGUE
-            if(d.input !== undefined && d.input.type.name === type && d.input.value.value === oldname){
-                if(newname === "null"){
-                    d.input.value.value = "";
-                } else {
-                    d.input.value.value = newname;
-                }
+            if(d.input !== undefined){
+                checkVariableForVariableDependency(d.input, oldname, newname, type);
             }
 
             // ############################# CASE CHOICES DIALOGUE
             if(d.choices !== undefined){
                 d.choices.forEach((c) => {
                     if(c.condition !== undefined){
-                        checkConditionForVariableDependency(c, oldname, newname, type);
+                        checkVariableForVariableDependency(c.condition, oldname, newname, type);
                     }
-                    if(c.object !== undefined && type === "Object" && c.object.value.type === "variable"){
-                        if(c.object.value.value === oldname){
-                            if(newname === "null"){
-                                c.object.value.type = "value";
-                                c.object.value.value = "null";
-                            } else {
-                                c.object.value.value = newname;
-                            }
-                        }
+                    if(c.object !== undefined){
+                        checkVariableForVariableDependency(c.object, oldname, newname, type);
                     }
                 });
             }
@@ -380,22 +355,8 @@ function removeDependencyVariable(type, oldname, newname, listPages, assets) {
     });
 
     // Project preferences
-    if(type === "Sound" && assets[8].content.defaultClickSound.value.type === "variable" && assets[8].content.defaultClickSound.value.value === oldname){
-        if(newname === "null"){
-            assets[8].content.defaultClickSound.value.type = "value";
-            assets[8].content.defaultClickSound.value.value = "null";
-        } else {
-            assets[8].content.defaultClickSound.value.value = newname;
-        }
-    }
-    if(type === "Sound" && assets[8].content.defaultTextSound.value.type === "variable" && assets[8].content.defaultTextSound.value.value === oldname){
-        if(newname === "null"){
-            assets[8].content.defaultTextSound.value.type = "value";
-            assets[8].content.defaultTextSound.value.value = "null";
-        } else {
-            assets[8].content.defaultTextSound.value.value = newname;
-        }
-    }
+    if(assets[8].content.defaultClickSound !== undefined) checkVariableForVariableDependency(assets[8].content.defaultClickSound, oldname, newname, type);
+    if(assets[8].content.defaultTextSound !== undefined) checkVariableForVariableDependency(assets[8].content.defaultTextSound, oldname, newname, type);
 }
 
 function checkInputsVariableDependencyFromAction(action, oldname, newname, type){
@@ -407,121 +368,70 @@ function checkInputsVariableDependencyFromAction(action, oldname, newname, type)
 
     action.inputs.forEach((i) => {
         checkVariableForVariableDependency(i, oldname, newname, type);
-
     });
 }
 
 function checkVariableForVariableDependency(i, oldname, newname, type){
-    if((i.type.name === type || i.type.name === "variable" || ((type === "Integer" || type === "Float") && (i.type.name === "Integer" || i.type.name === "Float"))) && i.value.type === "variable" && i.value.value === oldname){
+    if((i.value.type === "variable" && i.value.value === oldname) || (i.type.name.toLowerCase() === "variable" && i.value.type === "value" && i.value.value === oldname)){
         if(newname === "null"){
             if(i.onlyvar !== undefined && i.onlyvar){
                 i.value.value = "";
+                return;
             } else {
                 i.value.type = "value";
-                i.value.value = i.type.defaultValue;
+                i.value.value = JSON.parse(JSON.stringify(i.type.defaultValue));
+                return;
             }
         } else {
             i.value.value = newname;
+            return;
         }
-    } else if((type === "Integer" || type === "Float") && (i.type.name === "Integer" || i.type.name === "Float") && i.value.type === "value" && i.value.operation !== undefined && i.value.operation !== "value"){
-        checkNumberForVariableDependency(i, oldname, newname, type, i.type.defaultValue);
-    } else if(i.type.name === "Array"){
-        if(i.value.type === "value"){
-            if((i.value.value.type.name === type || i.value.value.type.name === "variable") ||
-                ((type === "Integer" || type === "Float") && (i.value.value.type.name === "Integer" || i.value.value.type.name === "Float")) ||
-                (i.value.value.type.name === "Boolean")){
-                i.value.value.values.forEach((varArray) => {
-                    checkVariableForVariableDependency(varArray, oldname, newname, type);
-                });
-            }
-        }
-    }
-
-    if(i.value.type === "arrayElement"){
+    } else if(i.value.type === "arrayElement"){
         if(i.value.value.array !== undefined) checkVariableForVariableDependency(i.value.value.array, oldname, newname, type);
         if(i.value.value.index !== undefined) checkVariableForVariableDependency(i.value.value.index, oldname, newname, type);
-    }
-
-    if(i.type.name === "variable" && i.value.value === oldname){
-        if(newname === "null") i.value.value = "";
-        else i.value.value = newname;
-    }
-
-    if(i.type.name === "Boolean" && i.value.type === "value"){
-        checkConditionForVariableDependency({condition : i}, oldname, newname, type);
-    }
-
-
-}
-
-function checkConditionForVariableDependency(d, oldname, newname, type){
-    if(d.condition.value.type === "value") {
-        if(d.condition.value.operation !== undefined && d.condition.value.operation !== "value"){
-            if(d.condition.value.input1 !== undefined && d.condition.value.input1.value.type === "variable" && d.condition.value.input1.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input1);
-            if(d.condition.value.input2 !== undefined && d.condition.value.input2.value.type === "variable" && d.condition.value.input2.value.value === oldname) dependencyBooleanInputs(newname, d.condition.value.input2);
-            d.condition.value.value = d.condition.value.input1.value.value + " " + d.condition.value.operation + " " +d.condition.value.input2.value.value;
-        }
-    } else if(type === "Boolean") {
-        if(d.condition.value.value === oldname) {
-            if(newname === "null"){
-                d.condition.value.type = "value";
-                d.condition.value.value = d.condition.type.defaultValue;
-            } else {
-                d.condition.value.value = newname;
-            }
+        return;
+    } else if(i.value.type === "value"){
+        if(i.type.name === "Array"){
+            i.value.value.values.forEach((varArray) => {
+                checkVariableForVariableDependency(varArray, oldname, newname, type);
+            });
+            return;
+        } else if(i.value.input1 !== undefined || i.value.input2 !== undefined){
+            if(i.value.input1 !== undefined) checkVariableForVariableDependency(i.value.input1, oldname, newname, type);
+            if(i.value.input2 !== undefined) checkVariableForVariableDependency(i.value.input2, oldname, newname, type);
+            return;
         }
     }
+    return false;
 }
 
-function dependencyBooleanInputs(newname, input){
-    if(input!==null){
-        if(newname === "null"){
-            input.value.type = "value";
-            input.value.value = input.type.defaultValue;
+// ################################################################
+
+function getDisplayNameVariable(variable){
+    if(variable.value.type === "variable"){
+        return variable.value.value;
+    } else if(variable.value.type === "value"){
+        if(variable.type.name === "Array"){
+            return "<static_array>";
+        } else if(variable.value.input1 !== undefined && variable.value.input2 !== undefined){
+            let text = "";
+            if(variable.value.operation === undefined) return "";
+            if(variable.value.operation === "value") return variable.value.value;
+            else if(variable.value.operation === "not") return "!("+getDisplayNameVariable(variable.value.input2)+")";
+            else if(variable.value.operation === "Random" || variable.value.operation === "Min" || variable.value.operation === "Max") return variable.value.operation + "(" + getDisplayNameVariable(variable.value.input1) + ", " + getDisplayNameVariable(variable.value.input2) + ")";
+            else if(variable.value.operation === "array length") return "length("+getDisplayNameVariable(variable.value.input2)+")";
+            else if(variable.value.operation === "exp") return "e ^ "+getDisplayNameVariable(variable.value.input2);
+            else if(variable.value.operation === "power") return getDisplayNameVariable(variable.value.input2)+" ^ "+getDisplayNameVariable(variable.value.input2);
+            else if(variable.value.operation === "Concat") return getDisplayNameVariable(variable.value.input1) + " + " + getDisplayNameVariable(variable.value.input2);
+            else if(variable.value.operation === "to String") return "toString("+getDisplayNameVariable(variable.value.input2)+")";
+            else text = getDisplayNameVariable(variable.value.input1) + " " +variable.value.operation + " " + getDisplayNameVariable(variable.value.input2);
+            return text;
         } else {
-            input.value.value = newname;
+            return variable.value.value;
         }
-    }
-}
-
-function checkNumberForVariableDependency(v, oldname, newname, type, defaultValue){
-    let newText = newname;
-    if(newname === "null") newText = defaultValue;
-    if(v.value.input1 !== undefined && v.value.input1.value.type === "value" && v.value.input1.value.operation !== undefined && v.value.input1.value.operation !== "value") checkNumberForVariableDependency(v.value.input1, oldname, newText, type, defaultValue);
-    if(v.value.input2 !== undefined && v.value.input1.value.type === "value" && v.value.input2.value.operation !== undefined && v.value.input2.value.operation !== "value") checkNumberForVariableDependency(v.value.input2, oldname, newText, type, defaultValue);
-
-    if(v.value.input1.value.type === "variable" && v.value.input1.value.value === oldname) {
-        if(newText === defaultValue){
-            v.value.input1.value.type = "value";
-            v.value.input1.value.operation = "value";
-        }
-        v.value.input1.value.value = newText;
-    }
-    if(v.value.input2.value.type === "variable" && v.value.input2.value.value === oldname) {
-        if (newText === defaultValue) {
-            v.value.input2.value.type = "value";
-            v.value.input2.value.operation = "value";
-        }
-        v.value.input2.value.value = newText;
-    }
-    v.value.value = getTextOperationNumberVariable(v.value.input1, v.value.input2, v.value.operation);
-}
-
-function getTextOperationNumberVariable(input1, input2, operation){
-    console.log("test");
-    if(operation === "Random" || operation === "Min" || operation === "Max") {
-        return operation + "(" + input1.value.value + ", " + input2.value.value + ")";
-    } else if(operation === "array length") {
-        if (input2.value.type === "value") return "length(static_array)";
-        if (input2.value.type === "variable") return "length(" + input2.value.value + ")";
-        if (input2.value.value.array !== undefined && input2.value.value.index !== undefined) return "length(" + (input2.value.value.array.value.type === "variable" ? input2.value.value.array.value.value : "staticArray") + "[" + input2.value.value.index.value.value + "])";
-        return "length(?)";
-    } else if(operation === "exp"){
-        return "e^"+input2.value.value;
-    } else if(operation === "power"){
-        return input1.value.value+"^"+input2.value.value;
-    } else {
-        return input1.value.value + " " + operation + " " + input2.value.value;
+    } else if(variable.value.type === "arrayElement"){
+        if(variable.value.value.array === undefined || variable.value.value.index === undefined) return "";
+        return getDisplayNameVariable(variable.value.value.array) + "[" + getDisplayNameVariable(variable.value.value.index) + "]";
     }
 }
 
@@ -563,8 +473,8 @@ export {
     createPackageWeb,
     createPackageWindows,
     getAllFilesPathAtDirectory,
-    getTextOperationNumberVariable,
     sizeChoiceNode,
     checkValidClipboard,
-    replaceFileLine
+    replaceFileLine,
+    getDisplayNameVariable
 };

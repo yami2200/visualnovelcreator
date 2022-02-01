@@ -5,7 +5,7 @@
         fluid
     >
       <v-row>
-        <v-col>
+        <v-col v-if="operationSelected !== 'not'">
           <v-checkbox
               v-if="operationSelected === 'value'"
               v-model="value"
@@ -77,7 +77,7 @@ export default {
   data: () => ({
     type: "Boolean",
     value: false,
-    listOperation: ["value", "<", "<=", "==", ">",">="],
+    listOperation: ["value", "<", "<=", "==", ">",">=", "not"],
     operationSelected: "value",
     listTypeVar: listVariables,
     selectTypeVar: listVariables[0],
@@ -123,7 +123,12 @@ export default {
       this.input2.value = {type: "value", value: this.input2.type.defaultValue};
     },
     changeOperation(){
-      if(this.operationSelected !== "value" && this.operationSelected !== "==" && this.input1.type.name !== "Float"){
+      if(this.operationSelected === "not"){
+        if(this.input2.type.name  !== "Boolean"){
+          this.input2.type = this.variable.type;
+          this.input2.value = {type: "value", value: this.input2.type.defaultValue};
+        }
+      } else if(this.operationSelected !== "value" && this.operationSelected !== "==" && this.input1.type.name !== "Float"){
         this.input1.type = this.listTypeVar[1];
         this.input2.type = this.listTypeVar[1];
         this.input1.value = {type: "value", value: this.input1.type.defaultValue};
@@ -136,9 +141,6 @@ export default {
       if(this.disableSaveButton) return;
       if(this.choice === "1") {
         let valText = this.value;
-        if(this.operationSelected !== "value"){
-          valText = this.input1.value.value + " " + this.operationSelected + " " +this.input2.value.value;
-        }
         this.$emit("newval", {type: "value", operation: this.operationSelected ,value: valText, input1 : this.input1, input2: this.input2});
       } else if (this.choice === "2") {
         if(this.select == null) return;

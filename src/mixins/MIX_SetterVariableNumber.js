@@ -1,5 +1,3 @@
-import {getTextOperationNumberVariable} from "@/lib";
-
 export const mix_settervariablenumber = {
 
     data: () => ({
@@ -141,10 +139,6 @@ export const mix_settervariablenumber = {
             if(this.disableSaveButton) return;
             if(this.choice === "1") {
                 let valText = this.value;
-                if(this.value === "") valText = this.variable.type.defaultValue;
-                if(this.operationSelected !== "value"){
-                    valText = getTextOperationNumberVariable(this.input1, this.input2, this.operationSelected);
-                }
                 this.$emit("newval", {type: "value", operation: this.operationSelected, value: valText, input1 : this.input1, input2: this.input2});
             } else if(this.choice === "3"){
                 if(valueArray === undefined || valueArray === null || valueArray.array === undefined || valueArray.index === undefined) return;
