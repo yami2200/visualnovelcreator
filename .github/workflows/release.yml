@@ -1,0 +1,62 @@
+name: "Build & Release App"
+on:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  build:
+    name: "Build App"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.12.0
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Project
+        run: npm run electron:build
+      - name: Upload Files
+        uses: actions/upload-artifact@v2
+        with:
+          name: files
+          path: out/
+  release:
+    name: "Release App"
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    steps:
+      - name: Set env variable with tags
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Download Files
+        uses: actions/download-artifact@v2
+        with:
+          name: files
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: $RELEASE_VERSION
+          release_name: Release $RELEASE_VERSION
+      - name: Archive app content
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: files.zip
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
+          asset_path: ./files.zip
+          asset_name: files-v$RELEASE_VERSION.zip
+          asset_content_type: application/zip
