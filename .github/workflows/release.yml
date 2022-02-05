@@ -4,8 +4,22 @@ on:
     tags:
       - "v*.*.*"
 jobs:
+  create-repo:
+    name: "Create Repository"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set env variable with tags
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: Release ${{ env.RELEASE_VERSION }}
   build:
     name: "Build App"
+    needs: create-repo
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -44,13 +58,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: files${{ runner.os }}
-      - name: Create GitHub release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: $RELEASE_VERSION
-          release_name: Release $RELEASE_VERSION
       - name: Archive app content
         uses: thedoctor0/zip-release@master
         with:
