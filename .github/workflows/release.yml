@@ -41,6 +41,7 @@ jobs:
       - name: Set env variable with tags
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Create GitHub release
+        id: create_github_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,6 +49,7 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}${{ runner.os }}
           release_name: Release ${{ env.RELEASE_VERSION }} - ${{ runner.os }}
           draft: false
+          prerelease: false
       - name: Download Files
         uses: actions/download-artifact@v2
         with:
