@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ env.RELEASE_VERSION }}${{ runner.os }}
           release_name: Release ${{ env.RELEASE_VERSION }} - ${{ runner.os }}
       - name: Download Files
         uses: actions/download-artifact@v2
