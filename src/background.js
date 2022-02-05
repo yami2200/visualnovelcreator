@@ -14,8 +14,8 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 720,
     autoHideMenuBar: true,
     title: "Visual Novel Creator",
     icon: path.join(__dirname, 'public/temporarylogo.png'),
@@ -27,7 +27,7 @@ async function createWindow() {
       enableRemoteModule: true,
       contextIsolation: false,
       webSecurity: false,
-      devTools: isDevelopment
+      devTools: true
     }
   })
 
