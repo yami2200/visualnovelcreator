@@ -356,7 +356,7 @@ export default {
         preferences = JSON.parse(readFileSync(path.join(pathPreferences, "visualnovelcreator", "preferences.json")));
       }
       catch {
-        console.log("An error occurred when trying to read editor preferences !\n The editor will load default preferences.");
+        console.log("An error occurred when trying to read editor preferences ! \n The editor will load default preferences.");
       }
       if(preferences!=null){
         this.editorPreferences = preferences;
