@@ -21,11 +21,15 @@ jobs:
         run: npm install
       - name: Build Project
         run: npm run electron:build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Files
         uses: actions/upload-artifact@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: files
-          path: out/
+          name: files${{ runner.os }}
+          path: ./dist_electron/
   release:
     name: "Release App"
     needs: build
@@ -39,7 +43,7 @@ jobs:
       - name: Download Files
         uses: actions/download-artifact@v2
         with:
-          name: files
+          name: files${{ runner.os }}
       - name: Create GitHub release
         uses: actions/create-release@v1
         env:
