@@ -372,7 +372,7 @@ export default {
         writeFile(path.join(pathPreferences, "visualnovelcreator", "preferences.json"), JSON.stringify(editorPreferencesNew));
         this.loadEditorPreferences(false);
       } else {
-        alert("An error occured when trying to read editor preferences ! \n The editor will load default preferences.");
+        alert("An error occured when trying to read editor preferences !\n The editor will load default preferences.");
       }
       this.editorPreferences = JSON.parse(JSON.stringify(jsonBasePreferences));
       this.updateEditorPreferences();
