@@ -30,7 +30,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click="deleteObject" :disabled=disableEditionButtons>
+      <v-btn v-if="cantdelete === undefined || !cantdelete" icon @click="deleteObject" :disabled=disableEditionButtons>
         <v-icon>mdi-delete</v-icon>
       </v-btn>
 
@@ -46,7 +46,7 @@
         <v-icon>mdi-arrow-up-drop-circle</v-icon>
       </v-btn>
 
-      <v-btn icon @click="newObject">
+      <v-btn v-if="cantcreate === undefined || !cantcreate" icon @click="newObject">
         <v-icon>mdi-plus-circle</v-icon>
       </v-btn>
 
@@ -59,7 +59,7 @@
 export default {
   name: "VSM-ListObjectComponent",
 
-  props:["height", "items", "bus", "canSearch", "searchAttribrute", "mandatory", "movable", "editable"],
+  props:["height", "items", "bus", "canSearch", "searchAttribrute", "mandatory", "movable", "editable", "cantcreate", "cantdelete"],
 
   mounted() {
     if(this.bus !== undefined){
