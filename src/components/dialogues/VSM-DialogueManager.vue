@@ -7,16 +7,6 @@
       ref="dialoguepanel"
       @mouseleave="leaveDialogueManager"
       @mousemove="trackMouse"
-      @keyup.delete="deletePress"
-
-      @keyup.&="addDialogue('dialogue')"
-      @keyup.é="addDialogue('choices')"
-      @keyup.51="addDialogue('condition')"
-      @keyup.52="addDialogue('function')"
-      @keyup.54="addDialogue('transition')"
-      @keyup.53="addDialogue('input')"
-
-      @keyup.f2="renameDialogueRequest"
   >
 
     <vsm-inputtext :bus="bus" :maxLetters="30" :text="'Write a new name for your dialogue'+(selectionDialogue.length>1 ? 's' : '')+' :'" :headline="'Rename dialogue'+(selectionDialogue.length>1 ? 's' : '')" @accept="renameDialogues"></vsm-inputtext>
@@ -49,9 +39,18 @@
 
     <vsm-editdialoguepanel @initShortcut="initShortcutLink" :bus="bus" :listDialogues="listDialogues" @refresh="refresh" :assets="assets" :listPages="listPages" @DeleteTransition="deleteTransitionDialogue"></vsm-editdialoguepanel>
 
-          <panZoom ref="panzoomelement" @init="initPanZoom" :options="{zoomDoubleClickSpeed: 1, beforeMouseDown: testIgnore, maxZoom: 10, minZoom:1, bounds: true, boundsPadding: 1}" style="outline: none;">
+            <svg
+                width="100%"
+                height="100%"
+                :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}"
+                ref="svgBox"
+                @wheel="wheelSVG"
+                @mousemove="mouseMoveSVG"
+                @mouseup="mouseUp"
+                @mousedown="mouseDownSVG"
+                @contextmenu="contextMenuDM"
 
-            <svg :height="2000+'px'" :style="{cursor: getCursor, backgroundColor: backgroundColorSVG}" :width="2000+'px'" ref="svgBox" @mouseup="mouseUp" @mousedown="mouseDownSVG" @contextmenu="contextMenuDM">
+            >
 
               <defs>
 
@@ -147,21 +146,22 @@
                 </linearGradient>
 
               </defs>
+              <g ref="svgParentGroup">
+                <path v-if="linkingBlock !== -1" pointer-events="none" :d="getPathLinkBezierToMouse(linkingOutput===-1 ? xMouse : linkXOut(linkingBlock, linkingOutput), linkingOutput===-1 ? yMouse : linkYOut(linkingBlock, linkingOutput), linkingOutput===-1 ? linkXInp(linkingBlock, linkingInput) : xMouse, linkingOutput===-1 ? linkYInp(linkingBlock, linkingInput) : yMouse)" style="stroke:rgb(0,0,0);stroke-width:0.3" fill="none"/>
 
-              <path v-if="linkingBlock !== -1" pointer-events="none" :d="getPathLinkBezierToMouse(linkingOutput===-1 ? xMouse : linkXOut(linkingBlock, linkingOutput), linkingOutput===-1 ? yMouse : linkYOut(linkingBlock, linkingOutput), linkingOutput===-1 ? linkXInp(linkingBlock, linkingInput) : xMouse, linkingOutput===-1 ? linkYInp(linkingBlock, linkingInput) : yMouse)" style="stroke:rgb(0,0,0);stroke-width:0.3" fill="none"/>
+                <g v-for="(value,index) in listDialogues" v-bind:key="index">
+                  <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
+                    <path v-if="valueL.id !== -1" pointer-events="none" :d="getPathLinkBezier(index, indexL, valueL)" style="stroke:rgb(0,0,0);stroke-width:0.3" fill="none"/>
+                  </g>
 
-              <g v-for="(value,index) in listDialogues" v-bind:key="index">
-                <g v-for="(valueL,indexL) in value.nextDialogue" v-bind:key="indexL">
-                  <path v-if="valueL.id !== -1" pointer-events="none" :d="getPathLinkBezier(index, indexL, valueL)" style="stroke:rgb(0,0,0);stroke-width:0.3" fill="none"/>
+                  <vsm-dialogueblock v-if="value.type === 'dialogue'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
+                  <vsm-dialoguechoices v-if="value.type === 'choices'" @clickDialogue="clickDialogue" @choiceHover="onChoiceHovered" @choiceStopHover="onChoiceStopHovered" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguechoices>
+                  <vsm-dialoguecondition v-else-if="value.type === 'condition'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
+                  <vsm-dialoguefunction v-else-if="value.type === 'function'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
+                  <vsm-dialogueinput v-else-if="value.type === 'input'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
+                  <vsm-dialoguetransition v-else-if="value.type === 'transition'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguetransition>
+
                 </g>
-
-                <vsm-dialogueblock v-if="value.type === 'dialogue'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueblock>
-                <vsm-dialoguechoices v-if="value.type === 'choices'" @clickDialogue="clickDialogue" @choiceHover="onChoiceHovered" @choiceStopHover="onChoiceStopHovered" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguechoices>
-                <vsm-dialoguecondition v-else-if="value.type === 'condition'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguecondition>
-                <vsm-dialoguefunction v-else-if="value.type === 'function'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguefunction>
-                <vsm-dialogueinput v-else-if="value.type === 'input'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialogueinput>
-                <vsm-dialoguetransition v-else-if="value.type === 'transition'" @clickDialogue="clickDialogue" @contextMenu="contextMenu" :linkingOutput="linkingOutput" @updatePlugsLoc="updatePlugsLocFromChild" @linkingInput="startingLinkFromInput" :linkingblock="linkingBlock" :bus="bus"  @linkEnd="linkEnd" @linkingOutput="startingLinkFromOutput" @selectD="selectDialogue" :index="index" :dialogue="value"></vsm-dialoguetransition>
-
               </g>
 
               <rect
@@ -176,11 +176,9 @@
               >
               </rect>
 
-
             </svg>
-          </panZoom>
 
-    <v-card-actions style="height: 50px; position: fixed; z-index: 10; bottom: 5px; pointer-events:none;">
+    <v-card-actions style="height: 50px; position: fixed; z-index: 10; bottom: -5px; pointer-events:none;">
       <v-btn
           style="pointer-events: auto;"
           @mouseenter="leaveDialogueManager"
@@ -211,6 +209,55 @@
       </v-btn>
     </v-card-actions>
 
+    <v-card-actions style="height: 50px; position: absolute; z-index: 10; right: 110px; bottom: -5px; pointer-events:none;">
+      <v-btn
+          style="pointer-events: auto;"
+          @click="moveToMatrix([1.33, 0, 0, 1.33, -179, -168])"
+          @mouseenter="leaveDialogueManager"
+          small
+          absolute
+          top
+          left
+          fab
+      >
+        <v-icon>mdi-image-filter-center-focus</v-icon>
+      </v-btn>
+      <v-btn
+          style="pointer-events: auto; margin-left: 50px"
+          @click="toggleSearchDialoguePanel"
+          @mouseenter="leaveDialogueManager"
+          small
+          absolute
+          top
+          left
+          fab
+      >
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+    </v-card-actions>
+
+    <v-card v-if="searchPanel" width="300px" height="300px" style="position: absolute; z-index: 10; right: 10px; bottom: 90px; pointer-events:visible;" @mouseenter="leaveDialogueManager">
+      <v-row>
+        <v-spacer></v-spacer>
+        <v-btn small fab @click="toggleSearchDialoguePanel" style="margin-top: 13px; margin-right: 13px" elevation="0">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-row>
+      <vsm-listobject
+          height="250px"
+          style="margin-top:20px"
+          :cantcreate="true"
+          :editable="false"
+          :cantdelete="true"
+          :items="listDialogues"
+          :bus="bus1"
+          searchAttribrute="title">
+        <template v-slot:default="slotProps">
+          <vsm-listobjectcompdialogue :dialogue="slotProps.itemList" @goToDialogue="goToDialogue"> </vsm-listobjectcompdialogue>
+        </template>
+      </vsm-listobject>
+    </v-card>
+
   </v-card>
 </template>
 
@@ -234,6 +281,8 @@ import jsonBaseDialogueChoices from '../../assets/base_dialoguechoices.json';
 import inputText from "@/components/modalrequest/VSM-InputTextModal";
 import EditDialogue from "@/components/VSM-EditDialoguePanel"
 import {remote} from "electron";
+import ListObjectComp from "@/components/VSM-ListObjectComponent";
+import ListObjectDialogueComp from "@/components/listObject/VSM-ListObjectDialogueComp";
 
 const BrowserWindow = remote.BrowserWindow
 const baseDialogue = jsonBaseDialogue;
@@ -257,6 +306,8 @@ export default {
     'vsm-tooltip' : tooltip,
     'vsm-inputtext' : inputText,
     'vsm-editdialoguepanel' : EditDialogue,
+    "vsm-listobject" : ListObjectComp,
+    "vsm-listobjectcompdialogue" : ListObjectDialogueComp,
   },
 
   props: ['listDialogues', "assets", "listPages", "busEntry", "projectproperties", "currentpage"],
@@ -264,6 +315,14 @@ export default {
   data : () => ({
     color: "red",
     manualMove: false,
+    bus1: new Vue(),
+
+    searchPanel: false,
+
+    initMousePosPanPressX: 0,
+    initMousePosPanPressY: 0,
+    matrixTranslation: [1.33, 0, 0, 1.33, -179, -168],
+    intervalMoveToMatrix: null,
 
     itemsMenu: [{title : "yes", action : "test1"}, {title : "no", action : "test2"}],
     contextMenuSelection: null,
@@ -285,7 +344,6 @@ export default {
     movingDialogue: false,
 
     justClick: false,
-    panzoom: null,
     linkingBlock: -1,
     linkingOutput: -1,
     linkingInput: -1,
@@ -332,6 +390,7 @@ export default {
       return this.initialDialogue === null || this.initialDialogue.page === null || this.initialDialogue.index === -1;
     },
   },
+
   methods:{
     test(){
       console.log("enter")
@@ -419,15 +478,15 @@ export default {
         if(this.selectionDialogue.length > 0 && (!data.shift || data.e.button ===2)) this.stopSelecting(this.selectionDialogue, [data.index]);
         this.selectionDialogue.push({
           index: data.index,
-          offsetX: data.e.offsetX - this.listDialogues[data.index].x,
-          offsetY: data.e.offsetY - this.listDialogues[data.index].y,
+          offsetX: this.getXInvertCoordinate(data.e.offsetX, data.e.offsetY) - this.listDialogues[data.index].x,
+          offsetY: this.getYInvertCoordinate(data.e.offsetX, data.e.offsetY) - this.listDialogues[data.index].y,
         });
       } else {
         this.lastSelectionGroup = {time: getDate(), index: data.index};
       }
       for(var i = 0; i<this.selectionDialogue.length;i++){
-        this.selectionDialogue[i].offsetX = data.e.offsetX - this.listDialogues[this.selectionDialogue[i].index].x;
-        this.selectionDialogue[i].offsetY = data.e.offsetY - this.listDialogues[this.selectionDialogue[i].index].y;
+        this.selectionDialogue[i].offsetX = this.getXInvertCoordinate(data.e.offsetX, data.e.offsetY) - this.listDialogues[this.selectionDialogue[i].index].x;
+        this.selectionDialogue[i].offsetY = this.getYInvertCoordinate(data.e.offsetX, data.e.offsetY) - this.listDialogues[this.selectionDialogue[i].index].y;
       }
       this.$refs.svgBox.addEventListener('mousemove', this.mouseMove)
     },
@@ -438,6 +497,8 @@ export default {
       if(e.button === 1 && e.buttons === 4) {
         e.preventDefault();
         this.panButtonPress = true;
+        this.initMousePosPanPressX = e.clientX;
+        this.initMousePosPanPressY = e.clientY;
       }
       if(this.justClick){
         this.justClick = false;
@@ -487,15 +548,12 @@ export default {
     },
     mouseMove(e){
       this.movingDialogue = true;
-      var ref = this;
+      let ref = this;
       this.selectionDialogue.forEach((element) => {
-        ref.listDialogues[element.index].x = e.offsetX - element.offsetX;
-        ref.listDialogues[element.index].y = e.offsetY - element.offsetY;
+        ref.listDialogues[element.index].x = this.getXInvertCoordinate(e.offsetX, e.offsetY) - element.offsetX;
+        ref.listDialogues[element.index].y = this.getYInvertCoordinate(e.offsetX, e.offsetY) - element.offsetY;
         ref.bus.$emit('moving'+element.index);
-      })
-      /*this.listDialogues[this.selectedDialogue].x = e.offsetX - this.dragOffsetX;
-      this.listDialogues[this.selectedDialogue].y = e.offsetY - this.dragOffsetY;
-      this.bus.$emit('moving'+this.selectedDialogue);*/
+      });
     },
     endSelectingBox(e){
       this.stopSelecting(this.selectionDialogue);
@@ -526,8 +584,8 @@ export default {
       }
       this.linkingOutput = data.indexO;
       this.linkingBlock = data.indexD;
-      this.xMouse = data.e.offsetX;
-      this.yMouse = data.e.offsetY;
+      this.xMouse = this.getXInvertCoordinate(data.e.offsetX, data.e.offsetY);
+      this.yMouse = this.getYInvertCoordinate(data.e.offsetX, data.e.offsetY);
     },
     startingLinkFromInput(data){
       this.justClick = true;
@@ -536,8 +594,8 @@ export default {
       this.linkingOutput = -1;
       this.linkingBlock = data.indexD;
       this.linkingInput = data.indexI;
-      this.xMouse = data.e.offsetX;
-      this.yMouse = data.e.offsetY;
+      this.xMouse = this.getXInvertCoordinate(data.e.offsetX, data.e.offsetY);
+      this.yMouse = this.getYInvertCoordinate(data.e.offsetX, data.e.offsetY);
     },
     linkEnd(data){
       if(this.linkingBlock === -1 || this.linkingBlock===data.indexD) return;
@@ -562,11 +620,6 @@ export default {
 
         removePreviousDialoguesFromOutput(this.listDialogues, data.indexD, data.indexIO);
 
-        /*var oldNext = this.listDialogues[data.indexD].nextDialogue[data.indexIO];
-        if(oldNext.id != -1){
-          if(this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].length <=1) this.listDialogues[oldNext.id].previousDialogue[oldNext.ii] = [{id: -1, ii:0}];
-          else this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].splice(this.listDialogues[oldNext.id].previousDialogue[oldNext.ii].findIndex(v => v.id === data.indexD && v.ii === data.indexIO), 1);
-        }*/
         this.listDialogues[data.indexD].nextDialogue[data.indexIO] = {id : this.linkingBlock, ii: this.linkingInput};
 
         if(this.listDialogues[this.linkingBlock].previousDialogue[this.linkingInput].length<=1) this.listDialogues[this.linkingBlock].previousDialogue[this.linkingInput] = [{id: data.indexD, ii:data.indexIO}]
@@ -583,8 +636,8 @@ export default {
       }
     },
     mouseMoveLink(e){
-      this.xMouse = e.offsetX;
-      this.yMouse = e.offsetY;
+      this.xMouse = this.getXInvertCoordinate(e.offsetX, e.offsetY);
+      this.yMouse = this.getYInvertCoordinate(e.offsetX, e.offsetY);
 
       if(e.x < 50) {
         if(this.scrollDirLinking[0] === 0 && this.scrollDirLinking[1] === 0) this.addScrollInterval();
@@ -615,9 +668,13 @@ export default {
     },
     addScrollInterval(){
       this.updateScroll = setInterval(() => {
-        this.panzoom.moveTo(this.panzoom.getTransform().x + this.scrollDirLinking[0]*10, this.panzoom.getTransform().y + this.scrollDirLinking[1]*10);
-        if(this.panzoom.getTransform().x !== 0 && this.panzoom.getTransform().x > (-1)*this.$refs["dialoguepanel"].$el.offsetWidth*(this.panzoom.getTransform().scale-1) + 10) this.xMouse -= this.scrollDirLinking[0] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
-        if(this.panzoom.getTransform().y !== 0 && this.panzoom.getTransform().y > (-1)*this.$refs["dialoguepanel"].$el.offsetHeight*(this.panzoom.getTransform().scale-1) + 10) this.yMouse -= this.scrollDirLinking[1] * 10 * Math.pow(this.panzoom.getTransform().scale, -1);
+        this.matrixTranslation[4] += this.scrollDirLinking[0]*7;
+        this.matrixTranslation[5] += this.scrollDirLinking[1]*7;
+        if(this.mouseEvent !== null && this.mouseEvent.offsetX !== undefined && this.mouseEvent.offsetY !== undefined){
+          this.xMouse = this.getXInvertCoordinate(this.mouseEvent.offsetX, this.mouseEvent.offsetY);
+          this.yMouse = this.getYInvertCoordinate(this.mouseEvent.offsetX, this.mouseEvent.offsetY);
+        }
+        this.refreshSVG();
       }, 20)
     },
     leaveDialogueManager(e){
@@ -632,14 +689,84 @@ export default {
     },
 
     // ############################ LOCATIONS MANAGEMENT
-    initPanZoom(instance){
-      this.panzoom = instance;
-      this.panzoom.setTransformOrigin(null);
-      this.panzoom.zoomTo(0.5,0.5,5);
-    },
     updatePlugsLocFromChild(data){
       this.listDialogues[data.index].outputsLoc = data.outputsLoc;
       this.listDialogues[data.index].inputsLoc = data.inputsLoc;
+    },
+    wheelSVG(e){
+      var centerX = this.$refs["svgBox"].clientWidth / 2;
+      var centerY = this.$refs["svgBox"].clientHeight / 2;
+      if(this.matrixTranslation[0] * (1-e.deltaY/1000) > 40) return;
+      if(this.matrixTranslation[0] * (1-e.deltaY/1000) < 0.25) return;
+
+      for (let i = 0; i < 6; i++) {
+        this.matrixTranslation[i] *= (1-e.deltaY/1000);
+      }
+
+      this.matrixTranslation[4] += (1 - (1-e.deltaY/1000)) * centerX;
+      this.matrixTranslation[5] += (1 - (1-e.deltaY/1000)) * centerY;
+      console.log(this.matrixTranslation);
+      this.refreshSVG();
+    },
+    mouseMoveSVG(e){
+      if(this.panButtonPress) {
+        let diffX = this.initMousePosPanPressX - e.clientX;
+        let diffY = this.initMousePosPanPressY - e.clientY;
+        this.matrixTranslation[4] -= diffX;
+        this.matrixTranslation[5] -= diffY;
+        this.initMousePosPanPressX = e.clientX;
+        this.initMousePosPanPressY = e.clientY;
+        this.refreshSVG();
+      }
+    },
+    refreshSVG(){
+      this.$refs["svgParentGroup"].setAttributeNS(null, "transform", "matrix(" + this.matrixTranslation.join(' ') + ")");
+    },
+    getXCoordinate(x, y){
+      return this.matrixTranslation[0] * x + this.matrixTranslation[1] * y + this.matrixTranslation[2];
+    },
+    getYCoordinate(x, y){
+      return this.matrixTranslation[3] * x + this.matrixTranslation[4] * y + this.matrixTranslation[5];
+    },
+    getXInvertCoordinate(x, y){
+      let a = this.matrixTranslation[0];
+      let b = this.matrixTranslation[1];
+      let c = this.matrixTranslation[2];
+      let d = this.matrixTranslation[3];
+      let e = this.matrixTranslation[4];
+      let f = this.matrixTranslation[5];
+      return ((-d) / (b*c - a*d)) * x + (c / (b*c - a * d)) * y + ((-c * f) + (d * e))/(b*c - a*d); // Inverse Matrix
+    },
+    getYInvertCoordinate(x, y){
+      let a = this.matrixTranslation[0];
+      let b = this.matrixTranslation[1];
+      let c = this.matrixTranslation[2];
+      let d = this.matrixTranslation[3];
+      let e = this.matrixTranslation[4];
+      let f = this.matrixTranslation[5];
+      return (b / (b*c - a*d)) * x + ((-a) / (b*c - a*d)) * y + ((a*f) - (b*e)) / (b*c - a*d);
+    },
+    moveToMatrix(matrix){
+      if(this.intervalMoveToMatrix !== null) clearInterval(this.intervalMoveToMatrix);
+      let count = 15;
+      let delta = [(this.matrixTranslation[0] - matrix[0]) / count,
+        (this.matrixTranslation[1] - matrix[1]) / count,
+        (this.matrixTranslation[2] - matrix[2]) / count,
+        (this.matrixTranslation[3] - matrix[3]) / count,
+        (this.matrixTranslation[4] - matrix[4]) / count,
+        (this.matrixTranslation[5] - matrix[5]) / count];
+
+      this.intervalMoveToMatrix = setInterval(() => {
+        this.matrixTranslation = [this.matrixTranslation[0] - delta[0],
+          this.matrixTranslation[1] - delta[1],
+          this.matrixTranslation[2] - delta[2],
+          this.matrixTranslation[3] - delta[3],
+          this.matrixTranslation[4] - delta[4],
+          this.matrixTranslation[5] - delta[5]];
+        this.refreshSVG();
+        count--;
+        if(count <= 0) clearInterval(this.intervalMoveToMatrix);
+      }, 15);
     },
 
     // ############################ CONTEXT MENU BEHAVIOR
@@ -689,12 +816,12 @@ export default {
     trackMouse(e){
       this.mouseEvent = e;
       if(this.selectingBox){
-        var minX = this.selectionBoxX;
-        var maxX = Math.max(this.selectingBoxLoc.x, this.mouseEvent.offsetX)
-        var minY = this.selectionBoxY;
-        var maxY = Math.max(this.selectingBoxLoc.y, this.mouseEvent.offsetY)
+        var minX = this.getXInvertCoordinate(this.selectionBoxX, this.selectionBoxY);
+        var maxX = this.getXInvertCoordinate(Math.max(this.selectingBoxLoc.x, this.mouseEvent.offsetX), Math.max(this.selectingBoxLoc.y, this.mouseEvent.offsetY));
+        var minY = this.getYInvertCoordinate(this.selectionBoxX, this.selectionBoxY);
+        var maxY = this.getYInvertCoordinate(Math.max(this.selectingBoxLoc.x, this.mouseEvent.offsetX), Math.max(this.selectingBoxLoc.y, this.mouseEvent.offsetY));
         var ref = this;
-        var indexs = this.listDialogues.filter(v => squareIntoSelection(minX, maxX, minY, maxY, v.x, v.y, -v.offsetLoc.x*2, -v.offsetLoc.y*2));
+        var indexs = this.listDialogues.filter(v => squareIntoSelection(minX, maxX, minY, maxY, v.x,  v.y, -v.offsetLoc.x*2, -v.offsetLoc.y*2));
         var i = 0;
         this.listDialogues.forEach(dialogue => {
           if(indexs.includes(dialogue)){
@@ -719,6 +846,33 @@ export default {
         this.pasteDialogues();
       } else if(e.control && e.key === "s"){
         this.$emit("save");
+      } else {
+        switch(e.code){
+          case "Delete":
+            this.deletePress();
+            break;
+          case "Digit1":
+            this.addDialogue('dialogue');
+            break;
+          case "Digit2":
+            this.addDialogue('choices');
+            break;
+          case "Digit3":
+            this.addDialogue('condition');
+            break;
+          case "Digit4":
+            this.addDialogue('function');
+            break;
+          case "Digit5":
+            this.addDialogue('transition');
+            break;
+          case "Digit6":
+            this.addDialogue('input');
+            break;
+          case "F2":
+            this.renameDialogueRequest();
+            break;
+        }
       }
     },
     initShortcutLink(p){
@@ -751,8 +905,8 @@ export default {
           break;
       }
       if(dialogue == null) return;
-      dialogue.x = this.mouseEvent.offsetX + dialogue.offsetLoc.x;
-      dialogue.y = this.mouseEvent.offsetY + dialogue.offsetLoc.y;
+      dialogue.x = this.getXInvertCoordinate(this.mouseEvent.offsetX, this.mouseEvent.offsetY) + dialogue.offsetLoc.x;
+      dialogue.y = this.getYInvertCoordinate(this.mouseEvent.offsetX, this.mouseEvent.offsetY) + dialogue.offsetLoc.y;
       this.listDialogues.push(dialogue);
     },
     clickDialogue(data){
@@ -986,8 +1140,8 @@ export default {
       var size = this.listDialogues.length;
       this.clipboard.content.forEach((d) => {
         var newdiag = JSON.parse(JSON.stringify(d));
-        newdiag.x = (newdiag.x - this.clipboard.deltaX) + this.mouseEvent.offsetX;
-        newdiag.y = (newdiag.y - this.clipboard.deltaY) + this.mouseEvent.offsetY;
+        newdiag.x = (newdiag.x - this.clipboard.deltaX) + this.getXInvertCoordinate(this.mouseEvent.offsetX, this.mouseEvent.offsetY);
+        newdiag.y = (newdiag.y - this.clipboard.deltaY) + this.getYInvertCoordinate(this.mouseEvent.offsetX, this.mouseEvent.offsetY);
         newdiag.title += "_copy"+(this.clipboard.pasteCount===0 ? "" : "_"+this.clipboard.pasteCount);
 
         newdiag.previousDialogue.forEach((p) => {
@@ -1013,6 +1167,18 @@ export default {
       this.deletePress();
     },
 
+    // ###################################### SEARCH PANEL
+    toggleSearchDialoguePanel(){
+      this.searchPanel = !this.searchPanel;
+    },
+    goToDialogue(dialogue){
+      let x = dialogue.x - this.getXInvertCoordinate(this.$refs["svgBox"].clientWidth / 2, this.$refs["svgBox"].clientHeight / 2);
+      let y = dialogue.y - this.getYInvertCoordinate(this.$refs["svgBox"].clientWidth / 2, this.$refs["svgBox"].clientHeight / 2);
+      /*let nx = this.getXCoordinate(x, y);
+      let ny = this.getXCoordinate(x, y);*/
+      this.moveToMatrix([this.matrixTranslation[0], this.matrixTranslation[1], this.matrixTranslation[2], this.matrixTranslation[3], this.matrixTranslation[4]-x*this.matrixTranslation[0], this.matrixTranslation[5]-y*this.matrixTranslation[0]]);
+    },
+
     // ####################################### LOADING AND SET INITIAL DIALOGUE
     setInitialWhenLoading(listPage){
       this.initialDialogue = {page : null, index : -1};
@@ -1033,7 +1199,8 @@ export default {
     this.busEntry.$on("deleteTransitionId", this.deleteDialogueID);
     this.busEntry.$on("deleteAllTransitionId", this.deleteAllDialogueID);
     this.busEntry.$on("reload", this.setInitialWhenLoading);
-    this.$emit("initShortcut", {name : "DialogueManager", f: this.shorcutHandle})
+    this.$emit("initShortcut", {name : "DialogueManager", f: this.shorcutHandle});
+    this.refreshSVG();
   }
 
 }
