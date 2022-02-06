@@ -48,7 +48,7 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_VERSION }}${{ runner.os }}
           release_name: Release ${{ env.RELEASE_VERSION }} - ${{ runner.os }}
-          draft: false
+          draft: true
           prerelease: false
       - name: Download Files
         uses: actions/download-artifact@v2
