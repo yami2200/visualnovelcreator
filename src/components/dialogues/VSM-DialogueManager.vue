@@ -705,7 +705,6 @@ export default {
 
       this.matrixTranslation[4] += (1 - (1-e.deltaY/1000)) * centerX;
       this.matrixTranslation[5] += (1 - (1-e.deltaY/1000)) * centerY;
-      console.log(this.matrixTranslation);
       this.refreshSVG();
     },
     mouseMoveSVG(e){
