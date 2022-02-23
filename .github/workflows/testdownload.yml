@@ -10,6 +10,8 @@ jobs:
       matrix:
         os: [ubuntu-latest]
     steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
       - name: ls
         run: ls
       - uses: montudor/action-zip@v1
