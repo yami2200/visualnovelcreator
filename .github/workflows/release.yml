@@ -14,9 +14,10 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
       - name: Unzip packageWindows archive
-        uses: TonyBogdanov/zip@1.0
+        uses: DuckSoft/extract-7z-action@master
         with:
-          args: unzip -qq -r ./public/packageWindows.zip ./public/
+          pathSource : ./public/packageWindows.zip
+          pathTarget : ./public/
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
