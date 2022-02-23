@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
-      - name: Unzip packageWindows
+      - name: Unzip packageWindows archive
         uses: TonyBogdanov/zip@1.0
         with:
           args: unzip -qq -r ./public/packageWindows.zip ./public/
