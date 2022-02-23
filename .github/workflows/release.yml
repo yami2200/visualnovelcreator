@@ -14,9 +14,9 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
       - name: Unzip packageWindows
-        uses: montudor/action-zip@v1
+        uses: TonyBogdanov/zip@1.0
         with:
-          args: unzip -qq public/packageWindows.zip -d public/
+          args: unzip -qq -r ./public/packageWindows.zip ./public/
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
