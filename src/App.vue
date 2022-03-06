@@ -4,8 +4,8 @@
       <vsm-menu-bar :loading="processing" :bus="bus" @package="packageProjectRequest" @enginecode="editEngineCodePanel" @preferences="openEditorPreferencesPanel" @properties="openProjectPropertiesPanel" @customfunction="openCustomFunctionsPanel"></vsm-menu-bar>
       <vsm-newproject-modal :bus="bus" @save="newProjectCreated"></vsm-newproject-modal>
       <vsm-packageproject :bus="bus" @save="packageProject"></vsm-packageproject>
-      <vsm-inputtext :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
-      <vsm-variables-panel v-if="assets!=null && assets.length>5" @save="saveProjectButton" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
+      <vsm-inputtext @initShortcut="addListPanelShortcut" :bus="bus" :maxLetters="30" text="Write a new name for your page :" headline="Rename the page" @accept="renamePage" :duplicate-names="listNamePages"></vsm-inputtext>
+      <vsm-variables-panel @initShortcut="addListPanelShortcut" v-if="assets!=null && assets.length>5" @save="saveProjectButton" :bus="bus" :variables="assets[5].content" :assets="assets" :listPages="listPage"></vsm-variables-panel>
       <vsm-enginecode-panel @initShortcut="addListPanelShortcut" :assets="assets" :bus="bus" :properties="project_properties"></vsm-enginecode-panel>
       <vsm-customfunctions @initShortcut="addListPanelShortcut" :assets="assets" :bus="bus" @save="saveCustomFunctions"></vsm-customfunctions>
       <vsm-editorpreferences @initShortcut="addListPanelShortcut" :bus="bus" :preferences="editorPreferences" @save="saveEditorPreferences"></vsm-editorpreferences>
@@ -15,7 +15,7 @@
         <vsm-dialogue-manager id="dialoguemanager" v-if="selectedDialoguePage!=null" @initShortcut="addListPanelShortcut($event, true)" @save="saveProjectButton" :currentpage="listPage[this.selectedDialoguePage].title" :projectproperties="project_properties" :busEntry="bus" :listPages="assets[6].content" :assets="assets" :listDialogues="listDialogues">  </vsm-dialogue-manager>
         <div id="separator"></div>
         <div id="pageandassetmanager">
-          <vsm-pagespanel :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
+          <vsm-pagespanel @initShortcut="addListPanelShortcut" :listPage="listPage" :bus="bus" @changePage="onSwitchPage" @requestPage="requestPage"></vsm-pagespanel>
           <vsm-assets-panel @initShortcut="addListPanelShortcut" @saveAssets="saveProjectButton" :project_prop="project_properties" :assets="assets" :bus="bus" :listPages="listPage"></vsm-assets-panel>
         </div>
       </div>

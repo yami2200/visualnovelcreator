@@ -57,6 +57,7 @@ import {removeDependencyVariable} from "@/lib";
 import helpButton from "@/components/VSM-HelpButton";
 import ListObjectComp from "@/components/VSM-ListObjectComponent";
 import ListObjectVariableComp from "@/components/listObject/VSM-ListObjectVariableComp";
+import {mix_modal} from "@/mixins/MIX_Modal";
 
 export default {
   name: "VSM-VariablesPanel",
@@ -70,9 +71,11 @@ export default {
 
   props:["bus", "variables", "assets", "listPages"],
 
+  mixins:[mix_modal],
+
   data () {
     return {
-      dialog: false,
+      nameText: "VariablesPanel",
       headlineCRM: "",
       textCRM: "",
       bus1: new Vue(),
@@ -87,12 +90,6 @@ export default {
     save(){
       this.bus1.$emit("updateList");
       this.$emit("save");
-    },
-    show(){
-      this.dialog = true;
-    },
-    hide(){
-      this.dialog = false;
     },
     edit(index){
       this.bus.$emit("showEditVariable", {type: true, index: index})
@@ -114,10 +111,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.bus.$on('showVariablesPanel', this.show);
-    this.bus.$on('hideVariablesPanel', this.hide);
-  },
 }
 </script>
 

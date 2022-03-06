@@ -15,7 +15,7 @@
           class="mr-4 ml-4"
           v-model="textinput"
           ref="inputTextField"
-          :rules="[rules.required, rules.counter, rules.duplicate]"
+          :rules="[rules.required, rules.counter, rules.duplicate, rules.invalidcharacters]"
       ></v-text-field>
 
       <v-card-actions>
@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import {mix_modal} from "@/mixins/MIX_Modal";
+
 export default {
   name: "VSM-InputTextModal",
 
@@ -52,21 +54,24 @@ export default {
     duplicateNames : {},
   },
 
+  mixins:[mix_modal],
+
   data () {
     return {
-      dialog: false,
+      nameText: "InputText",
       textinput: "",
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= this.maxLetters || 'Max '+this.maxLetters+' characters',
-        duplicate : value => (this.duplicateNames === undefined || !this.duplicateNames.includes(value)) || "Duplicate Name"
+        duplicate : value => (this.duplicateNames === undefined || !this.duplicateNames.includes(value)) || "Duplicate Name",
+        invalidcharacters : value => !value.includes('&') || 'Invalid Character',
       },
     }
   },
 
   computed: {
     disableAccept(){
-      return (this.textinput.length === 0 || this.textinput.length > this.maxLetters || (this.duplicateNames !== undefined && this.duplicateNames.includes(this.textinput)));
+      return (this.textinput.length === 0 || this.textinput.includes('&') || this.textinput.length > this.maxLetters || (this.duplicateNames !== undefined && this.duplicateNames.includes(this.textinput)));
     },
   },
 
@@ -79,12 +84,12 @@ export default {
         ref.$refs["inputTextField"].focus();
       }, 100);
     },
-    hide() {
-      this.dialog = false;
-    },
     cancel() {
       this.hide();
       this.$emit("cancel");
+    },
+    save(){
+      this.accept();
     },
     accept() {
       if(this.textinput.length === 0 || this.textinput.length > this.maxLetters) return ;
@@ -100,10 +105,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.bus.$on('showInputText', this.show);
-    this.bus.$on('hideInputText', this.hide)
-  },
 }
 </script>
 

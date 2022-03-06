@@ -9,7 +9,7 @@
       @mousemove="trackMouse"
   >
 
-    <vsm-inputtext :bus="bus" :maxLetters="30" :text="'Write a new name for your dialogue'+(selectionDialogue.length>1 ? 's' : '')+' :'" :headline="'Rename dialogue'+(selectionDialogue.length>1 ? 's' : '')" @accept="renameDialogues"></vsm-inputtext>
+    <vsm-inputtext @initShortcut="initShortcutLinkInputText" :bus="bus" :maxLetters="30" :text="'Write a new name for your dialogue'+(selectionDialogue.length>1 ? 's' : '')+' :'" :headline="'Rename dialogue'+(selectionDialogue.length>1 ? 's' : '')" @accept="renameDialogues"></vsm-inputtext>
 
     <vsm-tooltip
       :bus="bus"
@@ -354,6 +354,7 @@ export default {
     dragOffsetY: 0,
     selectedDialogue: -1,
     editDialogueShortcutFunction: null,
+    inputTextShortcutFunction: null,
 
     windowGame : null,
 
@@ -837,6 +838,7 @@ export default {
     },
     shorcutHandle(e){
       if(this.editDialogueShortcutFunction(e)) return;
+      if(this.inputTextShortcutFunction(e)) return;
       if(e.control && e.key === "c"){
         this.copyDialogues();
       } else if(e.control && e.key === "x"){
@@ -876,6 +878,9 @@ export default {
     },
     initShortcutLink(p){
       this.editDialogueShortcutFunction = p.f;
+    },
+    initShortcutLinkInputText(f){
+      this.inputTextShortcutFunction = f.f;
     },
 
     // ############################ DIALOGUES EDITING
