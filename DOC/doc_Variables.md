@@ -6,16 +6,17 @@
 
 # ![Variable Panel Location](docimg_variablePanelLocation.jpg)
 
-> This panel is useful for the management of the global variables of your game. This global variables can be use to store
-> specifics value of differents types :
+> This panel is useful for the management of the global variables of your game. This global variables can be used to store
+> specific values of different types :
 
-| Type of Variable  | Description  |
-| :---:| :---: |
-| <span style="color:#22c74e">Integer</span> | Store an integer number |
-| <span style="color:#4de396">Float</span> | Store a float number |
-| <span style="color:#94000a">Boolean</span> | Store a variable that can take 2 values : **true** or **false** |
-| <span style="color:#e34dd7">String</span> | Store a line of text |
-| <ul><li><span style="color:#1f18b5">Character</span></li><li><span style="color:#9c4321">Scene</span></li><li><span style="color:#ded82a">Object</span></li><li><span style="color:#7129e6">Music</span></li><li><span style="color:#ad29e6">Sound</span></li></ul> | Variable able to store a reference of a specific asset |
+|                                                                                                                          Type of Variable                                                                                                                           |                                        Description                                         |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------:|
+|                                                                                                             <span style="color:#22c74e">Integer</span>                                                                                                              |                                  Store an integer number                                   |
+|                                                                                                              <span style="color:#4de396">Float</span>                                                                                                               |                                    Store a float number                                    |
+|                                                                                                             <span style="color:#94000a">Boolean</span>                                                                                                              |              Store a variable that can take 2 values : **true** or **false**               |
+|                                                                                                              <span style="color:#e34dd7">String</span>                                                                                                              |                                    Store a line of text                                    |
+|                                                                                                              <span style="color:#a15130">Array</span>                                                                                                               | Store an array/list of other variables of one type (ex: Array of integers, array of array) |
+| <ul><li><span style="color:#1f18b5">Character</span></li><li><span style="color:#9c4321">Scene</span></li><li><span style="color:#ded82a">Object</span></li><li><span style="color:#7129e6">Music</span></li><li><span style="color:#ad29e6">Sound</span></li></ul> |                   Variable able to store a reference of a specific asset                   |
 
 > When you open the variable panel, the list of all the variables of the project appears.
 
@@ -27,7 +28,7 @@
 
 
 | <ol type="1"><li> Write here the name of your variable </li><li> Select the type of the variable </li><li> Set the initial value of the variable when the game will be launched </li></ol> | ![Edit Variable](docimg_editVariable.jpg) |
-|:---:   |:---:   |
+|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------:|
 
 ## 🔧 How to set the value of a variable/parameter :
 
@@ -45,15 +46,45 @@
 > 
 > To set the value, you just have to click on the **pen icon**. A new window will then open :
 
-| <ol type="1"><li> This radio buttons specify if you want to set the variable with a specific value or if you want to set the value with the value of another variable. </li><li> Set a specific value. (*Takes effect only if the button "Specific Value" is checked.*) </li><li> Select another variable you want to get the value for the variable you are setting. (*Takes effect only if the button "From Variable" is checked.*) </li></ol> | ![Edit Variable](docimg_setVariable.jpg) |
-|:---:   |:---:   |
+> You can set a variable in 3 different ways :
+> - Set with a specific value
+> - Copy the value of another variable
+> - Copy the value of an element from an array
 
+| <h3> Set with a specific value :</h3> <ol type="1"><li> This radio buttons specify that you set the variable with a specific value. </li><li> Write here the new value of the variable. </li></ol> <h3> Set with a specific value with an operator : </h3> <ol type="1"><li> This radio buttons specify that you set the variable with a specific value. </li><li> Specific operator or function that will process the value you write before setting the variable. </li><li> Write here the new value of the variable. </li></ol> | ![Edit Variable](docimg_editvariable_specificvalue.jpg) ![Edit Variable](docimg_editvariable_specificvalue_operators.jpg) |
+|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------:|
+|                                                                                                                                                <h3> Copy the value of another variable :</h3>   <ol type="1"><li> This radio buttons specify that you set the variable with a value from another variable. </li><li> Select here the specific variable you want to copy. </li></ol>                                                                                                                                                |                                  ![Edit Variable](docimg_editvariable_fromvariable.jpg)                                   |
+|                                                                                                               <h3> Copy the value of an element from an array :</h3>   <ol type="1"><li> This radio buttons specify that you set the variable with a specific value from an array. </li><li> The array where you want to get an element. </li><li> Position/index of the element to copy to the variable. </li></ol>                                                                                                               |                                    ![Edit Variable](docimg_editvariable_fromarray.jpg)                                    |
 > Note : it exists specific setter for some types of variable. Here are the differences :
 
-| Type of variable | Guide | Screenshot |
-| :---: |:---:   |:---:   |
-| Boolean Variable | In the case of boolean variable, you can set the value with a comparison. For example, you can check if a variable is equal to a specific value or greater than another one ... <ol type="1"><li> You can set here the first value to compare. </li><li> You can select with this menu the comparison operator ( > , = , < , >= , <= ) </li><li> You can set here the second value to compare with the first one. </li><li> You can select here the types of the 2 values you want to compare.</li></ol> | ![Edit Variable](docimg_guideBooleanSetter.jpg) |
-| Integer & Float Variables | In the case of integer & float variables, you can set the value with an operation between two values. For example, you can set an integer with the sum of two others ... <ol type="1"><li> You can set here the first value of the operation. </li><li> You can select with this menu the type of operation ( + , - , x , / ) </li><li> You can set here the second value of the operation. </li><li> You can select here the types of the 2 values you want to compare.</li></ol> | ![Edit Variable](docimg_guideBooleanSetter.jpg) |
+<h2> Boolean :</h2>
+
+| Operators  |                                                                                                                                  Guide                                                                                                                                  |                          Screenshot                          |
+|:----------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------:|
+|   Value    |                                                         <ol type="1"><li> If the operator is set to value, you just have to check the checkbox to set the variable to true, or uncheck it for false. </li></ol>                                                         |   ![Edit Variable](docimg_editvariable_boolean_value.jpg)    |
+| Comparison |                                 Comparison operators : <, >, <=, >= <ol type="1"><li> **[Float]** The first value to compare </li> <li> **[Float]** The second value to compare </li></ol> Screenshot : compute the comparison : a > b                                  | ![Edit Variable](docimg_editvariable_boolean_comparison.jpg) |
+|   Equals   | <ol type="1"><li> **[see 3]** The first value to compare </li> <li> **[see 3]** The second value to compare </li>  <li> **[VariableType]** Select the variable type of both values you want to test the equality. </li></ol> Screenshot : compute the equality : a == b |   ![Edit Variable](docimg_editvariable_boolean_equal.jpg)    |
+|    Not     |                                                    <ol type="1"><li> If the operator is set to not, you can write here a boolean variable (value/operation etc.) and it will compute the inverse result.  </li></ol>                                                    |    ![Edit Variable](docimg_editvariable_boolean_not.jpg)     |
+
+<h2> Float & Integers :</h2>
+
+|  Operators  |                                                                                                            Guide                                                                                                             |                        Screenshot                        |
+|:-----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------:|
+|    Value    |                                                     <ol type="1"><li> If the operator is set to value, you just have to write the new value you want to set. </li></ol>                                                      |  ![Edit Variable](docimg_editvariable_float_value.jpg)   |
+|  Operation  |            List of operations : +, -, *, /        <ol type="1"><li> **[Float]** First value of operation </li> <li> **[Float]** Second value of operation </li> </ol>  Screenshot : compute the operation : a + b            | ![Edit Variable](docimg_editvariable_float_operator.jpg) |
+|    Power    |                          <ol type="1"><li> **[Float]** The value of the base of the power </li> <li> **[Float]** The value of the power </li> </ol>       Screenshot : compute the operation : a^b                           |  ![Edit Variable](docimg_editvariable_float_power.jpg)   |
+| Exponential |                                                     <ol type="1"><li> **[Float]** The power of exponential </li></ol>           Screenshot : compute the operation : e^a                                                     |   ![Edit Variable](docimg_editvariable_float_exp.jpg)    |
+| Min or Max  |                              <ol type="1"><li> **[Float]** First value </li> <li> **[Float]** Second value </li></ol>      Screenshot : set the variable with the minimum value between a and b                              |  ![Edit Variable](docimg_editvariable_float_minmax.jpg)  |
+|   Random    |                        <ol type="1"><li> **[Float]** Minimum value </li> <li> **[Float]** Maximum value </li></ol>   Screenshot : set the variable with a random value between a and b (a <= x <= b)                         |  ![Edit Variable](docimg_editvariable_float_random.jpg)  |
+|   Length    | Set the variable with the length of an array (number of element the array contains)                                                        <ol type="1"><li> **[Array]** The array you want to measure the length </li></ol> |  ![Edit Variable](docimg_editvariable_float_length.jpg)  |
+
+<h2> String :</h2>
+
+| Operators |                                                                                                                                         Guide                                                                                                                                          |                        Screenshot                         |
+|:---------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------:|
+|   Value   |                                                                               <ol type="1"><li> If the operator is set to value, you just have to write the text value of the variable here. </li></ol>                                                                                |  ![Edit Variable](docimg_editvariable_string_value.jpg)   |
+|  Concat   |                             Concatenate two string values : <ol type="1"><li> **[String]** First string value to concatenate. </li><li> **[String]** Second string value to concatenate. </li></ol>   Screenshot : concatenate text1 + text2 = text1text2                              |  ![Edit Variable](docimg_editvariable_string_concat.jpg)  |
+| ToString  | The variable is set with a value of a different type which is transformed in string                  <ol type="1"><li> **[VariableType]** Select here the variable type you want to transform in String. </li> <li> **[see 1]** The value you want to transform in string. </li> </ol> | ![Edit Variable](docimg_editvariable_string_tostring.jpg) |
 
 ## 📃 Some other information :
 

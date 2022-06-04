@@ -32,6 +32,8 @@
 >To make a system which is not handled by the scripting system. You have access to an editor with all the code (HTML/JS/CSS) that you can edit like you want.
 > 
 > You can also create your own functions which can be called in the script tab but execute your own code, check [Custom Function Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_CustomFunctions.md).
+> 
+> Finally, you can debug your game by activating the debug mode which will throw error when something is not working/going as expected, see the [Debug Documentation](https://github.com/yami2200/visualnovelmaker/blob/master/DOC/doc_Debug.md)
 
 ## ⚙ Tech :
 
