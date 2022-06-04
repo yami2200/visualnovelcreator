@@ -4,6 +4,8 @@
 
 >Visual Novel Creator is an application/game engine to make Visual Novel games.
 > 
+>Check the video trailer [here](https://www.youtube.com/watch?v=NloEgHyuQWg)
+> 
 > Download the latest version here : [Visual Novel Creator 1.1.0](https://github.com/yami2200/visualnovelcreator/releases/tag/v1.1.0)
 
 ## 📚 Manage your assets :
